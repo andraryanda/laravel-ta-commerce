@@ -4,9 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Support\Str;
-use App\Http\Requests\ProductRequest;
 use App\Models\ProductCategory;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\ProductRequest;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ProductController extends Controller
 {
@@ -23,17 +27,17 @@ class ProductController extends Controller
             return DataTables::of($query)
                 ->addColumn('action', function ($item) {
                     return '
-                        <a class="inline-block border border-blue-700 bg-blue-700 text-white rounded-md px-2 py-1 m-1 transition duration-500 ease select-none hover:bg-blue-800 focus:outline-none focus:shadow-outline" 
+                        <a class="inline-block border border-purple-700 bg-purple-700 text-white rounded-md px-2 py-1 m-1 transition duration-500 ease select-none hover:bg-purple-800 focus:outline-none focus:shadow-outline"
                             href="' . route('dashboard.product.gallery.index', $item->id) . '">
-                            Gallery
+                            <i class="fa fa-image"></i> Gambar
                         </a>
-                        <a class="inline-block border border-gray-700 bg-gray-700 text-white rounded-md px-2 py-1 m-1 transition duration-500 ease select-none hover:bg-gray-800 focus:outline-none focus:shadow-outline" 
+                        <a class="inline-block border border-yellow-500 bg-yellow-400 text-white rounded-md px-2 py-1 m-1 transition duration-500 ease select-none hover:bg-yellow-500 focus:outline-none focus:shadow-outline"
                             href="' . route('dashboard.product.edit', $item->id) . '">
-                            Edit
+                            <i class="fa fa-pencil"></i> Edit
                         </a>
                         <form class="inline-block" action="' . route('dashboard.product.destroy', $item->id) . '" method="POST">
-                        <button class="border border-red-500 bg-red-500 text-white rounded-md px-2 py-1 m-2 transition duration-500 ease select-none hover:bg-red-600 focus:outline-none focus:shadow-outline" >
-                            Hapus
+                        <button title="Hapus" class="border border-red-500 bg-red-500 text-white rounded-md px-2 py-1 m-2 transition duration-500 ease select-none hover:bg-red-600 focus:outline-none focus:shadow-outline" >
+                        <i class="fa fa-trash"></i> Hapus
                         </button>
                             ' . method_field('delete') . csrf_field() . '
                         </form>';
@@ -46,7 +50,50 @@ class ProductController extends Controller
         }
 
         return view('pages.dashboard.product.index');
+        // return view('components.pages_component.dashboard.product.index');
     }
+
+    public function exportProducts(Request $request)
+{
+    $products = Product::with('galleries')->get();
+
+    $headers = [
+        'Content-Type' => 'text/csv',
+        'Content-Disposition' => 'attachment; filename=products_' . date('d-m-Y') . '.csv',
+    ];
+
+    $callback = function () use ($products) {
+        $file = fopen('php://output', 'w');
+
+        fputcsv($file, ['ID', 'Name', 'Price', 'Description', 'Tags', 'Category ID', 'Deleted At', 'Created At', 'Updated At', 'Image URL']);
+
+        foreach ($products as $product) {
+            $galleryUrls = '';
+            if ($product->galleries->count() > 0) {
+                foreach ($product->galleries as $gallery) {
+                    // $galleryUrls .= Storage::url($gallery->url) . "\n";
+                    $galleryUrls .= $gallery->url;
+                }
+            }
+            fputcsv($file, [
+                $product->id,
+                $product->name,
+                $product->price,
+                $product->description,
+                $product->tags,
+                $product->categories_id,
+                $product->deleted_at,
+                $product->created_at,
+                $product->updated_at,
+                $galleryUrls,
+            ]);
+        }
+
+        fclose($file);
+    };
+
+    return new StreamedResponse($callback, 200, $headers);
+}
 
     /**
      * Show the form for creating a new resource.

@@ -24,6 +24,9 @@
                         width: '25%'
                     },
                 ],
+                order: [
+                    [0, 'desc'] // Kolom indeks 0 diurutkan secara descending
+                ],
             });
         </script>
     </x-slot>

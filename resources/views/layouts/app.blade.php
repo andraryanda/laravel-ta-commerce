@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>{{ config('app.name', 'Apps Als Store RT/RW NET') }}</title>
 
         <!-- Fonts -->
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap">
@@ -25,7 +25,7 @@
                 padding-bottom: .5rem; 		/*pl-2*/
                 line-height: 1.25; 			/*leading-tight*/
                 border-width: 2px; 			/*border-2*/
-                border-radius: .25rem; 		
+                border-radius: .25rem;
                 border-color: #edf2f7; 		/*border-gray-200*/
                 background-color: #edf2f7; 	/*bg-gray-200*/
             }
@@ -34,14 +34,14 @@
             table.dataTable.hover tbody tr:hover, table.dataTable.display tbody tr:hover {
                 background-color: #ebf4ff;	/*bg-indigo-100*/
             }
-            
+
             /*Pagination Buttons*/
             .dataTables_wrapper .dataTables_paginate .paginate_button		{
                 font-weight: 700;				/*font-bold*/
                 border-radius: .25rem;			/*rounded*/
                 border: 1px solid transparent;	/*border border-transparent*/
             }
-            
+
             /*Pagination Buttons - Current selected */
             .dataTables_wrapper .dataTables_paginate .paginate_button.current	{
                 color: #fff !important;				/*text-white*/
@@ -61,14 +61,14 @@
                 background: #667eea !important;		/*bg-indigo-500*/
                 border: 1px solid transparent;		/*border border-transparent*/
             }
-            
+
             /*Add padding to bottom border */
             table.dataTable.no-footer {
                 border-bottom: 1px solid #e2e8f0;	/*border-b-1 border-gray-300*/
                 margin-top: 0.75em;
                 margin-bottom: 0.75em;
             }
-            
+
             /*Change colour of responsive icon*/
             table.dataTable.dtr-inline.collapsed>tbody>tr>td:first-child:before, table.dataTable.dtr-inline.collapsed>tbody>tr>th:first-child:before {
                 background-color: #667eea !important; /*bg-indigo-500*/
@@ -83,6 +83,7 @@
         <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
         <script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
+
     </head>
     <body class="font-sans antialiased">
         <x-jet-banner />

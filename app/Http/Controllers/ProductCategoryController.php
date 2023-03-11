@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use view;
 use Illuminate\Support\Str;
 use App\Models\ProductCategory;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\ProductCategoryRequest;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ProductCategoryController extends Controller
 {
@@ -24,13 +26,13 @@ class ProductCategoryController extends Controller
             return DataTables::of($query)
                 ->addColumn('action', function ($item) {
                     return '
-                        <a class="inline-block border border-gray-700 bg-gray-700 text-white rounded-md px-2 py-1 m-1 transition duration-500 ease select-none hover:bg-gray-800 focus:outline-none focus:shadow-outline"
+                        <a class="inline-block border border-yellow-500 bg-yellow-400 text-white rounded-md px-2 py-1 m-1 transition duration-500 ease select-none hover:bg-yellow-500 focus:outline-none focus:shadow-outline"
                             href="' . route('dashboard.category.edit', $item->id) . '">
-                            Edit
+                            <i class="fa fa-pencil"></i> Edit
                         </a>
                         <form class="inline-block" action="' . route('dashboard.category.destroy', $item->id) . '" method="POST">
-                        <button class="border border-red-500 bg-red-500 text-white rounded-md px-2 py-1 m-2 transition duration-500 ease select-none hover:bg-red-600 focus:outline-none focus:shadow-outline" >
-                            Hapus
+                        <button title="Hapus" class="border border-red-500 bg-red-500 text-white rounded-md px-2 py-1 m-2 transition duration-500 ease select-none hover:bg-red-600 focus:outline-none focus:shadow-outline" >
+                        <i class="fa fa-trash"></i> Hapus
                         </button>
                             ' . method_field('delete') . csrf_field() . '
                         </form>';
@@ -44,6 +46,33 @@ class ProductCategoryController extends Controller
 
         return view('pages.dashboard.category.index');
     }
+
+    public function exportProductCategories()
+    {
+        $productCategories = DB::table('product_categories')
+            ->select('id', 'name', 'deleted_at', 'created_at', 'updated_at')
+            ->get();
+
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename=product_categories_' . date('d-m-Y') . '.csv',
+        ];
+
+        $callback = function () use ($productCategories) {
+            $file = fopen('php://output', 'w');
+
+            fputcsv($file, ['ID', 'Name', 'Deleted At', 'Created At', 'Updated At']);
+
+            foreach ($productCategories as $productCategory) {
+                fputcsv($file, [$productCategory->id, $productCategory->name, $productCategory->deleted_at, $productCategory->created_at, $productCategory->updated_at]);
+            }
+
+            fclose($file);
+        };
+
+        return new StreamedResponse($callback, 200, $headers);
+    }
+
 
     /**
      * Show the form for creating a new resource.
@@ -89,7 +118,7 @@ class ProductCategoryController extends Controller
      */
     public function edit(ProductCategory $category)
     {
-        return view('pages.dashboard.category.edit',[
+        return view('pages.dashboard.category.edit', [
             'item' => $category
         ]);
     }
