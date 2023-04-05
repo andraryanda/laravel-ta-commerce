@@ -52,22 +52,17 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
 
         Route::middleware(['admin'])->group(function () {
             Route::resource('product', ProductController::class);
-            Route::get('exportAllProducts', [ProductController::class, 'exportProducts'])->name('product.exportProducts');
             Route::resource('category', ProductCategoryController::class);
             Route::resource('product.gallery', ProductGalleryController::class)->shallow()->only([
                 'index', 'create', 'store', 'destroy'
             ]);
-            Route::get('exportProductCategories', [ProductCategoryController::class, 'exportProductCategories'])->name('category.exportProductCategories');
+
+
             Route::post('importCategory', [ProductCategoryController::class, 'importCategory'])->name('category.importCategory');
             Route::resource('transaction', TransactionController::class)->only([
                 'index', 'show', 'edit', 'update'
             ]);
             Route::get('sendMessage-{transaction}', [TransactionController::class, 'sendMessage'])->name('transaction.sendMessage');
-            Route::get('exportPDF-{transaction}', [TransactionController::class, 'exportPDF'])->name('transaction.exportPDF');
-            Route::get('exportAllTransactions', [TransactionController::class, 'exportAllTransactions'])->name('transaction.exportAllTransactions');
-            Route::get('exportTransactionCancelled', [TransactionController::class, 'exportTransactionCancelled'])->name('transaction.exportTransactionCancelled');
-            Route::get('exportTransactionSuccess', [TransactionController::class, 'exportTransactionSuccess'])->name('transaction.exportTransactionSuccess');
-            Route::get('exportTransactionPending', [TransactionController::class, 'exportTransactionPending'])->name('transaction.exportTransactionPending');
             Route::get('transactionAllTransaction', [TransactionController::class, 'indexAllTransaction'])->name('transaction.indexAllTransaction');
             Route::get('transactionPending', [TransactionController::class, 'indexPending'])->name('transaction.indexPending');
             Route::get('transactionSuccess', [TransactionController::class, 'indexSuccess'])->name('transaction.indexSuccess');
@@ -84,18 +79,30 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
             Route::post('importUserCustomer', [UserController::class, 'importUserCustomer'])->name('user.importUserCustomer');
             Route::post('importUserAdmin', [UserController::class, 'importUserAdmin'])->name('user.importUserAdmin');
             Route::post('importUserAll', [UserController::class, 'importUserAll'])->name('user.importUserAll');
-            Route::get('exportRoleAdmin', [UserController::class, 'exportRoleAdmin'])->name('user.exportRoleAdmin');
-            Route::get('exportRoleUser', [UserController::class, 'exportRoleUser'])->name('user.exportRoleUser');
-            Route::get('exportUsers', [UserController::class, 'exportUsers'])->name('user.export');
+
+
             Route::get('userAdmin', [UserController::class, 'indexUserAdmin'])->name('user.indexUserAdmin');
             Route::get('userCustomer', [UserController::class, 'indexUserCustomer'])->name('user.indexUserCustomer');
 
             Route::get('chartUsers{year?}', [UserChartController::class, 'index'])->name('chart.chartUsers');
             Route::get('chartTransactions{year?}', [TransactionChartController::class, 'index'])->name('chart.chartTransactions');
             Route::get('chartVirtualBisnis', [ChartController::class, 'index'])->name('chart.chartVirtualBisnis');
-            Route::get('report', [ReportController::class, 'index'])->name('report.laporanStore');
 
             Route::post('/reportExport', [ReportController::class, 'generateReport'])->name('report.exportGenerateUser');
+
+
+            // Report
+            Route::get('report', [ReportController::class, 'index'])->name('report.laporanStore');
+            Route::get('exportUsers', [ReportController::class, 'exportUsers'])->name('report.exportAllUsers');
+            Route::get('exportRoleAdmin', [ReportController::class, 'exportRoleAdmin'])->name('report.exportRoleAdmin');
+            Route::get('exportRoleUser', [ReportController::class, 'exportRoleUser'])->name('report.exportRoleUser');
+            Route::get('exportProductCategories', [ReportController::class, 'exportProductCategories'])->name('report.exportProductCategories');
+            Route::get('exportAllProducts', [ReportController::class, 'exportProducts'])->name('report.exportProducts');
+            Route::get('exportPDF-{transaction}', [ReportController::class, 'exportPDF'])->name('report.exportPDF');
+            Route::get('exportAllTransactions', [ReportController::class, 'exportAllTransactions'])->name('report.exportAllTransactions');
+            Route::get('exportTransactionCancelled', [ReportController::class, 'exportTransactionCancelled'])->name('report.exportTransactionCancelled');
+            Route::get('exportTransactionSuccess', [ReportController::class, 'exportTransactionSuccess'])->name('report.exportTransactionSuccess');
+            Route::get('exportTransactionPending', [ReportController::class, 'exportTransactionPending'])->name('report.exportTransactionPending');
 
 
             // Midtrans

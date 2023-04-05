@@ -58,56 +58,6 @@ class ProductController extends Controller
         // return view('components.pages_component.dashboard.product.index');
     }
 
-    public function exportProducts(Request $request)
-    {
-        $products = Product::with('galleries')->with('category')->get();
-
-        $headers = [
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename=products_' . date('d-m-Y') . '.csv',
-        ];
-
-        $callback = function () use ($products) {
-            $file = fopen('php://output', 'w');
-
-            fputcsv($file, ['ID', 'Name', 'Price', 'Description', 'Tags', 'Category ID', 'Category', 'Deleted At', 'Created At', 'Updated At', 'Image URL']);
-
-            foreach ($products as $product) {
-                $galleryUrls = '';
-                // if ($product->galleries->count() > 0) {
-                //     foreach ($product->galleries as $gallery) {
-                //         // $galleryUrls .= Storage::url($gallery->url) . "\n";
-                //         $galleryUrls .= $gallery->url.' || ';
-                //     }
-                // }
-                if ($product->galleries->count() > 0) {
-                    foreach ($product->galleries as $key => $gallery) {
-                        $galleryUrls .= $gallery->url;
-                        if ($key < $product->galleries->count() - 1) {
-                            $galleryUrls .= ' || ';
-                        }
-                    }
-                }
-                fputcsv($file, [
-                    $product->id,
-                    $product->name,
-                    $product->price,
-                    $product->description,
-                    $product->tags,
-                    $product->categories_id,
-                    $product->category->name,
-                    $product->deleted_at,
-                    $product->created_at,
-                    $product->updated_at,
-                    $galleryUrls,
-                ]);
-            }
-
-            fclose($file);
-        };
-
-        return new StreamedResponse($callback, 200, $headers);
-    }
 
     /**
      * Show the form for creating a new resource.

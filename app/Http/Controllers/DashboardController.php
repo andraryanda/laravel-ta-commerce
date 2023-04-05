@@ -205,7 +205,7 @@ class DashboardController extends Controller
                             <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/whatsapp.png') . '" alt="whatsapp" loading="lazy" width="20" />
                             <p class="mt-1 text-xs">WhatsApp</p>
                         </a>
-                        <a href="' . route('dashboard.transaction.exportPDF', $item->id) . '" title="Kwitansi"
+                        <a href="' . route('dashboard.report.exportPDF', $item->id) . '" title="Kwitansi"
                             class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-indigo-500 bg-indigo-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-indigo-500 focus:outline-none focus:shadow-outline">
                             <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/printer.png') . '" alt="printer" loading="lazy" width="20" />
                             <p class="mt-1 text-xs">Kwitansi</p>

@@ -54,31 +54,6 @@ class ProductCategoryController extends Controller
         return view('pages.dashboard.category.index');
     }
 
-    public function exportProductCategories()
-    {
-        $productCategories = DB::table('product_categories')
-            ->select('id', 'name', 'deleted_at', 'created_at', 'updated_at')
-            ->get();
-
-        $headers = [
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename=product_categories_' . date('d-m-Y') . '.csv',
-        ];
-
-        $callback = function () use ($productCategories) {
-            $file = fopen('php://output', 'w');
-
-            fputcsv($file, ['ID', 'Name', 'Deleted At', 'Created At', 'Updated At']);
-
-            foreach ($productCategories as $productCategory) {
-                fputcsv($file, [$productCategory->id, $productCategory->name, $productCategory->deleted_at, $productCategory->created_at, $productCategory->updated_at]);
-            }
-
-            fclose($file);
-        };
-
-        return new StreamedResponse($callback, 200, $headers);
-    }
 
     public function importCategory()
     {
