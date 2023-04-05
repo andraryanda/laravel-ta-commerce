@@ -2,6 +2,7 @@
 
 namespace App\Charts;
 
+use Carbon\Carbon;
 use App\Models\Transaction;
 use ConsoleTVs\Charts\Classes\Chartjs\Chart;
 
@@ -22,11 +23,20 @@ class TransactionChart extends Chart
         return $total_amount_pending;
     }
 
+    // public function getTransactionData()
+    // {
+    //     $pending = Transaction::where('status', '=', 'PENDING')->sum('total_price');
+    //     $success = Transaction::where('status', '=', 'SUCCESS')->sum('total_price');
+    //     $cancelled = Transaction::where('status', '=', 'CANCELLED')->sum('total_price');
+
+    //     return collect([$pending, $success, $cancelled]);
+    // }
+
     public function getTransactionData()
     {
-        $pending = Transaction::where('status', '=', 'PENDING')->sum('total_price');
-        $success = Transaction::where('status', '=', 'SUCCESS')->sum('total_price');
-        $cancelled = Transaction::where('status', '=', 'CANCELLED')->sum('total_price');
+        $pending = Transaction::where('status', '=', 'PENDING')->count();
+        $success = Transaction::where('status', '=', 'SUCCESS')->count();
+        $cancelled = Transaction::where('status', '=', 'CANCELLED')->count();
 
         return collect([$pending, $success, $cancelled]);
     }

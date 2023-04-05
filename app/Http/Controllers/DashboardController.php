@@ -3,16 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Product;
 use App\Charts\UserChart;
 use App\Models\Transaction;
+use App\Charts\ProductChart;
 use Illuminate\Http\Request;
+use App\Models\TransactionItem;
 use App\Charts\TransactionChart;
 use Laravel\Jetstream\Jetstream;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Charts\TransactionPriceChart;
 use App\Charts\UserRegistrationChart;
+use App\Models\NotificationTransaction;
 use Yajra\DataTables\Facades\DataTables;
+// use ConsoleTVs\Charts\Classes\Chartjs\Chart;
 
 class DashboardController extends Controller
 {
@@ -23,119 +29,101 @@ class DashboardController extends Controller
 
     public function statusDashboard()
     {
-        // $usersChart = new UserChart;
-        // $usersChart->labels(['Jan', 'Feb', 'Mar']);
-        // $usersChart->dataset('Users by trimester', 'line', [10, 25, 13])
-        //     ->backgroundColor([
-        //         'rgba(128, 0, 128, 0.2)',
-        //         'rgba(148, 0, 211, 0.2)',
-        //         'rgba(238, 130, 238, 0.2)'
-        //     ]);
 
-        $numberOfMonths = 6;
-        $userRegistrationChart = new UserRegistrationChart;
-        $userRegistrationChart->labels($userRegistrationChart->getUserRegistrationData($numberOfMonths)['labels']);
-        $userRegistrationChart->dataset('Users Registered', 'line', $userRegistrationChart->getUserRegistrationData($numberOfMonths)['data'])
-            ->backgroundColor('rgba(54, 162, 235, 0.2)');
+
 
         // $numberOfMonths = 6;
         // $userRegistrationChart = new UserRegistrationChart;
         // $userRegistrationChart->labels($userRegistrationChart->getUserRegistrationData($numberOfMonths)['labels']);
-
-        // // Mengambil data jumlah pengguna untuk setiap role
-        // $userData = [];
-        // $adminData = [];
-        // for ($i = 1; $i <= $numberOfMonths; $i++) {
-        //     $month = date('m', strtotime("-$i month"));
-        //     $year = date('Y', strtotime("-$i month"));
-
-        //     $usersCount = User::where('roles', 'USER')
-        //         ->whereMonth('created_at', $month)
-        //         ->whereYear('created_at', $year)
-        //         ->count();
-        //     array_unshift($userData, $usersCount);
-
-        //     $adminsCount = User::where('roles', 'ADMIN')
-        //         ->whereMonth('created_at', $month)
-        //         ->whereYear('created_at', $year)
-        //         ->count();
-        //     array_unshift($adminData, $adminsCount);
-        // }
-
-        // // Set data untuk role "User"
-        // $userRegistrationChart->dataset('Users', 'line', $userData)
+        // $userRegistrationChart->dataset('Users Registered', 'line', $userRegistrationChart->getUserRegistrationData($numberOfMonths)['data'])
         //     ->backgroundColor('rgba(54, 162, 235, 0.2)');
 
-        // // Set data untuk role "Admin"
-        // $userRegistrationChart->dataset('Admins', 'line', $adminData)
-        //     ->backgroundColor('rgba(255, 99, 132, 0.2)');
-
-        // // Render chart
-        // $userRegistrationChart->options([
-        //     'scales' => [
-        //         'yAxes' => [
-        //             [
-        //                 'ticks' => [
-        //                     'beginAtZero' => true
-        //                 ]
-        //             ]
-        //         ]
-        //     ]
-        // ]);
-
-
-
-        // Inisialisasi chart
-        $usersChart = new UserChart;
-
-        // Set label untuk chart
-        $usersChart->labels(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']);
-
-        // Mengambil data jumlah pengguna untuk setiap role
-        $userData = [];
-        $adminData = [];
-
-        for ($i = 1; $i <= 6; $i++) {
-            $month = date('m', strtotime("-$i month"));
-            $year = date('Y', strtotime("-$i month"));
-
-            $usersCount = User::where('roles', 'USER')
-                ->whereMonth('created_at', $month)
-                ->whereYear('created_at', $year)
-                ->count();
-            array_unshift($userData, $usersCount);
-
-            $adminsCount = User::where('roles', 'ADMIN')
-                ->whereMonth('created_at', $month)
-                ->whereYear('created_at', $year)
-                ->count();
-            array_unshift($adminData, $adminsCount);
-        }
-
-        // Set data untuk role "User"
-        $userDataset = $usersChart->dataset('Users', 'line', $userData)
+        // Memanggil chart
+        $numberOfMonths = 6;
+        $userRegistrationChart = new UserRegistrationChart;
+        $userCounts = $userRegistrationChart->getUserRegistrationData($numberOfMonths);
+        $userRegistrationChart->labels($userCounts['labels']);
+        $userRegistrationChart->dataset('Users', 'bar', collect($userCounts['userCounts'])->pluck('user_count'))
             ->backgroundColor('rgba(54, 162, 235, 0.2)');
-
-        // Set data untuk role "Admin"
-        $adminDataset = $usersChart->dataset('Admins', 'line', $adminData)
+        $userRegistrationChart->dataset('Admins', 'bar', collect($userCounts['userCounts'])->pluck('admin_count'))
             ->backgroundColor('rgba(255, 99, 132, 0.2)');
+        $userRegistrationChart->options([
+            'scales' => [
+                'yAxes' => [
+                    [
+                        'ticks' => [
+                            'beginAtZero' => true,
+                        ],
+                    ],
+                ],
+            ],
+        ]);
 
         $transactionChart = new TransactionChart;
         $transactionChart->labels(['Pending', 'Success', 'Cancelled']);
-        $transactionChart->dataset('Transaction Status', 'bar', $transactionChart->getTransactionData())
+        $transactionChart->dataset('Pending', 'bar', [$transactionChart->getTransactionData()[0]])
+            ->backgroundColor('#FFCE56');
+        $transactionChart->dataset('Success', 'bar', [$transactionChart->getTransactionData()[1]])
+            ->backgroundColor('#36A2EB');
+        $transactionChart->dataset('Cancelled', 'bar', [$transactionChart->getTransactionData()[2]])
+            ->backgroundColor('#FF6384');
+
+
+        // Memanggil chart
+        $numberOfMonths = 6;
+        $transactionPriceChart = new TransactionPriceChart;
+        $transactionCounts = $transactionPriceChart->getTransactionPriceData($numberOfMonths);
+        $transactionPriceChart->labels($transactionCounts['labels']);
+        $transactionPriceChart->dataset('Pending', 'bar', $transactionCounts['pendingCounts'])
+            ->backgroundColor('rgba(255, 159, 64, 0.2)');
+        $transactionPriceChart->dataset('Success', 'bar', $transactionCounts['successCounts'])
+            ->backgroundColor('rgba(54, 162, 235, 0.2)');
+        $transactionPriceChart->dataset('Cancelled', 'bar', $transactionCounts['cancelledCounts'])
+            ->backgroundColor('rgba(255, 99, 132, 0.2)');
+        $transactionPriceChart->options([
+            'scales' => [
+                'yAxes' => [
+                    [
+                        'ticks' => [
+                            'beginAtZero' => true,
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        // Mengambil data penjualan terbanyak pada 10 produk
+        $bestSellingProducts = TransactionItem::join('products', 'transaction_items.products_id', '=', 'products.id')
+            ->select('products.name as product_name', DB::raw('SUM(transaction_items.quantity) as total_quantity'))
+            ->groupBy('transaction_items.products_id')
+            ->orderBy('total_quantity', 'desc')
+            ->limit(5)
+            ->get();
+
+        // Inisialisasi chart
+        $productChart = new ProductChart;
+
+        // Set label untuk chart
+        $productChart->labels($bestSellingProducts->pluck('product_name')->toArray());
+
+        // Set data untuk jumlah produk yang terjual
+        $productChart->dataset('Total Quantity Sold', 'bar', $bestSellingProducts->pluck('total_quantity')->toArray())
             ->backgroundColor([
-                '#FF6384',
-                '#36A2EB',
-                '#FFCE56'
-            ]);
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+            ])
+            // Tambahkan label untuk setiap data produk
+            ->label($bestSellingProducts->pluck('product_name')->toArray());
 
         $users_count = User::count();
         $new_transaction = Transaction::count();
-
-        $list_transaction = Transaction::orderBy('total_price', 'desc')->get();
-
         $total_amount_success = Transaction::where('status', '=', 'SUCCESS')->sum('total_price');
         $total_amount_pending = Transaction::where('status', '=', 'PENDING')->sum('total_price');
+        $list_transaction = Transaction::orderBy('total_price', 'desc')->get();
+
 
         if (request()->ajax()) {
             // $query = Transaction::with(['user'])->orderByDesc('created_at');
@@ -211,14 +199,27 @@ class DashboardController extends Controller
 
                 ->addColumn('action', function ($item) {
                     return '
-                        <a class="inline-block border border-blue-500 bg-blue-400 text-white rounded-md px-2 py-1 m-1 transition duration-500 ease select-none hover:bg-blue-500 focus:outline-none focus:shadow-outline"
-                            href="' . route('dashboard.transaction.show', $item->id) . '">
-                            <i class="fa fa-eye"></i> Lihat
+                    <div class="flex justify-start items-center space-x-3.5">
+                        <a href="' . route('dashboard.transaction.sendMessage', $item->id) . '" title="WhatsApp" target="_blank"
+                            class="inline-flex flex-col items-center justify-center w-20 h-12 bg-green-400 text-white rounded-md border border-green-500 transition duration-500 ease select-none hover:bg-green-500 focus:outline-none focus:shadow-outline">
+                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/whatsapp.png') . '" alt="whatsapp" loading="lazy" width="20" />
+                            <p class="mt-1 text-xs">WhatsApp</p>
                         </a>
-                        <a class="inline-block border border-yellow-500 bg-yellow-400 text-white rounded-md px-2 py-1 m-1 transition duration-500 ease select-none hover:bg-yellow-500 focus:outline-none focus:shadow-outline"
-                            href="' . route('dashboard.transaction.edit', $item->id) . '">
-                            <i class="fa fa-pencil"></i> Edit
-                        </a>';
+                        <a href="' . route('dashboard.transaction.exportPDF', $item->id) . '" title="Kwitansi"
+                            class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-indigo-500 bg-indigo-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-indigo-500 focus:outline-none focus:shadow-outline">
+                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/printer.png') . '" alt="printer" loading="lazy" width="20" />
+                            <p class="mt-1 text-xs">Kwitansi</p>
+                        </a>
+                        <a href="' . route('dashboard.transaction.show', $item->id) . '" title="Show"
+                            class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-blue-500 bg-blue-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-blue-500 focus:outline-none focus:shadow-outline">
+                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/show.png') . '" alt="show" loading="lazy" width="20" />
+                            <p class="mt-1 text-xs">Lihat</p>
+                        </a>
+                    </div>
+
+
+
+                    ';
                 })
                 // ->editColumn('total_price', function ($item) {
                 //     return number_format($item->total_price).'.00';
@@ -234,9 +235,10 @@ class DashboardController extends Controller
                 'list_transaction',
                 'total_amount_success',
                 'total_amount_pending',
-                'usersChart',
                 'transactionChart',
                 'userRegistrationChart',
+                'productChart',
+                'transactionPriceChart',
 
             )
         );

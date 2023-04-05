@@ -9,10 +9,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class ProductCategory extends Model
 {
     use HasFactory, SoftDeletes;
-    
+
     protected $fillable = [
-        'name', 
-    ];    
+        // 'id',
+        'name',
+        'id_category_uuid'
+    ];
+
+    // public $incrementing = false;
 
     public function products()
     {

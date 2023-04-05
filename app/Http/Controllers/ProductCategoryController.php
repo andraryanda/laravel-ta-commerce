@@ -7,8 +7,11 @@ use Illuminate\Support\Str;
 use App\Models\ProductCategory;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\ProductCategoryRequest;
+use App\Imports\ProductCategoryImport;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ProductCategoryController extends Controller
@@ -26,16 +29,20 @@ class ProductCategoryController extends Controller
             return DataTables::of($query)
                 ->addColumn('action', function ($item) {
                     return '
-                        <a class="inline-block border border-yellow-500 bg-yellow-400 text-white rounded-md px-2 py-1 m-1 transition duration-500 ease select-none hover:bg-yellow-500 focus:outline-none focus:shadow-outline"
-                            href="' . route('dashboard.category.edit', $item->id) . '">
-                            <i class="fa fa-pencil"></i> Edit
+                    <div class="flex justify-start items-center space-x-3.5">
+                        <a href="' . route('dashboard.category.edit', $item->id) . '" title="Edit"
+                            class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-yellow-500 bg-yellow-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-yellow-500 focus:outline-none focus:shadow-outline">
+                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/edit.png') . '" alt="edit" loading="lazy" width="20" />
+                            <p class="mt-1 text-xs">Edit</p>
                         </a>
-                        <form class="inline-block" action="' . route('dashboard.category.destroy', $item->id) . '" method="POST">
-                        <button title="Hapus" class="border border-red-500 bg-red-500 text-white rounded-md px-2 py-1 m-2 transition duration-500 ease select-none hover:bg-red-600 focus:outline-none focus:shadow-outline" >
-                        <i class="fa fa-trash"></i> Hapus
+                        <button type="button" title="Delete"
+                            class="flex flex-col delete-button shadow-sm items-center justify-center w-20 h-12 border border-red-500 bg-red-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-red-500 focus:outline-none focus:shadow-outline"
+                            data-id="' . $item->id . '">
+                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/delete.png') . '" alt="delete" loading="lazy" width="20" />
+                            <p class="mt-1 text-xs">Delete</p>
                         </button>
-                            ' . method_field('delete') . csrf_field() . '
-                        </form>';
+                    </div>
+                        ';
                 })
                 ->editColumn('price', function ($item) {
                     return number_format($item->price);
@@ -73,6 +80,25 @@ class ProductCategoryController extends Controller
         return new StreamedResponse($callback, 200, $headers);
     }
 
+    public function importCategory()
+    {
+        try {
+            $file = request()->file('file');
+
+            // Validasi tipe file
+            $allowedTypes = ['xlsx', 'csv'];
+            $fileExtension = $file->getClientOriginalExtension();
+            if (!in_array($fileExtension, $allowedTypes)) {
+                throw new \Exception('File type not allowed, File must be type .XLSX & .CSV');
+            }
+
+            Excel::import(new ProductCategoryImport, $file);
+            return redirect()->back()->withSuccess('Import successful!');
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage();
+            return redirect()->back()->with(compact('errorMessage'))->withError($e->getMessage());
+        }
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -94,7 +120,11 @@ class ProductCategoryController extends Controller
     {
         $data = $request->all();
 
-        ProductCategory::create($data);
+        // ProductCategory::create($data);
+        ProductCategory::create([
+            // 'id_category_uuid' => Uuid::uuid4()->getHex(),
+            'name' => $data['name'],
+        ]);
 
         return redirect()->route('dashboard.category.index');
     }

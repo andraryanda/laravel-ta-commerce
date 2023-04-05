@@ -24,16 +24,19 @@ class ProductGalleryController extends Controller
             return DataTables::of($query)
                 ->addColumn('action', function ($item) {
                     return '
-                        <form class="inline-block" action="' . route('dashboard.gallery.destroy', $item->id) . '" method="POST">
-                        <button class="border border-red-500 bg-red-500 text-white rounded-md px-2 py-1 m-2 transition duration-500 ease select-none hover:bg-red-600 focus:outline-none focus:shadow-outline" >
-                            Hapus
+                    <div class="flex justify-start items-center space-x-3.5">
+                        <button type="button" title="Delete"
+                            class="flex flex-col delete-button shadow-sm items-center justify-center w-20 h-12 border border-red-500 bg-red-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-red-500 focus:outline-none focus:shadow-outline"
+                            data-id="' . $item->id . '">
+                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/delete.png') . '" alt="delete" loading="lazy" width="20" />
+                            <p class="mt-1 text-xs">Delete</p>
                         </button>
-                            ' . method_field('delete') . csrf_field() . '
-                        </form>';
+                    </div>
+                        ';
                 })
                 ->editColumn('url', function ($item) {
                     return '
-                    <img style="max-width: 150px;" src="'. $item->url .'"/>';
+                    <img style="max-width: 150px;" src="' . $item->url . '"/>';
                 })
                 // <p>'.$item->url.'</p>
                 ->editColumn('is_featured', function ($item) {
@@ -62,14 +65,26 @@ class ProductGalleryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+
     public function store(ProductGalleryRequest $request, Product $product)
     {
         $files = $request->file('files');
 
-        if($request->hasFile('files'))
-        {
+        // if ($request->hasFile('files')) {
+        //     foreach ($files as $file) {
+        //         $path = $file->storeAs('public/gallery', $file->getClientOriginalName());
+
+        //         ProductGallery::create([
+        //             'products_id' => $product->id,
+        //             'url' => $path
+        //         ]);
+        //     }
+        // }
+        if ($request->hasFile('files')) {
             foreach ($files as $file) {
-                $path = $file->store('public/gallery');
+                $extension = $file->getClientOriginalExtension();
+                $filename = hash('sha256', time()) . '.' . $extension;
+                $path = $file->storeAs('public/gallery', $filename);
 
                 ProductGallery::create([
                     'products_id' => $product->id,
@@ -80,6 +95,7 @@ class ProductGalleryController extends Controller
 
         return redirect()->route('dashboard.product.gallery.index', $product->id);
     }
+
 
     /**
      * Display the specified resource.

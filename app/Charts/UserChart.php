@@ -2,6 +2,7 @@
 
 namespace App\Charts;
 
+use Illuminate\Support\Facades\DB;
 use ConsoleTVs\Charts\Classes\Chartjs\Chart;
 
 class UserChart extends Chart
@@ -14,5 +15,10 @@ class UserChart extends Chart
     public function __construct()
     {
         parent::__construct();
+
+        $this->options([
+            'responsive' => true,
+            'maintainAspectRatio' => false,
+        ]);
     }
 }

@@ -5,14 +5,19 @@
         </h2>
     </x-slot>
 
-    <x-slot name="slot">
+    {{-- <x-slot name="slot">
+    </x-slot> --}}
+
+    @section('transaction')
         <x-slot name="script">
             <script>
                 $(document).ready(function() {
                     // Setup - add a text input to each footer cell
                     $('#crudTable tfoot th:not(:last-child)').each(function() {
                         var title = $(this).text();
-                        $(this).html('<input type="text" class="text-xs rounded-full font-semibold tracking-wide text-left " placeholder="Search ..." ' + title + '" />');
+                        $(this).html(
+                            '<input type="text" class="text-xs rounded-full font-semibold tracking-wide text-left " placeholder="Search ..." ' +
+                            title + '" />');
                     });
 
                     // DataTable
@@ -60,7 +65,11 @@
                                 data: 'status',
                                 name: 'status',
                                 className: 'dt-body-start',
-
+                            },
+                            {
+                                data: 'payment',
+                                name: 'payment',
+                                className: 'dt-body-start',
                             },
                             {
                                 data: 'action',
@@ -161,57 +170,36 @@
                     animate();
                 });
             </script>
-    </x-slot>
+        </x-slot>
 
-    {{-- <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="shadow overflow-hidden sm:rounded-md">
-                <div class="px-4 py-5 bg-white sm:p-6">
-                    <table id="crudTable">
-                        <thead>
-                        <tr>
+        <div class="w-full overflow-hidden rounded-lg shadow-xs">
+            <div class="px-3 py-3 overflow-x-auto bg-white sm:p-6">
+                <table id="crudTable" class="w-full row-border whitespace-no-wrap mt-2 pt-2">
+                    <thead>
+                        <tr class="text-xs font-semibold tracking-wide text-left text-gray-700 uppercase border-b">
                             <th>ID</th>
                             <th>Nama</th>
                             <th>Total Harga</th>
                             <th>Status</th>
+                            <th>Metode Pembayaran</th>
                             <th>Aksi</th>
                         </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
+                    </thead>
+                    <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
+                    </tbody>
+                    <tfoot>
+                        <tr
+                            class="text-xs font-semibold tracking-wide text-left text-gray-600 uppercase border-b dark:border-gray-800 bg-gray-50 dark:text-gray-800 dark:bg-gray-400">
+                            <th>ID</th>
+                            <th>Nama</th>
+                            <th>Total Harga</th>
+                            <th>Status</th>
+                            <th>Metode Pembayaran</th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
+                </table>
             </div>
         </div>
-    </div> --}}
-
-    <div class="w-full overflow-hidden rounded-lg shadow-xs">
-        <div class="px-3 py-3 overflow-x-auto bg-white sm:p-6">
-            <table id="crudTable" class="w-full row-border whitespace-no-wrap mt-2 pt-2">
-                <thead>
-                    <tr
-                        class="text-xs font-semibold tracking-wide text-left text-gray-700 uppercase border-b">
-                        <th>ID</th>
-                        <th>Nama</th>
-                        <th>Total Harga</th>
-                        <th>Status</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
-                </tbody>
-                <tfoot>
-                    <tr
-                        class="text-xs font-semibold tracking-wide text-left text-gray-600 uppercase border-b dark:border-gray-800 bg-gray-50 dark:text-gray-800 dark:bg-gray-400">
-                        <th>ID</th>
-                        <th>Nama</th>
-                        <th>Total Harga</th>
-                        <th>Status</th>
-                        <th></th>
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
-    </div>
-
-    </x-slot>
+    @endsection
 </x-layout.apps>

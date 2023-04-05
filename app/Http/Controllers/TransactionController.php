@@ -2,16 +2,31 @@
 
 namespace App\Http\Controllers;
 
+use Fpdf;
+use Dompdf\Dompdf;
+use Midtrans\Snap;
+use Midtrans\Config;
+use Midtrans\Signature;
+use Barryvdh\DomPDF\PDF;
+use Midtrans\Notification;
 use App\Models\Transaction;
 use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 use App\Models\TransactionItem;
 use Laravel\Jetstream\Jetstream;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Psy\Formatter\SignatureFormatter;
+use Illuminate\Support\Facades\Response;
 use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\TransactionRequest;
+use Illuminate\Support\Facades\Validator;
+use Yajra\DataTables\Contracts\DataTable;
+use Midtrans\Handler as MidtransWebhookHandler;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+
 
 class TransactionController extends Controller
 {
@@ -25,89 +40,103 @@ class TransactionController extends Controller
         if (request()->ajax()) {
             $query = Transaction::with(['user'])->orderByDesc('created_at');
             return DataTables::of($query)
-            ->addColumn('user.name', function ($item) {
-                return '
+                ->addColumn('user.name', function ($item) {
+                    return '
                     <td class="px-4 py-3">
                         <div class="flex items-center text-sm">
                             <!-- Avatar with inset shadow -->
                             <div class="relative hidden w-8 h-8 mr-3 rounded-full md:block">
-                                '.(Jetstream::managesProfilePhotos() ?
-                                    (Auth::user()->profile_photo_url ? '
+                                ' . (Jetstream::managesProfilePhotos() ?
+                        (Auth::user()->profile_photo_url ? '
                                         <img class="object-cover w-full h-full rounded-full"
-                                            src="'.Auth::user()->profile_photo_url.'"
-                                            alt="'.$item->user->name.'" loading="lazy" />' : '
+                                            src="' . Auth::user()->profile_photo_url . '"
+                                            alt="' . $item->user->name . '" loading="lazy" />' : '
                                         <img class="object-cover w-full h-full rounded-full"
-                                            src="'.asset('img/default-avatar.jpg').'"
-                                            alt="'.$item->user->name.'" loading="lazy" />'
-                                    ) : '
+                                            src="' . asset('img/default-avatar.jpg') . '"
+                                            alt="' . $item->user->name . '" loading="lazy" />'
+                        ) : '
                                     <span class="inline-block h-8 w-8 rounded-full overflow-hidden bg-gray-100">
                                         <svg class="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
                                             <path
                                                 d="M12 14.75c2.67 0 8 1.34 8 4v1.25H4v-1.25c0-2.66 5.33-4 8-4zm0-9.5c-2.22 0-4 1.78-4 4s1.78 4 4 4 4-1.78 4-4-1.78-4-4-4zm0 6c-1.11 0-2-.89-2-2s.89-2 2-2 2 .89 2 2-.89 2-2 2z" />
                                         </svg>
                                     </span>
-                                ').'
+                                ') . '
                                 <div class="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></div>
                             </div>
                             <div>
-                                <p class="font-semibold">'.$item->user->name.'</p>
-                                <p class="text-xs text-gray-600 dark:text-gray-400">@'.$item->user->username.'</p>
+                                <p class="font-semibold">' . $item->user->name . '</p>
+                                <p class="text-xs text-gray-600 dark:text-gray-400">@' . $item->user->username . '</p>
                             </div>
                         </div>
                     </td>
                 ';
-            })
+                })
 
-            ->addColumn('status', function ($item){
-                if ($item->status == 'SUCCESS') {
-                    return '
+                ->addColumn('status', function ($item) {
+                    if ($item->status == 'SUCCESS') {
+                        return '
                         <td class="px-4 py-3 text-xs">
                             <span class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
                                 ' . $item->status . '
                             </span>
                         </td>
                     ';
-                } elseif ($item->status == 'PENDING') {
-                    return '
+                    } elseif ($item->status == 'PENDING') {
+                        return '
                         <td class="px-4 py-3 text-xs">
                             <span class="px-2 py-1 font-semibold leading-tight text-yellow-700 bg-yellow-100 rounded-full dark:bg-yellow-700 dark:text-yellow-100">
                                 ' . $item->status . '
                             </span>
                         </td>
                     ';
-                } elseif ($item->status == 'CANCELLED') {
-                    return '
+                    } elseif ($item->status == 'CANCELLED') {
+                        return '
                         <td class="px-4 py-3 text-xs">
                             <span class="px-2 py-1 font-semibold leading-tight text-red-700 bg-red-100 rounded-full dark:bg-red-700 dark:text-red-100">
                                 ' . $item->status . '
                             </span>
                         </td>
                     ';
-                } else {
-                    return '
+                    } else {
+                        return '
                         <td class="px-4 py-3 text-xs">
                             Not Found!
                         </td>
                     ';
-                }
-            })
+                    }
+                })
 
-            ->addColumn('action', function ($item) {
-                return '
+                ->addColumn('action', function ($item) {
+                    return '
                     <a class="inline-block border border-blue-500 bg-blue-400 text-white rounded-md px-2 py-1 m-1 transition duration-500 ease select-none hover:bg-blue-500 focus:outline-none focus:shadow-outline"
                         href="' . route('dashboard.transaction.show', $item->id) . '">
-                        <i class="fa fa-eye"></i> Lihat
+                        <div class="flex items-center">
+                            <span class="material-symbols-outlined inline-block mr-2">visibility</span>
+                            <p class="inline-block">Edit</p>
+                        </div>
                     </a>
+                    <a class="inline-block border border-blue-500 bg-blue-400 text-white rounded-md px-2 py-1 m-1 transition duration-500 ease select-none hover:bg-blue-500 focus:outline-none focus:shadow-outline"
+                    href="' . route('dashboard.transaction.print', $item->id) . '">
+                    <div class="flex items-center">
+                        <span class="material-symbols-outlined inline-block mr-2">print</span>
+                        <p class="inline-block">Print</p>
+                    </div>
+                </a>
                     <a class="inline-block border border-yellow-500 bg-yellow-400 text-white rounded-md px-2 py-1 m-1 transition duration-500 ease select-none hover:bg-yellow-500 focus:outline-none focus:shadow-outline"
                         href="' . route('dashboard.transaction.edit', $item->id) . '">
-                        <i class="fa fa-pencil"></i> Edit
-                    </a>';
-            })
-            // ->editColumn('total_price', function ($item) {
-            //     return number_format($item->total_price).'.00';
-            // })
-            ->rawColumns(['user.name','status','action'])
-            ->make();
+                        <div class="flex items-center">
+                            <span class="material-symbols-outlined inline-block mr-2">edit</span>
+                            <p class="inline-block">Edit</p>
+                        </div>
+                    </a>
+                    ';
+                })
+                // ->editColumn('total_price', function ($item) {
+                //     return number_format($item->total_price).'.00';
+                // })
+                ->rawColumns(['user.name', 'status', 'action'])
+                ->make();
         }
 
         return view('pages.dashboard.transaction.index');
@@ -115,406 +144,972 @@ class TransactionController extends Controller
 
     public function indexAllTransaction()
     {
+        $new_transaction = Transaction::count();
+        $total_amount_success = Transaction::where('status', '=', 'SUCCESS')->sum('total_price');
+        $total_amount_pending = Transaction::where('status', '=', 'PENDING')->sum('total_price');
+        $total_amount_cancelled = Transaction::where('status', '=', 'CANCELLED')->sum('total_price');
+
         if (request()->ajax()) {
             $query = Transaction::with(['user'])->orderByDesc('created_at');
             return DataTables::of($query)
-            ->addColumn('user.name', function ($item) {
-                return '
+                ->addColumn('user.name', function ($item) {
+                    return '
                     <td class="px-4 py-3">
                         <div class="flex items-center text-sm">
                             <!-- Avatar with inset shadow -->
                             <div class="relative hidden w-8 h-8 mr-3 rounded-full md:block">
-                                '.(Jetstream::managesProfilePhotos() ?
-                                    (Auth::user()->profile_photo_url ? '
+                                ' . (Jetstream::managesProfilePhotos() ?
+                        (Auth::user()->profile_photo_url ? '
                                         <img class="object-cover w-full h-full rounded-full"
-                                            src="'.Auth::user()->profile_photo_url.'"
-                                            alt="'.$item->user->name.'" loading="lazy" />' : '
+                                            src="' . Auth::user()->profile_photo_url . '"
+                                            alt="' . $item->user->name . '" loading="lazy" />' : '
                                         <img class="object-cover w-full h-full rounded-full"
-                                            src="'.asset('img/default-avatar.jpg').'"
-                                            alt="'.$item->user->name.'" loading="lazy" />'
-                                    ) : '
+                                            src="' . asset('img/default-avatar.jpg') . '"
+                                            alt="' . $item->user->name . '" loading="lazy" />'
+                        ) : '
                                     <span class="inline-block h-8 w-8 rounded-full overflow-hidden bg-gray-100">
                                         <svg class="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
                                             <path
                                                 d="M12 14.75c2.67 0 8 1.34 8 4v1.25H4v-1.25c0-2.66 5.33-4 8-4zm0-9.5c-2.22 0-4 1.78-4 4s1.78 4 4 4 4-1.78 4-4-1.78-4-4-4zm0 6c-1.11 0-2-.89-2-2s.89-2 2-2 2 .89 2 2-.89 2-2 2z" />
                                         </svg>
                                     </span>
-                                ').'
+                                ') . '
                                 <div class="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></div>
                             </div>
                             <div>
-                                <p class="font-semibold">'.$item->user->name.'</p>
-                                <p class="text-xs text-gray-600 dark:text-gray-400">@'.$item->user->username.'</p>
+                                <p class="font-semibold">' . $item->user->name . '</p>
+                                <p class="text-xs text-gray-600 dark:text-gray-400">@' . $item->user->username . '</p>
                             </div>
                         </div>
                     </td>
                 ';
-            })
+                })
 
-            ->addColumn('status', function ($item){
-                if ($item->status == 'SUCCESS') {
-                    return '
+                ->addColumn('status', function ($item) {
+                    if ($item->status == 'SUCCESS') {
+                        return '
                         <td class="px-4 py-3 text-xs">
                             <span class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
                                 ' . $item->status . '
                             </span>
                         </td>
                     ';
-                } elseif ($item->status == 'PENDING') {
-                    return '
+                    } elseif ($item->status == 'PENDING') {
+                        return '
                         <td class="px-4 py-3 text-xs">
                             <span class="px-2 py-1 font-semibold leading-tight text-yellow-700 bg-yellow-100 rounded-full dark:bg-yellow-700 dark:text-yellow-100">
                                 ' . $item->status . '
                             </span>
                         </td>
                     ';
-                } elseif ($item->status == 'CANCELLED') {
-                    return '
+                    } elseif ($item->status == 'CANCELLED') {
+                        return '
                         <td class="px-4 py-3 text-xs">
                             <span class="px-2 py-1 font-semibold leading-tight text-red-700 bg-red-100 rounded-full dark:bg-red-700 dark:text-red-100">
                                 ' . $item->status . '
                             </span>
                         </td>
                     ';
-                } else {
-                    return '
+                    } else {
+                        return '
                         <td class="px-4 py-3 text-xs">
                             Not Found!
                         </td>
                     ';
-                }
-            })
+                    }
+                })
 
-            ->addColumn('action', function ($item) {
-                return '
-                    <a class="inline-block border border-blue-500 bg-blue-400 text-white rounded-md px-2 py-1 m-1 transition duration-500 ease select-none hover:bg-blue-500 focus:outline-none focus:shadow-outline"
-                        href="' . route('dashboard.transaction.show', $item->id) . '">
-                        <i class="fa fa-eye"></i> Lihat
-                    </a>
-                    <a class="inline-block border border-yellow-500 bg-yellow-400 text-white rounded-md px-2 py-1 m-1 transition duration-500 ease select-none hover:bg-yellow-500 focus:outline-none focus:shadow-outline"
-                        href="' . route('dashboard.transaction.edit', $item->id) . '">
-                        <i class="fa fa-pencil"></i> Edit
-                    </a>';
-            })
-            // ->editColumn('total_price', function ($item) {
-            //     return number_format($item->total_price).'.00';
-            // })
-            ->rawColumns(['user.name','status','action'])
-            ->make();
+                ->addColumn('action', function ($item) {
+                    return '
+                    <div class="flex justify-start items-center space-x-3.5">
+                        <a href="' . route('dashboard.transaction.sendMessage', $item->id) . '" title="WhatsApp" target="_blank"
+                            class="inline-flex flex-col items-center justify-center w-20 h-12 bg-green-400 text-white rounded-md border border-green-500 transition duration-500 ease select-none hover:bg-green-500 focus:outline-none focus:shadow-outline">
+                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/whatsapp.png') . '" alt="whatsapp" loading="lazy" width="20" />
+                            <p class="mt-1 text-xs">WhatsApp</p>
+                        </a>
+                        <a href="' . route('dashboard.transaction.exportPDF', $item->id) . '" title="Kwitansi"
+                            class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-indigo-500 bg-indigo-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-indigo-500 focus:outline-none focus:shadow-outline">
+                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/printer.png') . '" alt="printer" loading="lazy" width="20" />
+                            <p class="mt-1 text-xs">Kwitansi</p>
+                        </a>
+                        <a href="' . route('dashboard.transaction.show', $item->id) . '" title="Show"
+                            class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-blue-500 bg-blue-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-blue-500 focus:outline-none focus:shadow-outline">
+                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/show.png') . '" alt="show" loading="lazy" width="20" />
+                            <p class="mt-1 text-xs">Lihat</p>
+                        </a>
+                        <a href="' . route('dashboard.transaction.edit', $item->id) . '" title="Edit"
+                            class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-yellow-500 bg-yellow-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-yellow-500 focus:outline-none focus:shadow-outline">
+                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/edit.png') . '" alt="show" loading="lazy" width="20" />
+                            <p class="mt-1 text-xs">Edit</p>
+                        </a>
+                    </div>
+                   ';
+                })
+                // ->editColumn('total_price', function ($item) {
+                //     return number_format($item->total_price).'.00';
+                // })
+                ->rawColumns(['user.name', 'status', 'action'])
+                ->make();
         }
 
-        return view('pages.dashboard.transaction.index_all_transaction');
+        return view('pages.dashboard.transaction.index_all_transaction', compact(
+            'new_transaction',
+            'total_amount_success',
+            'total_amount_pending',
+            'total_amount_cancelled',
+        ));
     }
 
     public function indexPending()
     {
+        $new_transaction = Transaction::where('status', '=', 'PENDING')->count();
+
+        $total_amount_pending = Transaction::where('status', '=', 'PENDING')->sum('total_price');
+
         if (request()->ajax()) {
-            $query = Transaction::with(['user'])->where('status','=','PENDING')->orderByDesc('created_at');
+            $query = Transaction::with(['user'])->where('status', '=', 'PENDING')->orderBy('created_at', 'desc');
+
             return DataTables::of($query)
-            ->addColumn('user.name', function ($item) {
-                return '
+                ->addColumn('user.name', function ($item) {
+                    return '
                     <td class="px-4 py-3">
                         <div class="flex items-center text-sm">
                             <!-- Avatar with inset shadow -->
                             <div class="relative hidden w-8 h-8 mr-3 rounded-full md:block">
-                                '.(Jetstream::managesProfilePhotos() ?
-                                    (Auth::user()->profile_photo_url ? '
+                                ' . (Jetstream::managesProfilePhotos() ?
+                        (Auth::user()->profile_photo_url ? '
                                         <img class="object-cover w-full h-full rounded-full"
-                                            src="'.Auth::user()->profile_photo_url.'"
-                                            alt="'.$item->user->name.'" loading="lazy" />' : '
+                                            src="' . Auth::user()->profile_photo_url . '"
+                                            alt="' . $item->user->name . '" loading="lazy" />' : '
                                         <img class="object-cover w-full h-full rounded-full"
-                                            src="'.asset('img/default-avatar.jpg').'"
-                                            alt="'.$item->user->name.'" loading="lazy" />'
-                                    ) : '
+                                            src="' . asset('img/default-avatar.jpg') . '"
+                                            alt="' . $item->user->name . '" loading="lazy" />'
+                        ) : '
                                     <span class="inline-block h-8 w-8 rounded-full overflow-hidden bg-gray-100">
                                         <svg class="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
                                             <path
                                                 d="M12 14.75c2.67 0 8 1.34 8 4v1.25H4v-1.25c0-2.66 5.33-4 8-4zm0-9.5c-2.22 0-4 1.78-4 4s1.78 4 4 4 4-1.78 4-4-1.78-4-4-4zm0 6c-1.11 0-2-.89-2-2s.89-2 2-2 2 .89 2 2-.89 2-2 2z" />
                                         </svg>
                                     </span>
-                                ').'
+                                ') . '
                                 <div class="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></div>
                             </div>
                             <div>
-                                <p class="font-semibold">'.$item->user->name.'</p>
-                                <p class="text-xs text-gray-600 dark:text-gray-400">@'.$item->user->username.'</p>
+                                <p class="font-semibold">' . $item->user->name . '</p>
+                                <p class="text-xs text-gray-600 dark:text-gray-400">@' . $item->user->username . '</p>
                             </div>
                         </div>
                     </td>
                 ';
-            })
+                })
 
-            ->addColumn('status', function ($item){
-                if ($item->status == 'SUCCESS') {
-                    return '
+                ->addColumn('status', function ($item) {
+                    if ($item->status == 'SUCCESS') {
+                        return '
                         <td class="px-4 py-3 text-xs">
                             <span class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
                                 ' . $item->status . '
                             </span>
                         </td>
                     ';
-                } elseif ($item->status == 'PENDING') {
-                    return '
+                    } elseif ($item->status == 'PENDING') {
+                        return '
                         <td class="px-4 py-3 text-xs">
                             <span class="px-2 py-1 font-semibold leading-tight text-yellow-700 bg-yellow-100 rounded-full dark:bg-yellow-700 dark:text-yellow-100">
                                 ' . $item->status . '
                             </span>
                         </td>
                     ';
-                } elseif ($item->status == 'CANCELLED') {
-                    return '
+                    } elseif ($item->status == 'CANCELLED') {
+                        return '
                         <td class="px-4 py-3 text-xs">
                             <span class="px-2 py-1 font-semibold leading-tight text-red-700 bg-red-100 rounded-full dark:bg-red-700 dark:text-red-100">
                                 ' . $item->status . '
                             </span>
                         </td>
                     ';
-                } else {
-                    return '
+                    } else {
+                        return '
                         <td class="px-4 py-3 text-xs">
                             Not Found!
                         </td>
                     ';
-                }
-            })
+                    }
+                })
 
-            ->addColumn('action', function ($item) {
-                return '
-                    <a class="inline-block border border-blue-500 bg-blue-400 text-white rounded-md px-2 py-1 m-1 transition duration-500 ease select-none hover:bg-blue-500 focus:outline-none focus:shadow-outline"
-                        href="' . route('dashboard.transaction.show', $item->id) . '">
-                        <i class="fa fa-eye"></i> Lihat
+                ->addColumn('action', function ($item) {
+                    return '
+                    <div class="flex justify-start space-x-3">
+                        <a href="' . route('dashboard.transaction.sendMessage', $item->id) . '" title="WhatsApp" target="_blank"
+                            class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-green-500 bg-green-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-green-500 focus:outline-none focus:shadow-outline">
+                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/whatsapp.png') . '" alt="whatsapp" loading="lazy" width="20" />
+                            <p class="mt-1 text-xs">WhatsApp</p>
+                        </a>
+                        <a href="' . route('dashboard.transaction.exportPDF', $item->id) . '" title="Kwitansi"
+                            class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-indigo-500 bg-indigo-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-indigo-500 focus:outline-none focus:shadow-outline">
+                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/printer.png') . '" alt="printer" loading="lazy" width="20" />
+                            <p class="mt-1 text-xs">Kwitansi</p>
+                        </a>
+                        <a href="' . route('dashboard.transaction.payment', $item->id) . '" target="_blank" title="Bayar"
+                        class="flex flex-col shadow-sm items-center justify-center w-20 h-12 border border-purple-500 bg-purple-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-purple-500 focus:outline-none focus:shadow-outline">
+                        <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/credit-card.png') . '" alt="Bayar" loading="lazy" width="20" />
+                        <p class="mt-1 text-xs">Bayar</p>
                     </a>
-                    <a class="inline-block border border-yellow-500 bg-yellow-400 text-white rounded-md px-2 py-1 m-1 transition duration-500 ease select-none hover:bg-yellow-500 focus:outline-none focus:shadow-outline"
-                        href="' . route('dashboard.transaction.edit', $item->id) . '">
-                        <i class="fa fa-pencil"></i> Edit
-                    </a>';
-            })
-            // ->editColumn('total_price', function ($item) {
-            //     return number_format($item->total_price).'.00';
-            // })
-            ->rawColumns(['user.name','status','action'])
-            ->make();
+                        <a href="' . route('dashboard.transaction.show', $item->id) . '" title="Show"
+                            class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-blue-500 bg-blue-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-blue-500 focus:outline-none focus:shadow-outline">
+                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/show.png') . '" alt="show" loading="lazy" width="20" />
+                            <p class="mt-1 text-xs">Lihat</p>
+                        </a>
+                        <a href="' . route('dashboard.transaction.edit', $item->id) . '" title="Edit"
+                            class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-yellow-500 bg-yellow-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-yellow-500 focus:outline-none focus:shadow-outline">
+                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/edit.png') . '" alt="show" loading="lazy" width="20" />
+                            <p class="mt-1 text-xs">Edit</p>
+                        </a>
+
+
+                    </div>
+                    ';
+                })
+                // ->editColumn('total_price', function ($item) {
+                //     return number_format($item->total_price).'.00';
+                // })
+                ->rawColumns(['user.name', 'status', 'action'])
+                ->make();
         }
 
-        return view('pages.dashboard.transaction.index_pending');
+        return view('pages.dashboard.transaction.index_pending', compact('total_amount_pending', 'new_transaction'));
     }
-
     public function indexSuccess()
     {
+        $new_transaction = Transaction::where('status', '=', 'SUCCESS')->count();
+
+        $total_amount_success = Transaction::where('status', '=', 'SUCCESS')->sum('total_price');
+
+
         if (request()->ajax()) {
-            $query = Transaction::with(['user'])->where('status','=','SUCCESS')->orderByDesc('created_at');
+            $query = Transaction::with(['user'])->where('status', '=', 'SUCCESS');
             return DataTables::of($query)
-            ->addColumn('user.name', function ($item) {
-                return '
+                ->addColumn('user.name', function ($item) {
+                    return '
                     <td class="px-4 py-3">
                         <div class="flex items-center text-sm">
                             <!-- Avatar with inset shadow -->
                             <div class="relative hidden w-8 h-8 mr-3 rounded-full md:block">
-                                '.(Jetstream::managesProfilePhotos() ?
-                                    (Auth::user()->profile_photo_url ? '
+                                ' . (Jetstream::managesProfilePhotos() ?
+                        (Auth::user()->profile_photo_url ? '
                                         <img class="object-cover w-full h-full rounded-full"
-                                            src="'.Auth::user()->profile_photo_url.'"
-                                            alt="'.$item->user->name.'" loading="lazy" />' : '
+                                            src="' . Auth::user()->profile_photo_url . '"
+                                            alt="' . $item->user->name . '" loading="lazy" />' : '
                                         <img class="object-cover w-full h-full rounded-full"
-                                            src="'.asset('img/default-avatar.jpg').'"
-                                            alt="'.$item->user->name.'" loading="lazy" />'
-                                    ) : '
+                                            src="' . asset('img/default-avatar.jpg') . '"
+                                            alt="' . $item->user->name . '" loading="lazy" />'
+                        ) : '
                                     <span class="inline-block h-8 w-8 rounded-full overflow-hidden bg-gray-100">
                                         <svg class="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
                                             <path
                                                 d="M12 14.75c2.67 0 8 1.34 8 4v1.25H4v-1.25c0-2.66 5.33-4 8-4zm0-9.5c-2.22 0-4 1.78-4 4s1.78 4 4 4 4-1.78 4-4-1.78-4-4-4zm0 6c-1.11 0-2-.89-2-2s.89-2 2-2 2 .89 2 2-.89 2-2 2z" />
                                         </svg>
                                     </span>
-                                ').'
+                                ') . '
                                 <div class="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></div>
                             </div>
                             <div>
-                                <p class="font-semibold">'.$item->user->name.'</p>
-                                <p class="text-xs text-gray-600 dark:text-gray-400">@'.$item->user->username.'</p>
+                                <p class="font-semibold">' . $item->user->name . '</p>
+                                <p class="text-xs text-gray-600 dark:text-gray-400">@' . $item->user->username . '</p>
                             </div>
                         </div>
                     </td>
                 ';
-            })
+                })
 
-            ->addColumn('status', function ($item){
-                if ($item->status == 'SUCCESS') {
-                    return '
+                ->addColumn('status', function ($item) {
+                    if ($item->status == 'SUCCESS') {
+                        return '
                         <td class="px-4 py-3 text-xs">
                             <span class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
                                 ' . $item->status . '
                             </span>
                         </td>
                     ';
-                } elseif ($item->status == 'PENDING') {
-                    return '
+                    } elseif ($item->status == 'PENDING') {
+                        return '
                         <td class="px-4 py-3 text-xs">
                             <span class="px-2 py-1 font-semibold leading-tight text-yellow-700 bg-yellow-100 rounded-full dark:bg-yellow-700 dark:text-yellow-100">
                                 ' . $item->status . '
                             </span>
                         </td>
                     ';
-                } elseif ($item->status == 'CANCELLED') {
-                    return '
+                    } elseif ($item->status == 'CANCELLED') {
+                        return '
                         <td class="px-4 py-3 text-xs">
                             <span class="px-2 py-1 font-semibold leading-tight text-red-700 bg-red-100 rounded-full dark:bg-red-700 dark:text-red-100">
                                 ' . $item->status . '
                             </span>
                         </td>
                     ';
-                } else {
-                    return '
+                    } else {
+                        return '
                         <td class="px-4 py-3 text-xs">
                             Not Found!
                         </td>
                     ';
-                }
-            })
+                    }
+                })
 
-            ->addColumn('action', function ($item) {
-                return '
-                    <a class="inline-block border border-blue-500 bg-blue-400 text-white rounded-md px-2 py-1 m-1 transition duration-500 ease select-none hover:bg-blue-500 focus:outline-none focus:shadow-outline"
-                        href="' . route('dashboard.transaction.show', $item->id) . '">
-                        <i class="fa fa-eye"></i> Lihat
-                    </a>
-                    <a class="inline-block border border-yellow-500 bg-yellow-400 text-white rounded-md px-2 py-1 m-1 transition duration-500 ease select-none hover:bg-yellow-500 focus:outline-none focus:shadow-outline"
-                        href="' . route('dashboard.transaction.edit', $item->id) . '">
-                        <i class="fa fa-pencil"></i> Edit
-                    </a>';
-            })
-            // ->editColumn('total_price', function ($item) {
-            //     return number_format($item->total_price).'.00';
-            // })
-            ->rawColumns(['user.name','status','action'])
-            ->make();
+                ->addColumn('action', function ($item) {
+                    return '
+                    <div class="flex justify-start space-x-3">
+                        <a href="' . route('dashboard.transaction.sendMessage', $item->id) . '" title="WhatsApp" target="_blank"
+                            class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-green-500 bg-green-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-green-500 focus:outline-none focus:shadow-outline">
+                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/whatsapp.png') . '" alt="whatsapp" loading="lazy" width="20" />
+                            <p class="mt-1 text-xs">WhatsApp</p>
+                        </a>
+                        <a href="' . route('dashboard.transaction.exportPDF', $item->id) . '" title="Kwitansi"
+                            class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-indigo-500 bg-indigo-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-indigo-500 focus:outline-none focus:shadow-outline">
+                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/printer.png') . '" alt="printer" loading="lazy" width="20" />
+                            <p class="mt-1 text-xs">Kwitansi</p>
+                        </a>
+                        <a href="' . route('dashboard.transaction.show', $item->id) . '" title="Show"
+                            class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-blue-500 bg-blue-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-blue-500 focus:outline-none focus:shadow-outline">
+                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/show.png') . '" alt="show" loading="lazy" width="20" />
+                            <p class="mt-1 text-xs">Lihat</p>
+                        </a>
+                        <a href="' . route('dashboard.transaction.edit', $item->id) . '" title="Edit"
+                            class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-yellow-500 bg-yellow-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-yellow-500 focus:outline-none focus:shadow-outline">
+                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/edit.png') . '" alt="show" loading="lazy" width="20" />
+                            <p class="mt-1 text-xs">Edit</p>
+                        </a>
+                    </div>
+                    ';
+                })
+                ->rawColumns(['user.name', 'status', 'action'])
+                ->make();
         }
 
-        return view('pages.dashboard.transaction.index_success');
+        return view('pages.dashboard.transaction.index_success', compact('total_amount_success', 'new_transaction'));
     }
 
     public function indexCancelled()
     {
+        $new_transaction = Transaction::where('status', '=', 'CANCELLED')->count();
+
+        $total_amount_cancelled = Transaction::where('status', '=', 'CANCELLED')->sum('total_price');
+
         if (request()->ajax()) {
-            $query = Transaction::with(['user'])->where('status','=','CANCELLED')->orderByDesc('created_at');
+            $query = Transaction::with(['user'])->where('status', '=', 'CANCELLED')->orderByDesc('created_at');
             return DataTables::of($query)
-            ->addColumn('user.name', function ($item) {
-                return '
+                ->addColumn('user.name', function ($item) {
+                    return '
                     <td class="px-4 py-3">
                         <div class="flex items-center text-sm">
                             <!-- Avatar with inset shadow -->
                             <div class="relative hidden w-8 h-8 mr-3 rounded-full md:block">
-                                '.(Jetstream::managesProfilePhotos() ?
-                                    (Auth::user()->profile_photo_url ? '
+                                ' . (Jetstream::managesProfilePhotos() ?
+                        (Auth::user()->profile_photo_url ? '
                                         <img class="object-cover w-full h-full rounded-full"
-                                            src="'.Auth::user()->profile_photo_url.'"
-                                            alt="'.$item->user->name.'" loading="lazy" />' : '
+                                            src="' . Auth::user()->profile_photo_url . '"
+                                            alt="' . $item->user->name . '" loading="lazy" />' : '
                                         <img class="object-cover w-full h-full rounded-full"
-                                            src="'.asset('img/default-avatar.jpg').'"
-                                            alt="'.$item->user->name.'" loading="lazy" />'
-                                    ) : '
+                                            src="' . asset('img/default-avatar.jpg') . '"
+                                            alt="' . $item->user->name . '" loading="lazy" />'
+                        ) : '
                                     <span class="inline-block h-8 w-8 rounded-full overflow-hidden bg-gray-100">
                                         <svg class="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
                                             <path
                                                 d="M12 14.75c2.67 0 8 1.34 8 4v1.25H4v-1.25c0-2.66 5.33-4 8-4zm0-9.5c-2.22 0-4 1.78-4 4s1.78 4 4 4 4-1.78 4-4-1.78-4-4-4zm0 6c-1.11 0-2-.89-2-2s.89-2 2-2 2 .89 2 2-.89 2-2 2z" />
                                         </svg>
                                     </span>
-                                ').'
+                                ') . '
                                 <div class="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></div>
                             </div>
                             <div>
-                                <p class="font-semibold">'.$item->user->name.'</p>
-                                <p class="text-xs text-gray-600 dark:text-gray-400">@'.$item->user->username.'</p>
+                                <p class="font-semibold">' . $item->user->name . '</p>
+                                <p class="text-xs text-gray-600 dark:text-gray-400">@' . $item->user->username . '</p>
                             </div>
                         </div>
                     </td>
                 ';
-            })
+                })
 
-            ->addColumn('status', function ($item){
-                if ($item->status == 'SUCCESS') {
-                    return '
+                ->addColumn('status', function ($item) {
+                    if ($item->status == 'SUCCESS') {
+                        return '
                         <td class="px-4 py-3 text-xs">
                             <span class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
                                 ' . $item->status . '
                             </span>
                         </td>
                     ';
-                } elseif ($item->status == 'PENDING') {
-                    return '
+                    } elseif ($item->status == 'PENDING') {
+                        return '
                         <td class="px-4 py-3 text-xs">
                             <span class="px-2 py-1 font-semibold leading-tight text-yellow-700 bg-yellow-100 rounded-full dark:bg-yellow-700 dark:text-yellow-100">
                                 ' . $item->status . '
                             </span>
                         </td>
                     ';
-                } elseif ($item->status == 'CANCELLED') {
-                    return '
+                    } elseif ($item->status == 'CANCELLED') {
+                        return '
                         <td class="px-4 py-3 text-xs">
                             <span class="px-2 py-1 font-semibold leading-tight text-red-700 bg-red-100 rounded-full dark:bg-red-700 dark:text-red-100">
                                 ' . $item->status . '
                             </span>
                         </td>
                     ';
-                } else {
-                    return '
+                    } else {
+                        return '
                         <td class="px-4 py-3 text-xs">
                             Not Found!
                         </td>
                     ';
-                }
-            })
+                    }
+                })
 
-            ->addColumn('action', function ($item) {
-                return '
-                    <a class="inline-block border border-blue-500 bg-blue-400 text-white rounded-md px-2 py-1 m-1 transition duration-500 ease select-none hover:bg-blue-500 focus:outline-none focus:shadow-outline"
-                        href="' . route('dashboard.transaction.show', $item->id) . '">
-                        <i class="fa fa-eye"></i> Lihat
-                    </a>
-                    <a class="inline-block border border-yellow-500 bg-yellow-400 text-white rounded-md px-2 py-1 m-1 transition duration-500 ease select-none hover:bg-yellow-500 focus:outline-none focus:shadow-outline"
-                        href="' . route('dashboard.transaction.edit', $item->id) . '">
-                        <i class="fa fa-pencil"></i> Edit
-                    </a>';
-            })
-            // ->editColumn('total_price', function ($item) {
-            //     return number_format($item->total_price).'.00';
-            // })
-            ->rawColumns(['user.name','status','action'])
-            ->make();
+                ->addColumn('action', function ($item) {
+                    return '
+                    <div class="flex justify-start space-x-3">
+                        <a href="' . route('dashboard.transaction.sendMessage', $item->id) . '" title="WhatsApp" target="_blank"
+                            class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-green-500 bg-green-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-green-500 focus:outline-none focus:shadow-outline">
+                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/whatsapp.png') . '" alt="whatsapp" loading="lazy" width="20" />
+                            <p class="mt-1 text-xs">WhatsApp</p>
+                        </a>
+                        <a href="' . route('dashboard.transaction.exportPDF', $item->id) . '" title="Kwitansi"
+                            class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-indigo-500 bg-indigo-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-indigo-500 focus:outline-none focus:shadow-outline">
+                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/printer.png') . '" alt="printer" loading="lazy" width="20" />
+                            <p class="mt-1 text-xs">Kwitansi</p>
+                        </a>
+                        <a href="' . route('dashboard.transaction.show', $item->id) . '" title="Show"
+                            class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-blue-500 bg-blue-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-blue-500 focus:outline-none focus:shadow-outline">
+                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/show.png') . '" alt="show" loading="lazy" width="20" />
+                            <p class="mt-1 text-xs">Lihat</p>
+                        </a>
+                        <a href="' . route('dashboard.transaction.edit', $item->id) . '" title="Edit"
+                            class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-yellow-500 bg-yellow-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-yellow-500 focus:outline-none focus:shadow-outline">
+                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/edit.png') . '" alt="show" loading="lazy" width="20" />
+                            <p class="mt-1 text-xs">Edit</p>
+                        </a>
+                    </div>
+                    ';
+                })
+                // ->editColumn('total_price', function ($item) {
+                //     return number_format($item->total_price).'.00';
+                // })
+                ->rawColumns(['user.name', 'status', 'action'])
+                ->make();
         }
 
-        return view('pages.dashboard.transaction.index_cancelled');
+        return view('pages.dashboard.transaction.index_cancelled', compact('total_amount_cancelled', 'new_transaction'));
     }
 
     public function exportAllTransactions()
-{
-    $transactions = DB::table('transactions')
-        ->join('transaction_items', 'transactions.id', '=', 'transaction_items.transactions_id')
-        ->join('users', 'transactions.users_id', '=', 'users.id')
-        ->join('products', 'transaction_items.products_id', '=', 'products.id')
-        ->select('transactions.id','transaction_items.products_id', 'transactions.users_id', 'users.name', 'transactions.address', 'products.name as product_name', 'transaction_items.quantity','transactions.total_price', 'transactions.shipping_price', 'transactions.status', 'transactions.payment', 'transactions.deleted_at', 'transactions.created_at', 'transactions.updated_at' )
-        ->get();
+    {
+        $transactions = DB::table('transactions')
+            ->join('transaction_items', 'transactions.id', '=', 'transaction_items.transactions_id')
+            ->join('users', 'transactions.users_id', '=', 'users.id')
+            ->join('products', 'transaction_items.products_id', '=', 'products.id')
+            ->select('transactions.id', 'transaction_items.products_id', 'transactions.users_id', 'users.name', 'transactions.address', 'products.name as product_name', 'transaction_items.quantity', 'transactions.total_price', 'transactions.shipping_price', 'transactions.status', 'transactions.payment', 'transactions.deleted_at', 'transactions.created_at', 'transactions.updated_at')
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-    $headers = [
-        'Content-Type' => 'text/csv',
-        // 'Content-Disposition' => 'attachment; filename=all_transactions.csv',
-        'Content-Disposition' => 'attachment; filename=all_transactions_' . date('d-m-Y') . '.csv',
+        $headers = [
+            'Content-Type' => 'text/csv',
+            // 'Content-Disposition' => 'attachment; filename=all_transactions.csv',
+            'Content-Disposition' => 'attachment; filename=all_transactions_' . date('d-m-Y') . '.csv',
+        ];
 
-    ];
+        $callback = function () use ($transactions) {
+            $file = fopen('php://output', 'w');
 
-    $callback = function () use ($transactions) {
-        $file = fopen('php://output', 'w');
+            fputcsv($file, ['Transaction ID', 'Product ID', 'User ID', 'User Name', 'Address', 'Product Name', 'Quantity', 'Total Price', 'Shipping Price', 'Status', 'Payment Method', 'Deleted At', 'Created At', 'Updated At']);
 
-        fputcsv($file, ['Transaction ID','Product ID', 'User ID', 'User Name', 'Address', 'Product Name', 'Quantity','Total Price', 'Shipping Price', 'Status', 'Payment Method', 'Deleted At', 'Created At', 'Updated At' ]);
+            foreach ($transactions as $transaction) {
+                fputcsv($file, [$transaction->id, $transaction->products_id, $transaction->users_id,  $transaction->name, $transaction->address, $transaction->product_name, $transaction->quantity, $transaction->total_price, $transaction->shipping_price, $transaction->status, $transaction->payment, $transaction->deleted_at, $transaction->created_at, $transaction->updated_at]);
+            }
 
-        foreach ($transactions as $transaction) {
-            fputcsv($file, [$transaction->id,$transaction->products_id, $transaction->users_id,  $transaction->name,$transaction->address,$transaction->product_name,$transaction->quantity, $transaction->total_price, $transaction->shipping_price, $transaction->status, $transaction->payment, $transaction->deleted_at, $transaction->created_at, $transaction->updated_at ]);
+            fclose($file);
+        };
+
+        return new StreamedResponse($callback, 200, $headers);
+    }
+
+    public function exportTransactionSuccess()
+    {
+        $transactions = DB::table('transactions')
+            ->join('transaction_items', 'transactions.id', '=', 'transaction_items.transactions_id')
+            ->join('users', 'transactions.users_id', '=', 'users.id')
+            ->join('products', 'transaction_items.products_id', '=', 'products.id')
+            ->where('transactions.status', '=', 'SUCCESS') // add where condition to filter by status
+            ->select('transactions.id', 'transaction_items.products_id', 'transactions.users_id', 'users.name', 'transactions.address', 'products.name as product_name', 'transaction_items.quantity', 'transactions.total_price', 'transactions.shipping_price', 'transactions.status', 'transactions.payment', 'transactions.deleted_at', 'transactions.created_at', 'transactions.updated_at')
+            ->get();
+
+        $headers = [
+            'Content-Type' => 'text/csv',
+            // 'Content-Disposition' => 'attachment; filename=all_transactions.csv',
+            'Content-Disposition' => 'attachment; filename=transaction_Success_' . date('d-m-Y') . '.csv',
+
+        ];
+
+        $callback = function () use ($transactions) {
+            $file = fopen('php://output', 'w');
+
+            fputcsv($file, ['Transaction ID', 'Product ID', 'User ID', 'User Name', 'Address', 'Product Name', 'Quantity', 'Total Price', 'Shipping Price', 'Status', 'Payment Method', 'Deleted At', 'Created At', 'Updated At']);
+
+            foreach ($transactions as $transaction) {
+                fputcsv($file, [$transaction->id, $transaction->products_id, $transaction->users_id,  $transaction->name, $transaction->address, $transaction->product_name, $transaction->quantity, $transaction->total_price, $transaction->shipping_price, $transaction->status, $transaction->payment, $transaction->deleted_at, $transaction->created_at, $transaction->updated_at]);
+            }
+
+            fclose($file);
+        };
+
+        return new StreamedResponse($callback, 200, $headers);
+    }
+
+    public function exportTransactionPending()
+    {
+        $transactions = DB::table('transactions')
+            ->join('transaction_items', 'transactions.id', '=', 'transaction_items.transactions_id')
+            ->join('users', 'transactions.users_id', '=', 'users.id')
+            ->join('products', 'transaction_items.products_id', '=', 'products.id')
+            ->where('transactions.status', '=', 'PENDING') // add where condition to filter by status
+            ->select('transactions.id', 'transaction_items.products_id', 'transactions.users_id', 'users.name', 'transactions.address', 'products.name as product_name', 'transaction_items.quantity', 'transactions.total_price', 'transactions.shipping_price', 'transactions.status', 'transactions.payment', 'transactions.deleted_at', 'transactions.created_at', 'transactions.updated_at')
+            ->get();
+
+        $headers = [
+            'Content-Type' => 'text/csv',
+            // 'Content-Disposition' => 'attachment; filename=all_transactions.csv',
+            'Content-Disposition' => 'attachment; filename=transaction_pending_' . date('d-m-Y') . '.csv',
+
+        ];
+
+        $callback = function () use ($transactions) {
+            $file = fopen('php://output', 'w');
+
+            fputcsv($file, ['Transaction ID', 'Product ID', 'User ID', 'User Name', 'Address', 'Product Name', 'Quantity', 'Total Price', 'Shipping Price', 'Status', 'Payment Method', 'Deleted At', 'Created At', 'Updated At']);
+
+            foreach ($transactions as $transaction) {
+                fputcsv($file, [$transaction->id, $transaction->products_id, $transaction->users_id,  $transaction->name, $transaction->address, $transaction->product_name, $transaction->quantity, $transaction->total_price, $transaction->shipping_price, $transaction->status, $transaction->payment, $transaction->deleted_at, $transaction->created_at, $transaction->updated_at]);
+            }
+
+            fclose($file);
+        };
+
+        return new StreamedResponse($callback, 200, $headers);
+    }
+
+    public function exportTransactionCancelled()
+    {
+        $transactions = DB::table('transactions')
+            ->join('transaction_items', 'transactions.id', '=', 'transaction_items.transactions_id')
+            ->join('users', 'transactions.users_id', '=', 'users.id')
+            ->join('products', 'transaction_items.products_id', '=', 'products.id')
+            ->where('transactions.status', '=', 'CANCELLED') // add where condition to filter by status
+            ->select('transactions.id', 'transaction_items.products_id', 'transactions.users_id', 'users.name', 'transactions.address', 'products.name as product_name', 'transaction_items.quantity', 'transactions.total_price', 'transactions.shipping_price', 'transactions.status', 'transactions.payment', 'transactions.deleted_at', 'transactions.created_at', 'transactions.updated_at')
+            ->get();
+
+        $headers = [
+            'Content-Type' => 'text/csv',
+            // 'Content-Disposition' => 'attachment; filename=all_transactions.csv',
+            'Content-Disposition' => 'attachment; filename=transaction_cancelled_' . date('d-m-Y') . '.csv',
+
+        ];
+
+        $callback = function () use ($transactions) {
+            $file = fopen('php://output', 'w');
+
+            fputcsv($file, ['Transaction ID', 'Product ID', 'User ID', 'User Name', 'Address', 'Product Name', 'Quantity', 'Total Price', 'Shipping Price', 'Status', 'Payment Method', 'Deleted At', 'Created At', 'Updated At']);
+
+            foreach ($transactions as $transaction) {
+                fputcsv($file, [$transaction->id, $transaction->products_id, $transaction->users_id,  $transaction->name, $transaction->address, $transaction->product_name, $transaction->quantity, $transaction->total_price, $transaction->shipping_price, $transaction->status, $transaction->payment, $transaction->deleted_at, $transaction->created_at, $transaction->updated_at]);
+            }
+
+            fclose($file);
+        };
+
+        return new StreamedResponse($callback, 200, $headers);
+    }
+
+    public function sendMessage(Transaction $transaction)
+    {
+        $phone_number = '+62' . substr_replace($transaction->user->phone, '', 0, 1);
+
+        $transaction_id = $transaction->id;
+
+        $items = DB::table('transaction_items')
+            ->join('products', 'transaction_items.products_id', '=', 'products.id')
+            ->select('products.name', 'products.price', 'transaction_items.quantity')
+            ->where('transactions_id', $transaction_id)
+            ->get();
+
+        $total = 0;
+        foreach ($items as $item) {
+            $total += $item->price * $item->quantity;
         }
 
-        fclose($file);
-    };
+        $message = "Halo " . '*' . $transaction->user->name . '*' . ", terima kasih telah berbelanja di toko *Al's Store* kami. Berikut adalah detail pesanan Anda:\n\n";
+        $message .= "-----------------------------------\n";
+        $message .= "*Pesanan Transaksi:*\n";
+        foreach ($items as $item) {
+            $message .= "*Nama Produk       : "  . $item->name . '*' . "\n";
+            $message .= "*Qty                        : "  . $item->quantity . '*' . "\n";
+            $message .= "*Harga Produk       : Rp "  . number_format($item->price, 0, '.', ',') . '*' . "\n";
+            $message .= "*Subtotal                : Rp "  . number_format($item->price * $item->quantity, 0, '.', ',') . '*' . "\n\n";
+        }
+        $message .= "*Total pembayaran : Rp "  . number_format($total, 0, '.', ',') . '*' . "\n";
+        $message .= "*Status pesanan      : "  . $transaction->status . '*' . "\n\n";
+        $message .= "-----------------------------------\n\n";
 
-    return new StreamedResponse($callback, 200, $headers);
-}
+        // $message .= "Silakan konfirmasi pembayaran Anda dengan mengirimkan bukti transfer ke nomor ini. Terima kasih. \n\n";
+        if ($transaction->status == 'PENDING') {
+            $message .= "Silakan konfirmasi pembayaran Anda dengan mengirimkan bukti transfer ke nomor ini. Terima kasih. \n\n";
+            $message .= "Silakan hubungi kami jika Anda memiliki pertanyaan atau masukan.\n";
+            $message .= "*Al's Store: 085314005779*";
+        } else if ($transaction->status == 'SUCCESS') {
+            $message .= "Terima kasih telah menjadi pelanggan kami! \n";
+            $message .= "Kami sangat menghargai kepercayaan Anda dan berharap dapat terus memberikan pelayanan terbaik. \n\n";
+            $message .= "Silakan hubungi kami jika Anda memiliki pertanyaan atau masukan. \n\n";
+            $message .= "*Al's Store: 085314005779*";
+        } else if ($transaction->status == 'CANCELLED') {
+            $message .= "*Maaf, pesanan Anda telah dibatalkan.* Silakan hubungi kami jika Anda memiliki pertanyaan atau masukan.\n\n";
+            $message .= "*Al's Store: 085314005779*";
+        }
+
+        $url = 'https://wa.me/' . $phone_number . '?text=' . urlencode($message);
+        return redirect()->away($url);
+    }
+
+    // public function pay($transactionId)
+    // {
+    //     // Set konfigurasi Midtrans
+    //     Config::$serverKey = env('MIDTRANS_SERVER_KEY');
+    //     Config::$clientKey = env('MIDTRANS_CLIENT_KEY');
+    //     Config::$isSanitized = true;
+    //     Config::$is3ds = true;
+
+    //     // Ambil data transaksi dari database
+    //     $transaction = Transaction::where('id', $transactionId)->firstOrFail();
+
+    //     // Buat array data pembayaran
+    //     $transactionDetails = array(
+    //         'order_id' => $transaction->incre_id,
+    //         'gross_amount' => $transaction->total_price + $transaction->shipping_price
+    //     );
+
+    //     // Kirim permintaan pembayaran ke Midtrans
+    //     $paymentUrl = Snap::createTransaction($transactionDetails)->redirect_url;
+
+    //     // Update status pembayaran transaksi ke PENDING
+    //     $transaction->status = 'PENDING';
+    //     $transaction->save();
+
+    //     // Redirect pengguna ke halaman pembayaran Midtrans
+    //     return redirect($paymentUrl);
+    // }
+
+    // public function payment($id)
+    // {
+    //     // Ambil data transaksi dari database
+    //     $transaction = Transaction::findOrFail($id);
+
+    //     // Set konfigurasi Midtrans
+    //     Config::$serverKey = env('MIDTRANS_SERVER_KEY');
+    //     Config::$clientKey = env('MIDTRANS_CLIENT_KEY');
+    //     Config::$isProduction = false;
+    //     Config::$isSanitized = true;
+    //     Config::$is3ds = true;
+
+    //     // Buat array data pembayaran
+    //     $transactionDetails = array(
+    //         'order_id' => $transaction->id,
+    //         'gross_amount' => $transaction->total_price + $transaction->shipping_price
+    //     );
+
+    //     // Kirim permintaan pembayaran ke Midtrans
+    //     $paymentUrl = Snap::createTransaction($transactionDetails)->redirect_url;
+
+    //     // Redirect pengguna ke halaman pembayaran Midtrans
+    //     return redirect($paymentUrl);
+    // }
+
+    // public function payment(Request $request, $id)
+    // {
+    //     // Set Midtrans API configuration
+    //     Config::$serverKey = env('MIDTRANS_SERVER_KEY');
+    //     Config::$isProduction = env('MIDTRANS_IS_PRODUCTION');
+    //     Config::$isSanitized = true;
+    //     Config::$is3ds = true;
+
+    //     // Get transaction data from database
+    //     $transaction = Transaction::findOrFail($id);
+
+    //     // Get transaction items data from database
+    //     $transaction_items = TransactionItem::where('transactions_id', $transaction->id)->get();
+
+    //     // Set item details for Midtrans
+    //     $items = [];
+    //     foreach ($transaction_items as $item) {
+    //         $item_detail = [
+    //             'id' => $item->id,
+    //             'price' => $item->product->price,
+    //             'quantity' => $item->quantity,
+    //             'name' => $item->product->name
+    //         ];
+    //         array_push($items, $item_detail);
+    //     }
+
+    //     // Set customer details for Midtrans
+    //     $customer_details = [
+    //         'first_name' => $transaction->user->name,
+    //         'email' => $transaction->user->email,
+    //         'phone' => $transaction->user->phone,
+    //         'billing_address' => [
+    //             'address' => $transaction->address,
+    //             'country_code' => 'IDN'
+    //         ]
+    //     ];
+
+    //     // Set transaction details for Midtrans
+    //     $orderId = uniqid();
+    //     $transaction_details = [
+    //         'order_id' => $transaction->id,
+    //         'gross_amount' => $transaction->total_price + $transaction->shipping_price,
+    //         'customer_details' => $customer_details,
+    //         'item_details' => $items
+    //     ];
+
+    //     try {
+    //         // Create Snap Token for Midtrans payment page
+    //         $snap_token = Snap::getSnapToken($transaction_details);
+
+    //         // Redirect user to Midtrans payment page
+    //         return redirect()->away('https://app.midtrans.com/snap/v1/transactions/' . $snap_token);
+    //     } catch (\Exception $e) {
+    //         return $e->getMessage();
+    //     }
+    // }
+
+    // jadi
+    // public function payment($id)
+    // {
+    //     $transaction = Transaction::with('user')->findOrFail($id);
+
+    //     // Set konfigurasi midtrans
+    //     Config::$serverKey = env('MIDTRANS_SERVER_KEY');
+    //     Config::$isProduction = env('MIDTRANS_ENVIRONMENT') === 'production' ? true : false;
+    //     Config::$isSanitized = true;
+    //     Config::$is3ds = false;
+
+    //     // Buat array untuk data pembayaran
+    //     $transaction_details = [
+    //         'order_id' => $transaction->id,
+    //         'gross_amount' => $transaction->total_price + $transaction->shipping_price,
+    //     ];
+
+    //     // Buat array untuk item pembelian
+    //     $items = [];
+    //     foreach ($transaction->items as $item) {
+    //         $items[] = [
+    //             'id' => $item->id,
+    //             'price' => $item->product->price,
+    //             'quantity' => $item->quantity,
+    //             'name' => $item->product->name,
+    //         ];
+    //     }
+
+    //     // Buat array untuk data pembelian
+    //     $transaction_data = [
+    //         'transaction_details' => $transaction_details,
+    //         'item_details' => $items,
+    //         'customer_details' => [
+    //             'first_name' => $transaction->user->name,
+    //             'name' => $transaction->user->name,
+    //             'email' => $transaction->user->email,
+    //             'phone' => $transaction->user->phone,
+    //             // 'address' => $transaction->user->name,
+    //             'address' => [
+    //                 'address' => $transaction->user->name,
+    //             ],
+    //         ],
+    //     ];
+
+    //     // Panggil API midtrans untuk membuat transaksi baru
+    //     try {
+    //         $snap_token = Snap::createTransaction($transaction_data)->token;
+    //     } catch (\Exception $e) {
+
+    //         return redirect()->back()->withErrors(['msg' => $e->getMessage()]);
+    //     }
+
+    //     // Redirect ke halaman pembayaran
+    //     return redirect()->away('https://app.sandbox.midtrans.com/snap/v2/vtweb/' . $snap_token);
+    // }
+
+
+
+
+    // public function midtransNotification(Request $request, $id)
+    // {
+    //     Config::$isProduction = env('MIDTRANS_IS_PRODUCTION', false);
+    //     Config::$serverKey = env('MIDTRANS_SERVER_KEY');
+    //     Config::$clientKey = env('MIDTRANS_CLIENT_KEY');
+
+    //     $notification = new Notification();
+
+    //     $orderId = $notification->order_id;
+    //     $transactionStatus = $notification->transaction_status;
+
+    //     if ($transactionStatus == 'capture') {
+    //         // TODO: Ubah status pembayaran pada tabel transaksi
+    //         // Sesuaikan dengan nama field dan model transaksi pada Laravel Anda
+    //         $transaction = \App\Models\Transaction::where('id', $orderId)->firstOrFail();
+    //         $transaction->status = 'SUCCESS';
+    //         $transaction->save();
+    //     } elseif ($transactionStatus == 'settlement') {
+    //         // TODO: Ubah status pembayaran pada tabel transaksi
+    //         // Sesuaikan dengan nama field dan model transaksi pada Laravel Anda
+    //         $transaction = \App\Models\Transaction::where('id', $orderId)->firstOrFail();
+    //         $transaction->status = 'SUCCESS';
+    //         $transaction->save();
+    //     } elseif ($transactionStatus == 'deny') {
+    //         // TODO: Ubah status pembayaran pada tabel transaksi
+    //         // Sesuaikan dengan nama field dan model transaksi pada Laravel Anda
+    //         $transaction = \App\Models\Transaction::where('id', $orderId)->firstOrFail();
+    //         $transaction->status = 'DENY';
+    //         $transaction->save();
+    //     }
+
+    //     return response('OK', 200);
+    // }
+
+    // public function midtransNotification(Request $request)
+    // {
+    //     $transaction_id = $request->input('order_id');
+    //     $transaction_status = $request->input('transaction_status');
+    //     $fraud_status = $request->input('fraud_status');
+    //     $transaction = Transaction::find($transaction_id);
+
+    //     if ($transaction_status == 'settlement') {
+    //         $transaction->status = 'SUCCESS';
+    //     } else if ($fraud_status == 'accept') {
+    //         $transaction->status = 'SUCCESS';
+    //     } else if ($transaction_status == 'cancel') {
+    //         $transaction->status = 'CANCELLED';
+    //     }
+    //     $transaction->save();
+
+    //     return response()->json(['message' => 'Success']);
+    // }
+
+
+
+
+    // public function handleWebhook(Request $request)
+    // {
+    //     $orderId = $request->order_id;
+    //     $transactionStatus = $request->transaction_status;
+
+    //     if ($transactionStatus == 'CAPTURE' || $transactionStatus == 'SETTLEMENT') {
+    //         // update transaction status to "success" in your database
+    //         $transaction = Transaction::where('id', $orderId)->firstOrFail();
+    //         $transaction->status = 'SUCCESS';
+    //         $transaction->save();
+    //     } else {
+    //         // update transaction status to "cancelled" in your database
+    //         $transaction = Transaction::where('id', $orderId)->firstOrFail();
+    //         $transaction->status = 'CANCELLED';
+    //         $transaction->save();
+    //     }
+    //     return redirect()->back();
+    // }
+
+
+
+
+    // public function payment($id)
+    // {
+    //     $transaction = Transaction::findOrFail($id);
+
+    //     // Set konfigurasi midtrans
+    //     Config::$serverKey = env('MIDTRANS_SERVER_KEY');
+    //     Config::$isProduction = env('MIDTRANS_ENVIRONMENT') === 'production' ? true : false;
+    //     Config::$isSanitized = true;
+    //     Config::$is3ds = false;
+
+    //     // Buat array untuk data pembayaran
+    //     $transaction_details = [
+    //         'order_id' => $transaction->id,
+    //         'gross_amount' => $transaction->total_price + $transaction->shipping_price,
+    //         'customer_details' => [
+    //             'first_name' => $transaction->user->name,
+    //             'email' => $transaction->user->email,
+    //         ],
+    //     ];
+
+    //     // Buat array untuk item pembelian
+    //     $items = [];
+    //     foreach ($transaction->items as $item) {
+    //         $items[] = [
+    //             'id' => $item->id,
+    //             'price' => $item->product->price,
+    //             'quantity' => $item->quantity,
+    //             'name' => $item->product->name,
+    //         ];
+    //     }
+
+    //     // Buat array untuk data pembelian
+    //     $transaction_data = [
+    //         'transaction_details' => $transaction_details,
+    //         'item_details' => $items,
+    //     ];
+
+    //     // Panggil API midtrans untuk membuat transaksi baru
+    //     try {
+    //         $snap_token = Snap::createTransaction($transaction_data)->token;
+    //     } catch (\Exception $e) {
+    //         return redirect()->back()->withErrors(['msg' => $e->getMessage()]);
+    //     }
+
+    //     // Redirect ke halaman pembayaran
+    //     return redirect()->away('https://app.sandbox.midtrans.com/snap/v2/vtweb/' . $snap_token);
+    // }
+
+    // public function handleWebhook(Request $request)
+    // {
+    //     // Set konfigurasi midtrans
+    //     Config::$serverKey = env('MIDTRANS_SERVER_KEY');
+    //     Config::$isProduction = env('MIDTRANS_ENVIRONMENT') === 'production' ? true : false;
+    //     Config::$isSanitized = true;
+    //     Config::$is3ds = true;
+
+    //     // Buat instance notification midtrans
+    //     $notification = new Notification();
+
+    //     // Verifikasi signature
+    //     if (!$notification->isValidSignature()) {
+    //         return response('Invalid signature', 403);
+    //     }
+
+    //     // Update status transaksi di database
+    //     $orderId = $notification->order_id;
+    //     $transactionStatus = $notification->transaction_status;
+
+    //     if ($transactionStatus == 'capture' || $transactionStatus == 'settlement') {
+    //         // update transaction status to "success" in your database
+    //         $transaction = Transaction::where('id', $orderId)->firstOrFail();
+    //         $transaction->status = 'SUCCESS';
+    //         $transaction->save();
+
+    //         // send email to user
+    //         // Mail::to($transaction->user->email)->send(new PaymentSuccess($transaction));
+    //     } else {
+    //         // update transaction status to "cancelled" in your database
+    //         $transaction = Transaction::where('id', $orderId)->firstOrFail();
+    //         $transaction->status = 'CANCELLED';
+    //         $transaction->save();
+    //     }
+
+    //     // Redirect ke halaman terima kasih Anda
+    //     return redirect('/thank-you');
+    // }
 
 
     /**
@@ -567,7 +1162,7 @@ class TransactionController extends Controller
      */
     public function edit(Transaction $transaction)
     {
-        return view('pages.dashboard.transaction.edit',[
+        return view('pages.dashboard.transaction.edit', [
             'item' => $transaction
         ]);
     }
@@ -585,7 +1180,15 @@ class TransactionController extends Controller
 
         $transaction->update($data);
 
-        return redirect()->route('dashboard.transaction.index');
+        if ($transaction->status == 'SUCCESS') {
+            return redirect()->route('dashboard.transaction.indexSuccess')->withSuccess('Transaction Berhasil Diupdate!');
+        } elseif ($transaction->status == 'PENDING') {
+            return redirect()->route('dashboard.transaction.indexPending')->withSuccess('Transaction Berhasil Diupdate!');
+        } elseif ($transaction->status == 'CANCELLED') {
+            return redirect()->route('dashboard.transaction.indexCancelled')->withSuccess('Transaction Berhasil Diupdate!');
+        } else {
+            return redirect()->route('dashboard.index')->withSuccess('Transaction Berhasil Diupdate!');
+        }
     }
 
     /**
@@ -597,5 +1200,32 @@ class TransactionController extends Controller
     public function destroy(Transaction $transaction)
     {
         //
+    }
+
+    public function exportPDF(Transaction $transaction)
+    {
+        $transaction_id = $transaction->id;
+
+        $items = DB::table('transaction_items')
+            ->join('products', 'transaction_items.products_id', '=', 'products.id')
+            ->select('products.name', 'products.price', 'transaction_items.quantity')
+            ->where('transactions_id', $transaction_id)
+            ->get();
+
+        $total = 0;
+        foreach ($items as $item) {
+            $total += $item->price * $item->quantity;
+        }
+
+        $pdf = new Dompdf();
+        $pdf->loadHtml(view('pages.dashboard.transaction.print', compact('transaction', 'items', 'total')));
+        $pdf->setPaper('A4', 'portrait');
+        $pdf->render();
+        $output = $pdf->output();
+        // file_put_contents('Kwitansi_' . $transaction->user->name . '_' . date('d-m-Y') . '.pdf', $output);
+        // $pdf->stream('Kwitansi_' . $transaction->user->name . '_' . date('d-m-Y') . '.pdf');
+        $file_name = 'Kwitansi_' . $transaction->user->name . '_' . date('d-m-Y', strtotime($transaction->created_at)) . '.pdf';
+        file_put_contents($file_name, $output);
+        $pdf->stream($file_name);
     }
 }

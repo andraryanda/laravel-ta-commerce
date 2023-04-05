@@ -14,11 +14,17 @@ class CreateTransactionItemsTable extends Migration
     public function up()
     {
         Schema::create('transaction_items', function (Blueprint $table) {
-            $table->id();
-            
+            // $table->id();
+            // $table->string('id', 32)->primary();
+            $table->uuid('id')->primary();
+            $table->bigInteger('incre_id');
+
+
             $table->bigInteger('users_id');
             $table->bigInteger('products_id');
-            $table->bigInteger('transactions_id');
+            $table->uuid('transactions_id');
+            // $table->string('transactions_id', 32);
+            // $table->bigInteger('transactions_id');
             $table->bigInteger('quantity');
 
             $table->timestamps();

@@ -27,20 +27,25 @@ class ProductController extends Controller
             return DataTables::of($query)
                 ->addColumn('action', function ($item) {
                     return '
-                        <a class="inline-block border border-purple-700 bg-purple-700 text-white rounded-md px-2 py-1 m-1 transition duration-500 ease select-none hover:bg-purple-800 focus:outline-none focus:shadow-outline"
-                            href="' . route('dashboard.product.gallery.index', $item->id) . '">
-                            <i class="fa fa-image"></i> Gambar
-                        </a>
-                        <a class="inline-block border border-yellow-500 bg-yellow-400 text-white rounded-md px-2 py-1 m-1 transition duration-500 ease select-none hover:bg-yellow-500 focus:outline-none focus:shadow-outline"
-                            href="' . route('dashboard.product.edit', $item->id) . '">
-                            <i class="fa fa-pencil"></i> Edit
-                        </a>
-                        <form class="inline-block" action="' . route('dashboard.product.destroy', $item->id) . '" method="POST">
-                        <button title="Hapus" class="border border-red-500 bg-red-500 text-white rounded-md px-2 py-1 m-2 transition duration-500 ease select-none hover:bg-red-600 focus:outline-none focus:shadow-outline" >
-                        <i class="fa fa-trash"></i> Hapus
-                        </button>
-                            ' . method_field('delete') . csrf_field() . '
-                        </form>';
+                        <div class="flex justify-start items-center space-x-3.5">
+                            <a href="' . route('dashboard.product.gallery.index', $item->id) . '" title="Gambar"
+                                class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-indigo-500 bg-indigo-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-indigo-500 focus:outline-none focus:shadow-outline">
+                                <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/picture.png') . '" alt="gambar" loading="lazy" width="20" />
+                                <p class="mt-1 text-xs">Gallery</p>
+                            </a>
+                            <a href="' . route('dashboard.product.edit', $item->id) . '" title="Edit"
+                                class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-yellow-500 bg-yellow-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-yellow-500 focus:outline-none focus:shadow-outline">
+                                <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/edit.png') . '" alt="edit" loading="lazy" width="20" />
+                                <p class="mt-1 text-xs">Edit</p>
+                            </a>
+                            <button type="button" title="Delete"
+                                class="flex flex-col delete-button shadow-sm items-center justify-center w-20 h-12 border border-red-500 bg-red-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-red-500 focus:outline-none focus:shadow-outline"
+                                data-id="' . $item->id . '">
+                                <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/delete.png') . '" alt="delete" loading="lazy" width="20" />
+                                <p class="mt-1 text-xs">Delete</p>
+                            </button>
+                        </div>
+                        ';
                 })
                 ->editColumn('price', function ($item) {
                     return number_format($item->price);
@@ -54,46 +59,55 @@ class ProductController extends Controller
     }
 
     public function exportProducts(Request $request)
-{
-    $products = Product::with('galleries')->get();
+    {
+        $products = Product::with('galleries')->with('category')->get();
 
-    $headers = [
-        'Content-Type' => 'text/csv',
-        'Content-Disposition' => 'attachment; filename=products_' . date('d-m-Y') . '.csv',
-    ];
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename=products_' . date('d-m-Y') . '.csv',
+        ];
 
-    $callback = function () use ($products) {
-        $file = fopen('php://output', 'w');
+        $callback = function () use ($products) {
+            $file = fopen('php://output', 'w');
 
-        fputcsv($file, ['ID', 'Name', 'Price', 'Description', 'Tags', 'Category ID', 'Deleted At', 'Created At', 'Updated At', 'Image URL']);
+            fputcsv($file, ['ID', 'Name', 'Price', 'Description', 'Tags', 'Category ID', 'Category', 'Deleted At', 'Created At', 'Updated At', 'Image URL']);
 
-        foreach ($products as $product) {
-            $galleryUrls = '';
-            if ($product->galleries->count() > 0) {
-                foreach ($product->galleries as $gallery) {
-                    // $galleryUrls .= Storage::url($gallery->url) . "\n";
-                    $galleryUrls .= $gallery->url;
+            foreach ($products as $product) {
+                $galleryUrls = '';
+                // if ($product->galleries->count() > 0) {
+                //     foreach ($product->galleries as $gallery) {
+                //         // $galleryUrls .= Storage::url($gallery->url) . "\n";
+                //         $galleryUrls .= $gallery->url.' || ';
+                //     }
+                // }
+                if ($product->galleries->count() > 0) {
+                    foreach ($product->galleries as $key => $gallery) {
+                        $galleryUrls .= $gallery->url;
+                        if ($key < $product->galleries->count() - 1) {
+                            $galleryUrls .= ' || ';
+                        }
+                    }
                 }
+                fputcsv($file, [
+                    $product->id,
+                    $product->name,
+                    $product->price,
+                    $product->description,
+                    $product->tags,
+                    $product->categories_id,
+                    $product->category->name,
+                    $product->deleted_at,
+                    $product->created_at,
+                    $product->updated_at,
+                    $galleryUrls,
+                ]);
             }
-            fputcsv($file, [
-                $product->id,
-                $product->name,
-                $product->price,
-                $product->description,
-                $product->tags,
-                $product->categories_id,
-                $product->deleted_at,
-                $product->created_at,
-                $product->updated_at,
-                $galleryUrls,
-            ]);
-        }
 
-        fclose($file);
-    };
+            fclose($file);
+        };
 
-    return new StreamedResponse($callback, 200, $headers);
-}
+        return new StreamedResponse($callback, 200, $headers);
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -141,7 +155,7 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         $categories = ProductCategory::all();
-        return view('pages.dashboard.product.edit',[
+        return view('pages.dashboard.product.edit', [
             'item' => $product,
             'categories' => $categories
         ]);

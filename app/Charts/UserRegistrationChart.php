@@ -18,25 +18,48 @@ class UserRegistrationChart extends Chart
         parent::__construct();
     }
 
+    //     public function getUserRegistrationData($numberOfMonths)
+    // {
+    //     $labels = [];
+    //     $data = [];
+
+    //     for ($i = $numberOfMonths - 1; $i >= 0; $i--) {
+    //         $date = Carbon::now()->subMonths($i);
+    //         $usersCount = User::whereYear('created_at', $date->year)
+    //             ->whereMonth('created_at', $date->month)
+    //             ->count();
+
+    //         $labels[] = $date->format('M Y');
+    //         $data[] = $usersCount;
+    //     }
+
+    //     return collect([
+    //         'labels' => $labels,
+    //         'data' => $data
+    //     ]);
+    // }
+
     public function getUserRegistrationData($numberOfMonths)
-{
-    $labels = [];
-    $data = [];
+    {
+        $labels = [];
+        $userCounts = [];
 
-    for ($i = $numberOfMonths - 1; $i >= 0; $i--) {
-        $date = Carbon::now()->subMonths($i);
-        $usersCount = User::whereYear('created_at', $date->year)
-            ->whereMonth('created_at', $date->month)
-            ->count();
+        for ($i = $numberOfMonths - 1; $i >= 0; $i--) {
+            $date = Carbon::now()->subMonths($i);
+            $usersCount = User::whereYear('created_at', $date->year)
+                ->whereMonth('created_at', $date->month)
+                ->selectRaw('count(*) as total')
+                ->selectRaw('sum(case when roles = "USER" then 1 else 0 end) as user_count')
+                ->selectRaw('sum(case when roles = "ADMIN" then 1 else 0 end) as admin_count')
+                ->first();
 
-        $labels[] = $date->format('M Y');
-        $data[] = $usersCount;
+            $labels[] = $date->format('M Y');
+            $userCounts[] = $usersCount;
+        }
+
+        return collect([
+            'labels' => $labels,
+            'userCounts' => $userCounts
+        ]);
     }
-
-    return collect([
-        'labels' => $labels,
-        'data' => $data
-    ]);
-}
-
 }
