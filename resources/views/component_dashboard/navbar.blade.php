@@ -11,16 +11,17 @@
         </button>
 
         <div class="">
-            <button onclick="window.location.href='{{ route('landingPage.index') }}'"
-                class="w-full text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 shadow-lg shadow-purple-500/50 dark:shadow-lg dark:shadow-purple-800/80 font-medium rounded-lg text-sm px-3 py-2.5 text-center mr-2 mb-2">
+            {{-- <button onclick="window.location.href='{{ route('landingPage.index') }}'" title="Home Page"
+                class="w-full sm:w-auto text-white bg-gradient-to-r from-indigo-500 via-indigo-600 to-indigo-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-indigo-800 shadow-lg shadow-purple-500/50 dark:shadow-lg dark:shadow-purple-800/80 font-medium rounded-lg text-sm px-3 py-2.5 text-center sm:mr-2 sm:mb-2">
                 <div class="flex items-center">
-                    <span class="material-symbols-outlined inline-block mr-2">arrow_back</span>
-                    <p class="inline-block">Back Landing Page</p>
+                    <img src="{{ asset('icon/homepage.png') }}" class="mr-2" alt="Home Page" width="25">
+                    <p class="inline-block">Home Page</p>
                 </div>
-            </button>
+            </button> --}}
         </div>
 
-        <!-- Search input -->
+
+        {{-- <!-- Search input -->
         <div class="flex justify-center flex-1 lg:mr-32">
             <div class="relative w-full max-w-xl mr-6 focus-within:text-purple-500">
                 <div class="absolute inset-y-0 flex items-center pl-2">
@@ -34,7 +35,7 @@
                     class="w-full pl-8 pr-2 text-sm text-gray-700 placeholder-gray-600 bg-gray-100 border-0 rounded-md dark:placeholder-gray-500 dark:focus:shadow-outline-gray dark:focus:placeholder-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:placeholder-gray-500 focus:bg-white focus:border-purple-300 focus:outline-none focus:shadow-outline-purple form-input"
                     type="text" placeholder="Search for projects" aria-label="Search" />
             </div>
-        </div>
+        </div> --}}
         <ul class="flex items-center flex-shrink-0 space-x-6">
             <!-- Theme toggler -->
             <li class="flex">
@@ -74,61 +75,6 @@
                             class="absolute top-0 right-0 inline-block w-3 h-3 transform translate-x-1 -translate-y-1 bg-red-600 border-2 border-white rounded-full dark:border-gray-800"></span>
                     @endif
                 </button>
-                {{-- <template x-if="isNotificationsMenuOpen">
-                    <ul x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100"
-                        x-transition:leave-end="opacity-0" @click.away="closeNotificationsMenu"
-                        @keydown.escape="closeNotificationsMenu" class="absolute right-0 w-56 p-2 mt-2 space-y-2">
-                        <div class="w-80 rounded-md shadow-md bg-white overflow-hidden">
-                            <div class="text-lg font-bold px-4 py-3 bg-gray-100 border-b border-gray-200">
-                                Notifications
-                            </div>
-                            <ul class="divide-y divide-gray-200">
-                                <li class="px-4 py-3">
-                                    <div class="flex justify-between">
-                                        <span class="font-semibold">New Order</span>
-                                        <button type="button" class="text-gray-500 hover:text-red-500">
-                                            <svg class="h-5 w-5 fill-current" viewBox="0 0 20 20"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <path
-                                                    d="M10 8.586L6.707 5.293a1 1 0 00-1.414 1.414L8.586 10l-3.293 3.293a1 1 0 001.414 1.414L10 11.414l3.293 3.293a1 1 0 001.414-1.414L11.414 10l3.293-3.293a1 1 0 00-1.414-1.414L10 8.586z" />
-                                            </svg>
-                                        </button>
-                                    </div>
-                                    <p class="text-sm text-gray-500 mt-1">You have a new order from John Doe</p>
-                                </li>
-                            </ul>
-                        </div>
-                    </ul>
-                </template> --}}
-                {{-- <template x-if="isNotificationsMenuOpen">
-                    <ul x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100"
-                        x-transition:leave-end="opacity-0" @click.away="closeNotificationsMenu"
-                        @keydown.escape="closeNotificationsMenu" class="absolute right-0 w-80 mt-2">
-                        <li class="rounded-md shadow-md bg-white dark:bg-gray-800 overflow-hidden">
-                            <div
-                                class="text-lg font-bold px-4 py-3 bg-gray-100 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
-                                Notifications
-                            </div>
-                            <ul class="divide-y divide-gray-200">
-                                <li class="px-4 py-3">
-                                    <div class="flex justify-between">
-                                        <span class="font-semibold">New Order</span>
-                                        <button type="button" class="text-gray-500 hover:text-red-500">
-                                            <svg class="h-5 w-5 fill-current" viewBox="0 0 20 20"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <path
-                                                    d="M10 8.586L6.707 5.293a1 1 0 00-1.414 1.414L8.586 10l-3.293 3.293a1 1 0 001.414 1.414L10 11.414l3.293 3.293a1 1 0 001.414-1.414L11.414 10l3.293-3.293a1 1 0 00-1.414-1.414L10 8.586z" />
-                                            </svg>
-                                        </button>
-                                    </div>
-                                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                        {{ app(\App\Http\Controllers\NotificationTransactionController::class)->getCount() }}
-                                    </p>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </template> --}}
                 <template x-if="isNotificationsMenuOpen">
                     <ul x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100"
                         x-transition:leave-end="opacity-0" @click.away="closeProfileMenu"

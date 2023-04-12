@@ -140,22 +140,7 @@
                                 orderable: false,
                                 searchable: false,
                                 width: '25%',
-                                render: function(data, type, full, meta) {
-                                    return '<div class="flex justify-start items-center space-x-3.5">\
-                                                                                                                                                                                                                                    <button type="button" class="inline-flex btn-edit flex-col items-center justify-center w-20 h-12 bg-yellow-400 text-white rounded-md border border-yellow-500 transition duration-500 ease select-none hover:bg-yellow-500 focus:outline-none focus:shadow-outline" data-id="' +
-                                        full.id +
-                                        '">\
-                                                                                                                                                                                                        <img class="object-cover w-6 h-6 rounded-full" src="{{ asset('icon/edit.png') }}" alt="edit" loading="lazy" width="20" />\
-                                                                                                                                                                                                        <p class="mt-1 text-xs">Edit</p>\
-                                                                                                                                                                                                    </button>\
-                                                                                                                                                                                                    <button type="button" class="inline-flex btn-delete flex-col items-center justify-center w-20 h-12 bg-red-400 text-white rounded-md border border-red-500 transition duration-500 ease select-none hover:bg-red-500 focus:outline-none focus:shadow-outline" data-id="' +
-                                        full.id +
-                                        '">\
-                                                                                                                                                                                                                        <img class="w-6 h-6 rounded-full object-cover mr-2" src="{{ asset('icon/delete.png') }}" alt="Delete" loading="lazy" width="20" />\
-                                                                                                                                                                                                                        <span class="text-xs">Hapus</span>\
-                                                                                                                                                                                                                        </button>\
-                                                                                                                                                                                                                                    </div>';
-                                }
+
                             }
                         ],
                         pagingType: 'full_numbers',
@@ -179,25 +164,14 @@
                             $('#crudTable th:first-child .fa').remove();
                         }
                     });
+                });
+            </script>
+        </x-slot>
 
-                    $('body').on('click', '.btn-edit', function() {
-                        var user_id = $(this).data('id');
-                        $.ajax({
-                            url: "{{ route('dashboard.user.edit', ['user' => ':id']) }}".replace(':id',
-                                user_id),
-                            type: "GET",
-                            success: function(response) {
-                                window.location.href =
-                                    "{{ route('dashboard.user.edit', ['user' => ':id']) }}".replace(
-                                        ':id', user_id);
-                            },
-                            error: function() {
-                                console.log('Error: Failed to open edit page.');
-                            }
-                        });
-                    });
-
-                    $('body').on('click', '.btn-delete', function() {
+        @push('javascript')
+            <script>
+                $(document).ready(function() {
+                    $('body').on('click', '.delete-button', function() {
                         var user_id = $(this).data("id");
                         Swal.fire({
                             title: 'Apakah anda yakin ingin menghapus user ini?',
@@ -250,7 +224,7 @@
                     });
                 });
             </script>
-        </x-slot>
+        @endpush
 
         <div class="w-full overflow-hidden rounded-lg shadow-xs">
             <div class=" overflow-x-auto bg-white">
@@ -391,3 +365,77 @@
         </div>
     @endsection
 </x-layout.apps>
+
+
+
+
+
+
+{{-- $('body').on('click', '.btn-edit', function() {
+    var user_id = $(this).data('id');
+    $.ajax({
+        url: "{{ route('dashboard.user.edit', ['user' => ':id']) }}".replace(':id',
+            user_id),
+        type: "GET",
+        success: function(response) {
+            window.location.href =
+                "{{ route('dashboard.user.edit', ['user' => ':id']) }}".replace(
+                    ':id', user_id);
+        },
+        error: function() {
+            console.log('Error: Failed to open edit page.');
+        }
+    });
+});
+
+$('body').on('click', '.btn-delete', function() {
+    var user_id = $(this).data("id");
+    Swal.fire({
+        title: 'Apakah anda yakin ingin menghapus user ini?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Hapus',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                type: "DELETE",
+                url: "{{ route('dashboard.user.destroy', ':id') }}".replace(
+                    ':id', user_id),
+                data: {
+                    "_token": "{{ csrf_token() }}"
+                },
+                error: function(data) {
+                    console.log('Error:', data);
+                }
+            });
+            setTimeout(function() {
+                    location.reload();
+                },
+                1000
+            ); // memberikan jeda selama 1000 milidetik atau 1 detik sebelum reload
+            let timerInterval;
+            Swal.fire({
+                title: 'Deleted!',
+                text: 'Your data has been deleted.',
+                icon: 'success',
+                timer: 1500,
+                timerProgressBar: true,
+                didOpen: () => {
+                    Swal.showLoading();
+                    timerInterval = setInterval(() => {}, 100);
+                },
+                willClose: () => {
+                    clearInterval(timerInterval);
+                    location.reload();
+                }
+            }).then((result) => {
+                if (result.dismiss === Swal.DismissReason.timer) {
+                    console.log('I was closed by the timer');
+                }
+            });
+        }
+    });
+}); --}}

@@ -24,7 +24,6 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\TransactionRequest;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Contracts\DataTable;
-use Midtrans\Handler as MidtransWebhookHandler;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 
@@ -350,7 +349,7 @@ class TransactionController extends Controller
                             <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/printer.png') . '" alt="printer" loading="lazy" width="20" />
                             <p class="mt-1 text-xs">Kwitansi</p>
                         </a>
-                        <a href="' . route('dashboard.transaction.payment', $item->id) . '" target="_blank" title="Bayar"
+                        <a href="' . route('dashboard.payment', $item->id) . '" target="_blank" title="Bayar"
                         class="flex flex-col shadow-sm items-center justify-center w-20 h-12 border border-purple-500 bg-purple-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-purple-500 focus:outline-none focus:shadow-outline">
                         <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/credit-card.png') . '" alt="Bayar" loading="lazy" width="20" />
                         <p class="mt-1 text-xs">Bayar</p>
@@ -601,6 +600,268 @@ class TransactionController extends Controller
         return view('pages.dashboard.transaction.index_cancelled', compact('total_amount_cancelled', 'new_transaction'));
     }
 
+    public function cancelPayment($id)
+    {
+        $transaction = Transaction::findOrFail($id);
+
+        // Set konfigurasi midtrans
+        Config::$serverKey = env('MIDTRANS_SERVER_KEY');
+        Config::$isProduction = env('MIDTRANS_ENVIRONMENT') === 'production' ? true : false;
+        Config::$isSanitized = true;
+        Config::$is3ds = false;
+
+        // Panggil API midtrans untuk membatalkan transaksi
+        try {
+            $midtrans_transaction = Transaction::status($transaction->midtrans_transaction_id);
+            $midtrans_transaction->cancel();
+            $transaction->status = 'CANCELLED';
+            $transaction->save();
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['msg' => $e->getMessage()]);
+        }
+
+        return redirect()->route('dashboard.midtrans.show', $id)->withError('Transaksi telah dibatalkan.');
+    }
+
+    public function payment($id)
+    {
+        $transaction = Transaction::with('user')->findOrFail($id);
+
+        // Set konfigurasi midtrans
+        Config::$serverKey = env('MIDTRANS_SERVER_KEY');
+        Config::$isProduction = env('MIDTRANS_ENVIRONMENT') === 'production' ? true : false;
+        Config::$isSanitized = true;
+        Config::$is3ds = false;
+
+        // Buat array untuk data pembayaran
+        $transaction_details = [
+            'order_id' => $transaction->id,
+            'gross_amount' => $transaction->total_price + $transaction->shipping_price,
+        ];
+
+        // Buat array untuk item pembelian
+        $items = [];
+        foreach ($transaction->items as $item) {
+            $items[] = [
+                'id' => $item->id,
+                'price' => $item->product->price,
+                'quantity' => $item->quantity,
+                'name' => $item->product->name,
+            ];
+        }
+
+        // Buat array untuk data pembelian
+        $transaction_data = [
+            'transaction_details' => $transaction_details,
+            'item_details' => $items,
+            'customer_details' => [
+                'first_name' => $transaction->user->name,
+                'name' => $transaction->user->name,
+                'email' => $transaction->user->email,
+                'phone' => $transaction->user->phone,
+                'address' => [
+                    'address' => $transaction->address,
+                ],
+            ],
+        ];
+
+        // Panggil API midtrans untuk membuat transaksi baru
+        try {
+            $snap_token = Snap::createTransaction($transaction_data)->token;
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['msg' => $e->getMessage()]);
+        }
+        // Redirect ke halaman pembayaran
+        return redirect()->away('https://app.sandbox.midtrans.com/snap/v2/vtweb/' . $snap_token)
+            ->with(['transaction_id' => $transaction->id]);
+    }
+
+    public function handlefinish(Request $request)
+    {
+        // Set your server key from config file or env
+        Config::$serverKey = env('MIDTRANS_SERVER_KEY');
+        Config::$isProduction = !env('MIDTRANS_IS_SANDBOX');
+        Config::$isSanitized = true;
+        Config::$is3ds = true;
+
+        $transaction = Transaction::where('id', $request->order_id)->firstOrFail();
+
+        if ($request->status_code == 200) {
+            if ($request->transaction_status == 'settlement') {
+                $transaction->status = 'SUCCESS';
+                $transaction->payment = 'Bank Transfer';
+            } elseif ($request->transaction_status == 'capture') {
+                $transaction->status = 'SUCCESS';
+                $transaction->payment = 'Bank Transfer';
+            } elseif ($request->transaction_status == 'pending') {
+                $transaction->status = 'PENDING';
+            } elseif ($request->transaction_status == 'deny') {
+                $transaction->status = 'DENY';
+                $transaction->payment = 'Bank Transfer';
+                // tambahkan kode ini untuk membatalkan transaksi di Midtrans
+                \Midtrans\Transaction::cancel($request->order_id);
+            } elseif ($request->transaction_status == 'expire') {
+                $transaction->status = 'EXPIRED';
+                $transaction->payment = 'Bank Transfer';
+                // tambahkan kode ini untuk membatalkan transaksi di Midtrans
+                \Midtrans\Transaction::cancel($request->order_id);
+            } elseif ($request->transaction_status == 'cancel') {
+                $transaction->status = 'CANCELLED';
+                $transaction->payment = 'Bank Transfer';
+                // tambahkan kode ini untuk membatalkan transaksi di Midtrans
+                \Midtrans\Transaction::cancel($request->order_id);
+            } else {
+                $transaction->status = 'CANCELLED';
+                $transaction->payment = 'Bank Transfer';
+
+                // tambahkan kode ini untuk membatalkan transaksi di Midtrans
+                \Midtrans\Transaction::cancel($request->order_id);
+            }
+        } else {
+            $transaction->status = 'CANCELLED';
+            $transaction->payment = 'Bank Transfer';
+            \Midtrans\Transaction::cancel($request->order_id);
+        }
+
+        $transaction->save();
+
+        // tambahkan kode ini untuk menampilkan peringatan jika pengguna menekan tombol "Back to Merchant"
+        if ($request->status_code == 404 && $request->transaction_status == 'cancel') {
+            return redirect()->route('dashboard.midtrans.show', $transaction->id);
+        }
+
+        if ($transaction->status == 'SUCCESS') {
+            return redirect()->route('dashboard.midtrans.show', $transaction->id)->with('success', 'Transaksi Berhasil');
+        } else {
+            return redirect()->route('dashboard.midtrans.show', $transaction->id)->with('error', 'Transaksi Cancelled');
+        }
+    }
+
+
+    //Payment Notification URL*
+    public function notification(Request $request)
+    {
+        // Set your server key from config file or env
+        Config::$serverKey = env('MIDTRANS_SERVER_KEY');
+        Config::$isProduction = !env('MIDTRANS_IS_SANDBOX');
+        Config::$isSanitized = true;
+        Config::$is3ds = true;
+
+        $notif = new Notification();
+
+        $transaction = Transaction::where('id', $notif->order_id)->firstOrFail();
+
+        // Handle notification status
+        switch ($notif->transaction_status) {
+            case 'capture':
+                if ($notif->fraud_status == 'challenge') {
+                    // Handle if payment is challenged
+                    $transaction->status = 'CHALLENGE';
+                    $transaction->save();
+                } else if ($notif->fraud_status == 'accept') {
+                    // Handle if payment is accepted
+                    $transaction->status = 'SUCCESS';
+                    $transaction->save();
+                }
+                break;
+            case 'settlement':
+                // Handle if payment is settled
+                $transaction->status = 'SUCCESS';
+                $transaction->save();
+                break;
+            case 'deny':
+                // Handle if payment is denied
+                $transaction->status = 'DENY';
+                $transaction->save();
+                break;
+            case 'expire':
+                // Handle if payment is expired
+                $transaction->status = 'EXPIRED';
+                $transaction->save();
+                break;
+            case 'cancel':
+                // Handle if payment is canceled
+                $transaction->status = 'CANCELLED';
+                $transaction->save();
+                break;
+            case 'pending':
+                // Handle if payment is pending
+                $transaction->status = 'PENDING';
+                $transaction->save();
+                break;
+            default:
+                // Handle if transaction status is unknown
+                $transaction->status = 'UNKNOWN';
+                $transaction->save();
+                break;
+        }
+
+        return response()->json(['success' => true]);
+    }
+
+    //Recurring Notification URL*
+    public function notificationHandler(Request $request)
+    {
+        // Set your server key from config file or env
+        Config::$serverKey = env('MIDTRANS_SERVER_KEY');
+        Config::$isProduction = !env('MIDTRANS_IS_SANDBOX');
+        Config::$isSanitized = true;
+        Config::$is3ds = true;
+
+        // Get transaction data from the request
+        $transaction = Transaction::where('id', $request->order_id)->firstOrFail();
+
+        // Handle the notification
+        $notification = new Notification();
+
+        switch ($notification->transaction_status) {
+            case 'capture':
+                if ($notification->fraud_status == 'challenge') {
+                    $transaction->status = 'PENDING';
+                } else if ($notification->fraud_status == 'accept') {
+                    $transaction->status = 'SUCCESS';
+                }
+                break;
+            case 'settlement':
+                $transaction->status = 'SUCCESS';
+                break;
+            case 'deny':
+                $transaction->status = 'DENY';
+                break;
+            case 'expire':
+                $transaction->status = 'EXPIRED';
+                break;
+            case 'cancel':
+                $transaction->status = 'CANCELLED';
+                break;
+            default:
+                $transaction->status = 'FAILED';
+                break;
+        }
+
+        $transaction->save();
+
+        return response()->json([
+            'status' => 'OK',
+        ]);
+    }
+
+    public function showTransaction(Transaction $transaction)
+    {
+        if (request()->ajax()) {
+            $query = TransactionItem::with(['product'])->where('transactions_id', $transaction->id);
+
+            return DataTables::of($query)
+                ->editColumn('product.price', function ($item) {
+                    return number_format($item->product->price);
+                })
+                ->make();
+        }
+
+        return view('pages.midtrans.index', compact('transaction'));
+    }
+
+
     public function sendMessage(Transaction $transaction)
     {
         $phone_number = '+62' . substr_replace($transaction->user->phone, '', 0, 1);
@@ -707,9 +968,11 @@ class TransactionController extends Controller
     // {
     //     // Set Midtrans API configuration
     //     Config::$serverKey = env('MIDTRANS_SERVER_KEY');
-    //     Config::$isProduction = env('MIDTRANS_IS_PRODUCTION');
+    //     Config::$clientKey = env('MIDTRANS_CLIENT_KEY'); // Tambahkan baris ini
+    //     Config::$isProduction = env('MIDTRANS_ENVIRONMENT') === 'production' ? true : false;
     //     Config::$isSanitized = true;
-    //     Config::$is3ds = true;
+    //     Config::$is3ds = false;
+
 
     //     // Get transaction data from database
     //     $transaction = Transaction::findOrFail($id);

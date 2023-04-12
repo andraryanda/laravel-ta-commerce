@@ -21,6 +21,7 @@ use App\Http\Controllers\LandingPage\HostingController;
 use App\Http\Controllers\LandingPage\PricingController;
 use App\Http\Controllers\LandingPage\HalamanUtamaController;
 use App\Http\Controllers\Midtrans\MidtransWebhookController;
+use App\Http\Controllers\SearchGlobalController;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,7 +57,6 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
             Route::resource('product.gallery', ProductGalleryController::class)->shallow()->only([
                 'index', 'create', 'store', 'destroy'
             ]);
-
 
             Route::post('importCategory', [ProductCategoryController::class, 'importCategory'])->name('category.importCategory');
             Route::resource('transaction', TransactionController::class)->only([
@@ -96,19 +96,41 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
             Route::get('exportUsers', [ReportController::class, 'exportUsers'])->name('report.exportAllUsers');
             Route::get('exportRoleAdmin', [ReportController::class, 'exportRoleAdmin'])->name('report.exportRoleAdmin');
             Route::get('exportRoleUser', [ReportController::class, 'exportRoleUser'])->name('report.exportRoleUser');
+            Route::get('exportCustomUsers', [ReportController::class, 'exportCustomUsers'])->name('report.exportCustomAllUsers');
+            Route::get('exportCustomRoleAdmin', [ReportController::class, 'exportCustomRoleAdmin'])->name('report.exportCustomRoleAdmin');
+            Route::get('exportCustomRoleUser', [ReportController::class, 'exportCustomRoleUser'])->name('report.exportCustomRoleUser');
             Route::get('exportProductCategories', [ReportController::class, 'exportProductCategories'])->name('report.exportProductCategories');
+            Route::get('exportCustomProductCategories', [ReportController::class, 'exportCustomProductCategories'])->name('report.exportCustomProductCategories');
             Route::get('exportAllProducts', [ReportController::class, 'exportProducts'])->name('report.exportProducts');
+            Route::get('exportCustomProducts', [ReportController::class, 'exportCustomProducts'])->name('report.exportCustomProducts');
+
             Route::get('exportPDF-{transaction}', [ReportController::class, 'exportPDF'])->name('report.exportPDF');
             Route::get('exportAllTransactions', [ReportController::class, 'exportAllTransactions'])->name('report.exportAllTransactions');
+            Route::get('exportAllCustomTransactions', [ReportController::class, 'exportAllCustomTransactions'])->name('report.exportAllCustomTransactions');
             Route::get('exportTransactionCancelled', [ReportController::class, 'exportTransactionCancelled'])->name('report.exportTransactionCancelled');
             Route::get('exportTransactionSuccess', [ReportController::class, 'exportTransactionSuccess'])->name('report.exportTransactionSuccess');
             Route::get('exportTransactionPending', [ReportController::class, 'exportTransactionPending'])->name('report.exportTransactionPending');
+            Route::get('exportTransactionCustomPending', [ReportController::class, 'exportTransactionCustomPending'])->name('report.exportTransactionCustomPending');
+            Route::get('exportTransactionCustomSuccess', [ReportController::class, 'exportTransactionCustomSuccess'])->name('report.exportTransactionCustomSuccess');
+            Route::get('exportTransactionCustomCancelled', [ReportController::class, 'exportTransactionCustomCancelled'])->name('report.exportTransactionCustomCancelled');
+
+            // // Midtrans
+            // Route::get('dashboard/payment/cancel/{id}', [MidtransWebhookController::class, 'cancelPayment'])->name('midtrans.cancel');
+            // Route::get('payment/finish/{id}', [TransactionController::class, 'handlefinish'])->name('payment.finish');
+
+            // Route::get('transaction/{id}/payment', [TransactionController::class, 'payment'])->name('payment');
+            // Route::post('payment/notification', [TransactionController::class, 'notification'])->name('transaction.paymentNotification');
+            // Route::post('recurring/notification', [TransactionController::class, 'notificationHandler'])->name('transaction.recurring');
+            // Route::post('payAccount/notification', [MidtransWebhookController::class, 'handlePayAccountNotification'])->name('transaction.payAccount');
+            // Route::get('payment/unfinish/{id}', [MidtransWebhookController::class, 'handleUnfinish'])->name('payment.unfinish');
+            // Route::get('payment/error', [MidtransWebhookController::class, 'handleError'])->name('payment.error');
+            // Route::get('transactionShowMidtrans/{transaction}', [TransactionController::class, 'show'])->name('midtrans.show');
 
 
             // Midtrans
             Route::get('dashboard/payment/cancel/{id}', [MidtransWebhookController::class, 'cancelPayment'])->name('midtrans.cancel');
 
-            Route::get('transaction/{id}/payment', [MidtransWebhookController::class, 'payment'])->name('transaction.payment');
+            Route::get('transaction/{id}/payment', [MidtransWebhookController::class, 'payment'])->name('payment');
             Route::post('payment/notification', [MidtransWebhookController::class, 'notification'])->name('transaction.paymentNotification');
             Route::post('recurring/notification', [MidtransWebhookController::class, 'notificationHandler'])->name('transaction.recurring');
             Route::post('payAccount/notification', [MidtransWebhookController::class, 'handlePayAccountNotification'])->name('transaction.payAccount');

@@ -86,9 +86,7 @@ class MidtransWebhookController extends Controller
                     'url' => route('dashboard.midtrans.cancel', $transaction->id),
                 ],
                 'unfinish' => route('dashboard.payment.unfinish', $transaction->id),
-
             ],
-
         ];
 
         // Panggil API midtrans untuk membuat transaksi baru
@@ -245,13 +243,14 @@ class MidtransWebhookController extends Controller
         Config::$isSanitized = true;
         Config::$is3ds = true;
 
-        $transaction = Transaction::where('id', $request->order_id)->firstOrFail();
+        // Cek apakah transaksi ditemukan dalam database berdasarkan order_id
+        $transaction = Transaction::where('id', $request->order_id)->first();
+        if (!$transaction) {
+            return response()->json(['error' => 'Transaction not found'], 404);
+        }
 
         if ($request->status_code == 200) {
-            if ($request->transaction_status == 'settlement') {
-                $transaction->status = 'SUCCESS';
-                $transaction->payment = 'Bank Transfer';
-            } elseif ($request->transaction_status == 'capture') {
+            if ($request->transaction_status == 'settlement' || $request->transaction_status == 'capture') {
                 $transaction->status = 'SUCCESS';
                 $transaction->payment = 'Bank Transfer';
             } elseif ($request->transaction_status == 'pending') {
@@ -259,44 +258,37 @@ class MidtransWebhookController extends Controller
             } elseif ($request->transaction_status == 'deny') {
                 $transaction->status = 'DENY';
                 $transaction->payment = 'Bank Transfer';
-                // tambahkan kode ini untuk membatalkan transaksi di Midtrans
+                // batalkan transaksi di Midtrans
                 \Midtrans\Transaction::cancel($request->order_id);
             } elseif ($request->transaction_status == 'expire') {
                 $transaction->status = 'EXPIRED';
                 $transaction->payment = 'Bank Transfer';
-                // tambahkan kode ini untuk membatalkan transaksi di Midtrans
+                // batalkan transaksi di Midtrans
                 \Midtrans\Transaction::cancel($request->order_id);
             } elseif ($request->transaction_status == 'cancel') {
                 $transaction->status = 'CANCELLED';
                 $transaction->payment = 'Bank Transfer';
-                // tambahkan kode ini untuk membatalkan transaksi di Midtrans
+                // batalkan transaksi di Midtrans
                 \Midtrans\Transaction::cancel($request->order_id);
             } else {
                 $transaction->status = 'CANCELLED';
                 $transaction->payment = 'Bank Transfer';
-
-                // tambahkan kode ini untuk membatalkan transaksi di Midtrans
+                // batalkan transaksi di Midtrans
                 \Midtrans\Transaction::cancel($request->order_id);
             }
         } else {
             $transaction->status = 'CANCELLED';
             $transaction->payment = 'Bank Transfer';
+            // batalkan transaksi di Midtrans
             \Midtrans\Transaction::cancel($request->order_id);
         }
 
         $transaction->save();
 
-        // tambahkan kode ini untuk menampilkan peringatan jika pengguna menekan tombol "Back to Merchant"
-        if ($request->status_code == 404 && $request->transaction_status == 'cancel') {
-            return redirect()->route('dashboard.midtrans.show', $transaction->id);
-        }
-
-        if ($transaction->status == 'SUCCESS') {
-            return redirect()->route('dashboard.midtrans.show', $transaction->id)->with('success', 'Transaksi Berhasil');
-        } else {
-            return redirect()->route('dashboard.midtrans.show', $transaction->id)->with('error', 'Transaksi Cancelled');
-        }
+        // return redirect()->route('dashboard.transaction.indexSuccess');
+        return redirect()->route('dashboard.midtrans.show', $transaction->id);
     }
+
 
 
     public function handleUnfinish(Request $request)
@@ -348,43 +340,39 @@ class MidtransWebhookController extends Controller
 
         return view('pages.midtrans.index', compact('transaction'));
     }
-
-
-    // public function updateStatus(Request $request)
-    // {
-    //     $transaction = Transaction::where('id', $request->order_id)->firstOrFail();
-
-    //     if ($request->status_code == 200) {
-    //         if ($request->transaction_status == 'settlement') {
-    //             $transaction->status = 'SUCCESS';
-    //         } elseif ($request->transaction_status == 'pending') {
-    //             $transaction->status = 'PENDING';
-    //         } elseif ($request->transaction_status == 'deny') {
-    //             $transaction->status = 'DENY';
-    //         } elseif ($request->transaction_status == 'expire') {
-    //             $transaction->status = 'EXPIRED';
-    //         } elseif ($request->transaction_status == 'cancel') {
-    //             $transaction->status = 'CANCELLED';
-    //         } else {
-    //             $transaction->status = 'CANCELLED';
-    //         }
-    //     } else {
-    //         $transaction->status = 'CANCELLED';
-    //     }
-
-    //     $transaction->save();
-    //     return redirect()->route('dashboard.transaction.show', $transaction->id);
-    //     // return response('OK', 200);
-    // }
-    // // Cara update transaksi 2
-    // public function paymentFinish($id)
-    // {
-    //     $transaction = Transaction::findOrFail($id);
-    //     $transaction->status = 'SUCCESS';
-    //     $transaction->save();
-
-    //     return redirect()->route('dashboard.transaction.show', $id);
-    // }
-
-
 }
+
+// public function updateStatus(Request $request)
+// {
+//     $transaction = Transaction::where('id', $request->order_id)->firstOrFail();
+
+//     if ($request->status_code == 200) {
+//         if ($request->transaction_status == 'settlement') {
+//             $transaction->status = 'SUCCESS';
+//         } elseif ($request->transaction_status == 'pending') {
+//             $transaction->status = 'PENDING';
+//         } elseif ($request->transaction_status == 'deny') {
+//             $transaction->status = 'DENY';
+//         } elseif ($request->transaction_status == 'expire') {
+//             $transaction->status = 'EXPIRED';
+//         } elseif ($request->transaction_status == 'cancel') {
+//             $transaction->status = 'CANCELLED';
+//         } else {
+//             $transaction->status = 'CANCELLED';
+//         }
+//     } else {
+//         $transaction->status = 'CANCELLED';
+//     }
+
+//     $transaction->save();
+//     return redirect()->route('dashboard.transaction.show', $transaction->id);
+// }
+// // Cara update transaksi 2
+// public function paymentFinish($id)
+// {
+//     $transaction = Transaction::findOrFail($id);
+//     $transaction->status = 'SUCCESS';
+//     $transaction->save();
+
+//     return redirect()->route('dashboard.transaction.show', $id);
+// }

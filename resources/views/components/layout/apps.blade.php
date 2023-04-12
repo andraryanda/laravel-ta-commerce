@@ -9,6 +9,10 @@
     {{-- <title>{{ __('Als Store RT/RW NET') }}</title> --}}
     <link rel="shortcut icon" href="{{ asset('icon/store.png') }}">
 
+    <link href="{{ url('https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css') }}"
+        rel="stylesheet" />
+    <script src="{{ url('https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js') }}"></script>
+
     <link href="{{ url('https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.4/flowbite.min.css') }}" rel="stylesheet" />
     <script src="{{ url('https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.4/flowbite.min.js') }}"></script>
 
@@ -191,11 +195,6 @@
     <!-- Scripts -->
 
     <script src="{{ url('https://cdn.jsdelivr.net/npm/sweetalert2@11') }}"></script>
-    {{-- <script src="{{ asset('assets/select2/dist/js/select2.min.js') }}"></script>
-    <link rel="stylesheet" href="{{ asset('assets/select2/dist/css/select2.min.css') }}"> --}}
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
 
     <script src="{{ url('https://code.jquery.com/jquery-3.6.0.min.js') }}"></script>
     <script type="text/javascript" src="{{ url('https://code.jquery.com/jquery-3.4.1.min.js') }}"></script>

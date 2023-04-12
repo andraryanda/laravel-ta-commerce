@@ -3,15 +3,17 @@
 namespace App\Http\Controllers;
 
 use view;
+use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Str;
 use App\Models\ProductCategory;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Crypt;
+use App\Imports\ProductCategoryImport;
 use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\ProductCategoryRequest;
-use App\Imports\ProductCategoryImport;
-use Ramsey\Uuid\Uuid;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ProductCategoryController extends Controller
@@ -28,16 +30,17 @@ class ProductCategoryController extends Controller
 
             return DataTables::of($query)
                 ->addColumn('action', function ($item) {
+                    $encryptedId = Crypt::encrypt($item->id);
                     return '
                     <div class="flex justify-start items-center space-x-3.5">
-                        <a href="' . route('dashboard.category.edit', $item->id) . '" title="Edit"
+                        <a href="' . route('dashboard.category.edit', $encryptedId) . '" title="Edit"
                             class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-yellow-500 bg-yellow-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-yellow-500 focus:outline-none focus:shadow-outline">
                             <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/edit.png') . '" alt="edit" loading="lazy" width="20" />
                             <p class="mt-1 text-xs">Edit</p>
                         </a>
                         <button type="button" title="Delete"
                             class="flex flex-col delete-button shadow-sm items-center justify-center w-20 h-12 border border-red-500 bg-red-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-red-500 focus:outline-none focus:shadow-outline"
-                            data-id="' . $item->id . '">
+                            data-id="' . $encryptedId . '">
                             <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/delete.png') . '" alt="delete" loading="lazy" width="20" />
                             <p class="mt-1 text-xs">Delete</p>
                         </button>
@@ -121,12 +124,23 @@ class ProductCategoryController extends Controller
      * @param  \App\Models\ProductCategory  $category
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|\Illuminate\View\View
      */
-    public function edit(ProductCategory $category)
+
+    public function edit($encryptedId)
     {
+        $id = Crypt::decrypt($encryptedId);
+        $category = ProductCategory::find($id);
+
+        if (!$category) {
+            // Lakukan penanganan jika kategori tidak ditemukan
+            abort(404);
+        }
+
         return view('pages.dashboard.category.edit', [
             'item' => $category
         ]);
     }
+
+
 
     /**
      * Update the specified resource in storage.
@@ -150,10 +164,23 @@ class ProductCategoryController extends Controller
      * @param  \App\Models\ProductCategory  $category
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(ProductCategory $category)
+    public function destroy($encryptedId)
     {
-        $category->delete();
+        try {
+            $id = Crypt::decrypt($encryptedId);
+            $category = ProductCategory::find($id);
 
-        return redirect()->route('dashboard.category.index');
+            if (!$category) {
+                // Lakukan penanganan jika kategori tidak ditemukan
+                abort(404);
+            }
+
+            $category->delete();
+
+            return redirect()->route('dashboard.category.index')->with('success', 'Kategori telah dihapus.');
+        } catch (DecryptException $e) {
+            // Lakukan penanganan jika terjadi kesalahan dekripsi
+            abort(404);
+        }
     }
 }

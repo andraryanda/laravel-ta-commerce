@@ -25,7 +25,14 @@ class ProductGalleryRequest extends FormRequest
     public function rules()
     {
         return [
-            'files.*' => 'required|image',
+            'files.*' => 'required|image|mimes:jpeg,jpg,png',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'files.*.mimes' => 'File harus dalam format jpeg, jpg, atau png',
         ];
     }
 }

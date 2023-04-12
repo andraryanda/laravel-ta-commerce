@@ -94,12 +94,6 @@
                                 }
                             },
                             {
-                                data: 'id',
-                                name: 'id',
-                                width: '5%',
-                                className: 'dt-body-start',
-                            },
-                            {
                                 data: 'name',
                                 name: 'name',
                                 className: 'dt-body-start',
@@ -138,7 +132,7 @@
                             // [0, 'asc'] // Kolom indeks 0 (DT_RowIndex) diurutkan secara ascending
                         ],
                         language: {
-                            searchPlaceholder: "Search Data Users",
+                            searchPlaceholder: "Search Data Category",
                             decimal: ',',
                             thousands: '.',
                             paginate: {
@@ -266,7 +260,6 @@
                         <tr
                             class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
                             <th>No</th>
-                            <th>ID</th>
                             <th>Nama</th>
                             <th>Tanggal</th>
                             <th>Aksi</th>
@@ -277,7 +270,6 @@
                     <tfoot
                         class="text-xs font-semibold tracking-wide text-left text-gray-600 uppercase border-b dark:border-gray-800 bg-gray-50 dark:text-gray-800 dark:bg-gray-400">
                         <th class="no-search"></th>
-                        <th>ID</th>
                         <th>Nama</th>
                         <th>Tanggal</th>
                         <th></th>
@@ -288,55 +280,57 @@
 
         @push('javascript')
             <script>
-                $('body').on('click', '.delete-button', function() {
-                    var category_id = $(this).data("id");
-                    Swal.fire({
-                        title: 'Apakah anda yakin ingin menghapus category ini?',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#d33',
-                        cancelButtonColor: '#3085d6',
-                        confirmButtonText: 'Hapus',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            $.ajax({
-                                type: "DELETE",
-                                url: "{{ route('dashboard.category.destroy', ':id') }}".replace(
-                                    ':id', category_id),
-                                data: {
-                                    "_token": "{{ csrf_token() }}"
-                                },
-                                error: function(data) {
-                                    console.log('Error:', data);
-                                }
-                            });
-                            setTimeout(function() {
-                                    location.reload();
-                                },
-                                1000
-                            ); // memberikan jeda selama 1000 milidetik atau 1 detik sebelum reload
-                            let timerInterval;
-                            Swal.fire({
-                                title: 'Deleted!',
-                                text: 'Your data has been deleted.',
-                                icon: 'success',
-                                timer: 1500,
-                                timerProgressBar: true,
-                                didOpen: () => {
-                                    Swal.showLoading();
-                                    timerInterval = setInterval(() => {}, 100);
-                                },
-                                willClose: () => {
-                                    clearInterval(timerInterval);
-                                    location.reload();
-                                }
-                            }).then((result) => {
-                                if (result.dismiss === Swal.DismissReason.timer) {
-                                    console.log('I was closed by the timer');
-                                }
-                            });
-                        }
+                $(document).ready(function() {
+                    $('body').on('click', '.delete-button', function() {
+                        var category_id = $(this).data("id");
+                        Swal.fire({
+                            title: 'Apakah anda yakin ingin menghapus category ini?',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#3085d6',
+                            confirmButtonText: 'Hapus',
+                            cancelButtonText: 'Batal'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                $.ajax({
+                                    type: "DELETE",
+                                    url: "{{ route('dashboard.category.destroy', ':id') }}".replace(
+                                        ':id', category_id),
+                                    data: {
+                                        "_token": "{{ csrf_token() }}"
+                                    },
+                                    error: function(data) {
+                                        console.log('Error:', data);
+                                    }
+                                });
+                                setTimeout(function() {
+                                        location.reload();
+                                    },
+                                    1000
+                                ); // memberikan jeda selama 1000 milidetik atau 1 detik sebelum reload
+                                let timerInterval;
+                                Swal.fire({
+                                    title: 'Deleted!',
+                                    text: 'Your data has been deleted.',
+                                    icon: 'success',
+                                    timer: 1500,
+                                    timerProgressBar: true,
+                                    didOpen: () => {
+                                        Swal.showLoading();
+                                        timerInterval = setInterval(() => {}, 100);
+                                    },
+                                    willClose: () => {
+                                        clearInterval(timerInterval);
+                                        location.reload();
+                                    }
+                                }).then((result) => {
+                                    if (result.dismiss === Swal.DismissReason.timer) {
+                                        console.log('I was closed by the timer');
+                                    }
+                                });
+                            }
+                        });
                     });
                 });
             </script>

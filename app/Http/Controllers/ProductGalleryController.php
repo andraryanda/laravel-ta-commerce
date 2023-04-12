@@ -69,17 +69,6 @@ class ProductGalleryController extends Controller
     public function store(ProductGalleryRequest $request, Product $product)
     {
         $files = $request->file('files');
-
-        // if ($request->hasFile('files')) {
-        //     foreach ($files as $file) {
-        //         $path = $file->storeAs('public/gallery', $file->getClientOriginalName());
-
-        //         ProductGallery::create([
-        //             'products_id' => $product->id,
-        //             'url' => $path
-        //         ]);
-        //     }
-        // }
         if ($request->hasFile('files')) {
             foreach ($files as $file) {
                 $extension = $file->getClientOriginalExtension();

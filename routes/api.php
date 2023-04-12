@@ -6,6 +6,7 @@ use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\API\TransactionController;
 use App\Http\Controllers\API\ProductCategoryController;
+use App\Http\Controllers\API\MidtransAPI\MidtransAPIWebhookController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,6 +27,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('transactions', [TransactionController::class, 'all']);
     Route::post('checkout', [TransactionController::class, 'checkout']);
+
+    Route::get('transactionAPI/{id}/payment', [MidtransAPIWebhookController::class, 'payment'])->name('paymentAPI');
 });
 
 

@@ -140,22 +140,24 @@
                                 orderable: false,
                                 searchable: false,
                                 width: '25%',
-                                render: function(data, type, full, meta) {
-                                    return '<div class="flex justify-start items-center space-x-3.5">\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <button type="button" class="inline-flex btn-edit flex-col items-center justify-center w-20 h-12 bg-yellow-400 text-white rounded-md border border-yellow-500 transition duration-500 ease select-none hover:bg-yellow-500 focus:outline-none focus:shadow-outline" data-id="' +
-                                        full.id +
-                                        '">\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <img class="object-cover w-6 h-6 rounded-full" src="{{ asset('icon/edit.png') }}" alt="edit" loading="lazy" width="20" />\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <p class="mt-1 text-xs">Edit</p>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </button>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <button type="button" class="inline-flex btn-delete flex-col items-center justify-center w-20 h-12 bg-red-400 text-white rounded-md border border-red-500 transition duration-500 ease select-none hover:bg-red-500 focus:outline-none focus:shadow-outline" data-id="' +
-                                        full.id +
-                                        '">\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <img class="w-6 h-6 rounded-full object-cover mr-2" src="{{ asset('icon/delete.png') }}" alt="Delete" loading="lazy" width="20" />\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <span class="text-xs">Hapus</span>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </button>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>';
-                                }
+                                //                 render: function(data, type, row, meta) {
+                                //                     var encryptedId = '{{ encrypt(' + row.id + ') }}'; // Mengenkripsi ID
+                                //                     return '<div class="flex justify-start items-center space-x-3.5">\
+                                //                                     <button type="button" class="inline-flex btn-edit flex-col items-center justify-center w-20 h-12 bg-yellow-400 text-white rounded-md border border-yellow-500 transition duration-500 ease select-none hover:bg-yellow-500 focus:outline-none focus:shadow-outline" data-id="' +
+                                //                         encryptedId +
+                                //                         '">\
+                                // <img class="object-cover w-6 h-6 rounded-full" src="{{ asset('icon/edit.png') }}" alt="edit" loading="lazy" width="20" />\
+                                // <p class="mt-1 text-xs">Edit</p>\
+                                // </button>\
+                                //                                                     <button type="button" class="inline-flex btn-delete flex-col items-center justify-center w-20 h-12 bg-red-400 text-white rounded-md border border-red-500 transition duration-500 ease select-none hover:bg-red-500 focus:outline-none focus:shadow-outline" data-id="' +
+                                //                         encryptedId +
+                                //                         '">\
+                                //                                                     <img class="w-6 h-6 rounded-full object-cover mr-2" src="{{ asset('icon/delete.png') }}" alt="Delete" loading="lazy" width="20" />\
+                                //                                                     <span class="text-xs">Hapus</span>\
+                                //                                                     </button>\
+                                //                                                 </div>';
+                                //                 }
+
                             }
                         ],
                         pagingType: 'full_numbers',
@@ -180,24 +182,38 @@
                         }
                     });
 
-                    $('body').on('click', '.btn-edit', function() {
-                        var user_id = $(this).data('id');
-                        $.ajax({
-                            url: "{{ route('dashboard.user.edit', ['user' => ':id']) }}".replace(':id',
-                                user_id),
-                            type: "GET",
-                            success: function(response) {
-                                window.location.href =
-                                    "{{ route('dashboard.user.edit', ['user' => ':id']) }}".replace(
-                                        ':id', user_id);
-                            },
-                            error: function() {
-                                console.log('Error: Failed to open edit page.');
-                            }
-                        });
-                    });
 
-                    $('body').on('click', '.btn-delete', function() {
+
+                });
+            </script>
+
+
+            {{-- count Biasa --}}
+            <script>
+                const counters = document.querySelectorAll('.counter');
+                const speed = 200;
+
+                counters.forEach(counter => {
+                    const animate = () => {
+                        const target = +counter.getAttribute('data-target');
+                        const count = +counter.innerText.replace(/,/g, '');
+                        const increment = Math.ceil(target / speed);
+                        if (count < target) {
+                            counter.innerText = (count + increment).toLocaleString('id-ID');
+                            setTimeout(animate, 1);
+                        } else {
+                            counter.innerText = target.toLocaleString('id-ID');
+                        }
+                    }
+                    animate();
+                });
+            </script>
+        </x-slot>
+
+        @push('javascript')
+            <script>
+                $(document).ready(function() {
+                    $('body').on('click', '.delete-button', function() {
                         var user_id = $(this).data("id");
                         Swal.fire({
                             title: 'Apakah anda yakin ingin menghapus user ini?',
@@ -250,29 +266,7 @@
                     });
                 });
             </script>
-
-
-            {{-- count Biasa --}}
-            <script>
-                const counters = document.querySelectorAll('.counter');
-                const speed = 200;
-
-                counters.forEach(counter => {
-                    const animate = () => {
-                        const target = +counter.getAttribute('data-target');
-                        const count = +counter.innerText.replace(/,/g, '');
-                        const increment = Math.ceil(target / speed);
-                        if (count < target) {
-                            counter.innerText = (count + increment).toLocaleString('id-ID');
-                            setTimeout(animate, 1);
-                        } else {
-                            counter.innerText = target.toLocaleString('id-ID');
-                        }
-                    }
-                    animate();
-                });
-            </script>
-        </x-slot>
+        @endpush
 
         <div class="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4">
             <!-- Card -->

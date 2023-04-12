@@ -1,172 +1,21 @@
 <x-layout.apps>
     <x-slot name="header">
-        <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
+        <h2 class="my-6 mx-2 text-2xl font-semibold text-gray-700 dark:text-gray-200">
             {{ __('Report Users/Category/Product/Transaction') }}
         </h2>
     </x-slot>
 
     <x-slot name="slot">
-        <x-slot name="styles">
-
-        </x-slot>
-
-        @push('javascript')
-            <script>
-                $(document).ready(function() {
-                    // Action when the form is submitted
-                    $('#report-form').submit(function(event) {
-                        event.preventDefault();
-                        var form = $(this);
-
-                        $.ajax({
-                            url: form.attr('action'),
-                            method: form.attr('method'),
-                            data: form.serialize(),
-                            dataType: 'json',
-                            beforeSend: function() {
-                                Swal.fire({
-                                    title: 'Please wait',
-                                    text: 'Generating report...',
-                                    allowOutsideClick: false,
-                                    showConfirmButton: false,
-                                    onBeforeOpen: () => {
-                                        Swal.showLoading();
-                                    }
-                                });
-                            },
-                            success: function(response) {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Success',
-                                    text: 'Report generated',
-                                    showConfirmButton: true,
-                                }).then(function() {
-                                    window.location.href = response.download_link;
-                                });
-                            },
-                            error: function(xhr, status, error) {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: xhr.responseJSON.message,
-                                    showConfirmButton: true,
-                                });
-                            }
-                        });
-                    });
-
-                    // Action when the export button is clicked
-                    $('#export').click(function() {
-                        var form = $('#report-form');
-                        form.attr('action', '{{ url('#') }}');
-                        form.attr('method', 'POST');
-                        form.submit();
-                    });
-                });
-            </script>
-
-            <script>
-                $(document).ready(function() {
-                    // Hide all buttons on page load
-                    $('#btn-laporan-all-users, #btn-laporan-user-admin, #btn-laporan-user-customer, #btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
-                        .hide();
-
-                    // Show button when an option is selected
-                    $('#laporan').on('change', function() {
-                        var selectedOption = $(this).val();
-
-                        if (selectedOption === '') {
-                            $('#btn-laporan-all-users, #btn-laporan-user-admin, #btn-laporan-user-customer, #btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
-                                .hide();
-                        } else if (selectedOption === 'laporan-all-users') {
-                            $('#btn-laporan-all-users').show();
-                            $('#btn-laporan-user-admin, #btn-laporan-user-customer, #btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
-                                .hide();
-                        } else if (selectedOption === 'laporan-user-admin') {
-                            $('#btn-laporan-user-admin').show();
-                            $('#btn-laporan-all-users, #btn-laporan-user-customer, #btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
-                                .hide();
-                        } else if (selectedOption === 'laporan-user-customer') {
-                            $('#btn-laporan-user-customer').show();
-                            $('#btn-laporan-all-users, #btn-laporan-user-admin, #btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
-                                .hide();
-                        } else if (selectedOption === 'laporan-kategori') {
-                            $('#btn-laporan-kategori').show();
-                            $('#btn-laporan-all-users, #btn-laporan-user-admin, #btn-laporan-user-customer, #btn-laporan-produk, #btn-laporan-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
-                                .hide();
-                        } else if (selectedOption === 'laporan-produk') {
-                            $('#btn-laporan-produk').show();
-                            $('#btn-laporan-all-users, #btn-laporan-user-admin, #btn-laporan-user-customer, #btn-laporan-kategori, #btn-laporan-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
-                                .hide();
-                        } else if (selectedOption === 'laporan-all-transaksi') {
-                            $('#btn-laporan-all-transaksi').show();
-                            $('#btn-laporan-all-users, #btn-laporan-user-admin, #btn-laporan-user-customer, #btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
-                                .hide();
-                        } else if (selectedOption === 'laporan-transaksi-success') {
-                            $('#btn-laporan-transaksi-success').show();
-                            $('#btn-laporan-all-users, #btn-laporan-user-admin, #btn-laporan-user-customer, #btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-all-transaksi, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
-                                .hide();
-                        } else if (selectedOption === 'laporan-transaksi-pending') {
-                            $('#btn-laporan-transaksi-pending').show();
-                            $('#btn-laporan-all-users, #btn-laporan-user-admin, #btn-laporan-user-customer, #btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-cancelled')
-                                .hide();
-                        } else if (selectedOption === 'laporan-transaksi-cancelled') {
-                            $('#btn-laporan-transaksi-cancelled').show();
-                            $('#btn-laporan-all-users, #btn-laporan-user-admin, #btn-laporan-user-customer, #btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending')
-                                .hide();
-                        }
-                    });
-
-                    // Access export URL on button click
-                    $('#btn-laporan-all-users').on('click', function() {
-                        var exportUrl = "{{ route('dashboard.report.exportAllUsers') }}";
-                        window.location.href = exportUrl;
-                    });
-                    $('#btn-laporan-user-admin').on('click', function() {
-                        var exportUrl = "{{ route('dashboard.report.exportRoleAdmin') }}";
-                        window.location.href = exportUrl;
-                    });
-                    $('#btn-laporan-user-customer').on('click', function() {
-                        var exportUrl = "{{ route('dashboard.report.exportRoleUser') }}";
-                        window.location.href = exportUrl;
-                    });
-                    $('#btn-laporan-kategori').on('click', function() {
-                        var exportUrl = "{{ route('dashboard.report.exportProductCategories') }}";
-                        window.location.href = exportUrl;
-                    });
-                    $('#btn-laporan-produk').on('click', function() {
-                        var exportUrl = "{{ route('dashboard.report.exportProducts') }}";
-                        window.location.href = exportUrl;
-                    });
-                    $('#btn-laporan-all-transaksi').on('click', function() {
-                        var exportUrl = "{{ route('dashboard.report.exportAllTransactions') }}";
-                        window.location.href = exportUrl;
-                    });
-                    $('#btn-laporan-transaksi-success').on('click', function() {
-                        var exportUrl = "{{ route('dashboard.report.exportTransactionSuccess') }}";
-                        window.location.href = exportUrl;
-                    });
-                    $('#btn-laporan-transaksi-pending').on('click', function() {
-                        var exportUrl = "{{ route('dashboard.report.exportTransactionPending') }}";
-                        window.location.href = exportUrl;
-                    });
-                    $('#btn-laporan-transaksi-cancelled').on('click', function() {
-                        var exportUrl = "{{ route('dashboard.report.exportTransactionCancelled') }}";
-                        window.location.href = exportUrl;
-                    });
-                });
-            </script>
-        @endpush
 
 
         {{-- Code function halaman Report --}}
-        <div class="py-3">
+        <div class="py-3 mx-2">
             <div
                 class="w-full p-6 mx-auto sm:px-6 lg:px-8 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                 <label for="laporan" class="block font-medium text-sm text-gray-700"><strong>Pilih
                         Laporan:</strong></label>
                 <select name="laporan" id="laporan"
-                    class="block w-full mt-1 rounded-md p-3 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    class="select-search block w-full mt-1 rounded-md p-3 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                     <option value=""> -- Select --</option>
                     <option value="laporan-all-users">Laporan All Users</option>
                     <option value="laporan-user-admin">Laporan User Admin</option>
@@ -251,11 +100,347 @@
                         </div>
                     </button>
                 </div>
+
+                <div class="mt-3 space-y-3">
+                    {{-- All Users --}}
+                    <div id="btn-laporan-custom-all-users">
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <h2 class="text-lg font-semibold mb-4">Custom Date All Users</h2>
+                            <form method="GET" action="{{ route('dashboard.report.exportCustomAllUsers') }}">
+                                <div class="mb-4">
+                                    <label for="start_date" class="block text-sm font-medium text-gray-700">Start
+                                        Date</label>
+                                    <input type="date" class="form-input mt-1 block w-full sm:w-full rounded-md"
+                                        name="start_date" id="start_date" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="end_date" class="block text-sm font-medium text-gray-700">End
+                                        Date</label>
+                                    <input type="date" class="form-input mt-1 block w-full sm:w-full rounded-md"
+                                        name="end_date" id="end_date" required>
+                                </div>
+
+                                <button type="submit"
+                                    class="w-full sm:w-full bg-purple-500 text-white rounded-md py-2 px-4 font-medium hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                    Export</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    {{-- User Admin --}}
+                    <div id="btn-laporan-custom-user-admin">
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <h2 class="text-lg font-semibold mb-4">Custom Date User Admin</h2>
+                            <form method="GET" action="{{ route('dashboard.report.exportCustomRoleAdmin') }}">
+                                <div class="mb-4">
+                                    <label for="start_date" class="block text-sm font-medium text-gray-700">Start
+                                        Date</label>
+                                    <input type="date" class="form-input mt-1 block w-full sm:w-full rounded-md"
+                                        name="start_date" id="start_date" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="end_date" class="block text-sm font-medium text-gray-700">End
+                                        Date</label>
+                                    <input type="date" class="form-input mt-1 block w-full sm:w-full rounded-md"
+                                        name="end_date" id="end_date" required>
+                                </div>
+
+                                <button type="submit"
+                                    class="w-full sm:w-full bg-purple-500 text-white rounded-md py-2 px-4 font-medium hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                    Export</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    {{-- User Customer --}}
+                    <div id="btn-laporan-custom-user-customer">
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <h2 class="text-lg font-semibold mb-4">Custom Date User Customer</h2>
+                            <form method="GET" action="{{ route('dashboard.report.exportCustomRoleUser') }}">
+                                <div class="mb-4">
+                                    <label for="start_date" class="block text-sm font-medium text-gray-700">Start
+                                        Date</label>
+                                    <input type="date" class="form-input mt-1 block w-full sm:w-full rounded-md"
+                                        name="start_date" id="start_date" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="end_date" class="block text-sm font-medium text-gray-700">End
+                                        Date</label>
+                                    <input type="date" class="form-input mt-1 block w-full sm:w-full rounded-md"
+                                        name="end_date" id="end_date" required>
+                                </div>
+
+                                <button type="submit"
+                                    class="w-full sm:w-full bg-purple-500 text-white rounded-md py-2 px-4 font-medium hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                    Export</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    {{-- Category --}}
+                    <div id="btn-laporan-custom-category">
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <h2 class="text-lg font-semibold mb-4">Custom Date Category</h2>
+                            <form method="GET"
+                                action="{{ route('dashboard.report.exportCustomProductCategories') }}">
+                                <div class="mb-4">
+                                    <label for="start_date" class="block text-sm font-medium text-gray-700">Start
+                                        Date</label>
+                                    <input type="date" class="form-input mt-1 block w-full sm:w-full rounded-md"
+                                        name="start_date" id="start_date" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="end_date" class="block text-sm font-medium text-gray-700">End
+                                        Date</label>
+                                    <input type="date" class="form-input mt-1 block w-full sm:w-full rounded-md"
+                                        name="end_date" id="end_date" required>
+                                </div>
+
+                                <button type="submit"
+                                    class="w-full sm:w-full bg-purple-500 text-white rounded-md py-2 px-4 font-medium hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                    Export</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    {{-- Product --}}
+                    <div id="btn-laporan-custom-products">
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <h2 class="text-lg font-semibold mb-4">Custom Date Products</h2>
+                            <form method="GET" action="{{ route('dashboard.report.exportCustomProducts') }}">
+                                <div class="mb-4">
+                                    <label for="start_date" class="block text-sm font-medium text-gray-700">Start
+                                        Date</label>
+                                    <input type="date" class="form-input mt-1 block w-full sm:w-full rounded-md"
+                                        name="start_date" id="start_date" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="end_date" class="block text-sm font-medium text-gray-700">End
+                                        Date</label>
+                                    <input type="date" class="form-input mt-1 block w-full sm:w-full rounded-md"
+                                        name="end_date" id="end_date" required>
+                                </div>
+
+                                <button type="submit"
+                                    class="w-full sm:w-full bg-purple-500 text-white rounded-md py-2 px-4 font-medium hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                    Export</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    {{-- All Transactions --}}
+                    <div id="btn-laporan-custom-all-transaksi">
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <h2 class="text-lg font-semibold mb-4">Custom Date Transaksi</h2>
+                            <form method="GET"
+                                action="{{ route('dashboard.report.exportAllCustomTransactions') }}">
+                                <div class="mb-4">
+                                    <label for="start_date" class="block text-sm font-medium text-gray-700">Start
+                                        Date</label>
+                                    <input type="date" class="form-input mt-1 block w-full sm:w-full rounded-md"
+                                        name="start_date" id="start_date" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="end_date" class="block text-sm font-medium text-gray-700">End
+                                        Date</label>
+                                    <input type="date" class="form-input mt-1 block w-full sm:w-full rounded-md"
+                                        name="end_date" id="end_date" required>
+                                </div>
+
+                                <button type="submit"
+                                    class="w-full sm:w-full bg-purple-500 text-white rounded-md py-2 px-4 font-medium hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                    Export</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    {{-- Transaction Success --}}
+                    <div id="btn-laporan-custom-transaksi-success">
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <h2 class="text-lg font-semibold mb-4">Custom Date Transaksi Success</h2>
+                            <form method="GET"
+                                action="{{ route('dashboard.report.exportTransactionCustomSuccess') }}">
+                                <div class="mb-4">
+                                    <label for="start_date" class="block text-sm font-medium text-gray-700">Start
+                                        Date</label>
+                                    <input type="date" class="form-input mt-1 block w-full sm:w-full rounded-md"
+                                        name="start_date" id="start_date" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="end_date" class="block text-sm font-medium text-gray-700">End
+                                        Date</label>
+                                    <input type="date" class="form-input mt-1 block w-full sm:w-full rounded-md"
+                                        name="end_date" id="end_date" required>
+                                </div>
+
+                                <button type="submit"
+                                    class="w-full sm:w-full bg-purple-500 text-white rounded-md py-2 px-4 font-medium hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                    Export</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    {{-- Transaction Pending --}}
+                    <div id="btn-laporan-custom-transaksi-pending">
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <h2 class="text-lg font-semibold mb-4">Custom Date Transaksi Pending</h2>
+                            <form method="GET"
+                                action="{{ route('dashboard.report.exportTransactionCustomPending') }}">
+                                <div class="mb-4">
+                                    <label for="start_date" class="block text-sm font-medium text-gray-700">Start
+                                        Date</label>
+                                    <input type="date" class="form-input mt-1 block w-full sm:w-full rounded-md"
+                                        name="start_date" id="start_date" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="end_date" class="block text-sm font-medium text-gray-700">End
+                                        Date</label>
+                                    <input type="date" class="form-input mt-1 block w-full sm:w-full rounded-md"
+                                        name="end_date" id="end_date" required>
+                                </div>
+
+                                <button type="submit"
+                                    class="w-full sm:w-full bg-purple-500 text-white rounded-md py-2 px-4 font-medium hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                    Export</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    {{-- Transaction Cancelled --}}
+                    <div id="btn-laporan-custom-transaksi-cancelled">
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <h2 class="text-lg font-semibold mb-4">Custom Date Transaksi Cancelled</h2>
+                            <form method="GET"
+                                action="{{ route('dashboard.report.exportTransactionCustomCancelled') }}">
+                                <div class="mb-4">
+                                    <label for="start_date" class="block text-sm font-medium text-gray-700">Start
+                                        Date</label>
+                                    <input type="date" class="form-input mt-1 block w-full sm:w-full rounded-md"
+                                        name="start_date" id="start_date" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="end_date" class="block text-sm font-medium text-gray-700">End
+                                        Date</label>
+                                    <input type="date" class="form-input mt-1 block w-full sm:w-full rounded-md"
+                                        name="end_date" id="end_date" required>
+                                </div>
+
+                                <button type="submit"
+                                    class="w-full sm:w-full bg-purple-500 text-white rounded-md py-2 px-4 font-medium hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                    Export</button>
+                            </form>
+                        </div>
+                    </div>
+
+
+                </div>
             </div>
         </div>
 
+        @push('javascript')
+            <script>
+                $(document).ready(function() {
 
+                    // Hide all buttons on page load
+                    $('#btn-laporan-all-users, #btn-laporan-user-admin, #btn-laporan-user-customer, #btn-laporan-custom-all-users,#btn-laporan-custom-user-admin,#btn-laporan-custom-products,#btn-laporan-custom-user-customer,#btn-laporan-custom-category,#btn-laporan-custom-products, #btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-all-transaksi,#btn-laporan-custom-all-transaksi,#btn-laporan-custom-transaksi-success,#btn-laporan-custom-transaksi-pending, #btn-laporan-custom-transaksi-cancelled, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
+                        .hide();
 
+                    // Show button when an option is selected
+
+                    $('#laporan').on('change', function() {
+                        var selectedOption = $(this).val();
+
+                        if (selectedOption === '') {
+                            $('#btn-laporan-all-users, #btn-laporan-user-admin, #btn-laporan-custom-user-customer,#btn-laporan-custom-all-users, #btn-laporan-user-customer, #btn-laporan-custom-user-admin,#btn-laporan-custom-products,#btn-laporan-custom-category,#btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-all-transaksi, #btn-laporan-custom-all-transaksi, #btn-laporan-custom-transaksi-success,#btn-laporan-custom-transaksi-cancelled, #btn-laporan-custom-transaksi-pending, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
+                                .hide();
+                        } else if (selectedOption === 'laporan-all-users') {
+                            $('#btn-laporan-all-users').show();
+                            $('#btn-laporan-custom-all-users').show();
+                            $('#btn-laporan-user-admin, #btn-laporan-user-customer, #btn-laporan-custom-user-customer,#btn-laporan-custom-user-admin,#btn-laporan-custom-products,#btn-laporan-custom-category,#btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-all-transaksi, #btn-laporan-custom-transaksi-cancelled, #btn-laporan-custom-transaksi-pending,#btn-laporan-custom-transaksi-success,#btn-laporan-custom-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
+                                .hide();
+                        } else if (selectedOption === 'laporan-user-admin') {
+                            $('#btn-laporan-user-admin').show();
+                            $('#btn-laporan-custom-user-admin').show();
+                            $('#btn-laporan-all-users, #btn-laporan-user-customer, #btn-laporan-custom-user-customer,#btn-laporan-custom-all-users,#btn-laporan-custom-products,#btn-laporan-custom-category,#btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-all-transaksi,#btn-laporan-custom-transaksi-cancelled, #btn-laporan-custom-transaksi-pending,#btn-laporan-custom-transaksi-success,#btn-laporan-custom-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
+                                .hide();
+                        } else if (selectedOption === 'laporan-user-customer') {
+                            $('#btn-laporan-user-customer').show();
+                            $('#btn-laporan-custom-user-customer').show();
+                            $('#btn-laporan-all-users, #btn-laporan-user-admin, #btn-laporan-kategori,#btn-laporan-custom-user-admin,#btn-laporan-custom-all-users, #btn-laporan-custom-products,#btn-laporan-custom-category,#btn-laporan-custom-transaksi-cancelled, #btn-laporan-custom-transaksi-pending,#btn-laporan-produk, #btn-laporan-all-transaksi,#btn-laporan-custom-transaksi-success,#btn-laporan-custom-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
+                                .hide();
+                        } else if (selectedOption === 'laporan-kategori') {
+                            $('#btn-laporan-kategori').show();
+                            $('#btn-laporan-custom-category').show();
+                            $('#btn-laporan-all-users, #btn-laporan-user-admin, #btn-laporan-custom-user-admin,#btn-laporan-custom-all-users,#btn-laporan-custom-products,#btn-laporan-custom-user-customer,#btn-laporan-user-customer, #btn-laporan-produk, #btn-laporan-custom-transaksi-cancelled, #btn-laporan-all-transaksi,#btn-laporan-custom-all-transaksi, #btn-laporan-custom-transaksi-pending,#btn-laporan-custom-transaksi-success,#btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
+                                .hide();
+                        } else if (selectedOption === 'laporan-produk') {
+                            $('#btn-laporan-produk').show();
+                            $('#btn-laporan-custom-products').show();
+                            $('#btn-laporan-all-users, #btn-laporan-user-admin, #btn-laporan-custom-user-admin,#btn-laporan-custom-all-users,#btn-laporan-custom-category,#btn-laporan-user-customer, #btn-laporan-kategori, #btn-laporan-custom-user-customer,#btn-laporan-custom-transaksi-cancelled, #btn-laporan-all-transaksi,#btn-laporan-custom-all-transaksi, #btn-laporan-custom-transaksi-pending,#btn-laporan-custom-transaksi-success,#btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
+                                .hide();
+                        } else if (selectedOption === 'laporan-all-transaksi') {
+                            $('#btn-laporan-all-transaksi').show();
+                            $('#btn-laporan-custom-all-transaksi').show();
+                            $('#btn-laporan-all-users, #btn-laporan-user-admin, #btn-laporan-custom-category,#btn-laporan-custom-user-customer,#btn-laporan-custom-user-admin,#btn-laporan-custom-all-users,#btn-laporan-custom-products,#btn-laporan-user-customer, #btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-custom-transaksi-pending,#btn-laporan-custom-transaksi-cancelled, #btn-laporan-custom-transaksi-success,#btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
+                                .hide();
+                        } else if (selectedOption === 'laporan-transaksi-success') {
+                            $('#btn-laporan-transaksi-success').show();
+                            $('#btn-laporan-custom-transaksi-success').show();
+                            $('#btn-laporan-all-users, #btn-laporan-user-admin, #btn-laporan-custom-user-customer,#btn-laporan-custom-user-admin,#btn-laporan-custom-products,#btn-laporan-custom-all-users,#btn-laporan-user-customer, #btn-laporan-custom-category,#btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-custom-transaksi-pending,#btn-laporan-all-transaksi,#btn-laporan-custom-transaksi-cancelled, #btn-laporan-custom-all-transaksi, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
+                                .hide();
+                        } else if (selectedOption === 'laporan-transaksi-pending') {
+                            $('#btn-laporan-transaksi-pending').show();
+                            $('#btn-laporan-custom-transaksi-pending').show();
+                            $('#btn-laporan-all-users, #btn-laporan-user-admin, #btn-laporan-custom-user-customer,#btn-laporan-custom-user-admin,#btn-laporan-custom-all-users,#btn-laporan-user-customer, #btn-laporan-custom-products,#btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-custom-category,#btn-laporan-custom-transaksi-cancelled, #btn-laporan-custom-transaksi-success,#btn-laporan-all-transaksi,#btn-laporan-custom-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-cancelled')
+                                .hide();
+                        } else if (selectedOption === 'laporan-transaksi-cancelled') {
+                            $('#btn-laporan-transaksi-cancelled').show();
+                            $('#btn-laporan-custom-transaksi-cancelled').show();
+                            $('#btn-laporan-all-users, #btn-laporan-user-admin, #btn-laporan-custom-user-customer,#btn-laporan-custom-user-admin,#btn-laporan-custom-products,#btn-laporan-custom-all-users,#btn-laporan-user-customer, #btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-custom-category,#btn-laporan-custom-transaksi-pending,#btn-laporan-custom-transaksi-success,#btn-laporan-all-transaksi,#btn-laporan-custom-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending')
+                                .hide();
+                        }
+                    });
+
+                    // Access export URL on button click
+                    $('#btn-laporan-all-users').on('click', function() {
+                        var exportUrl = "{{ route('dashboard.report.exportAllUsers') }}";
+                        window.location.href = exportUrl;
+                    });
+                    $('#btn-laporan-user-admin').on('click', function() {
+                        var exportUrl = "{{ route('dashboard.report.exportRoleAdmin') }}";
+                        window.location.href = exportUrl;
+                    });
+                    $('#btn-laporan-user-customer').on('click', function() {
+                        var exportUrl = "{{ route('dashboard.report.exportRoleUser') }}";
+                        window.location.href = exportUrl;
+                    });
+                    $('#btn-laporan-kategori').on('click', function() {
+                        var exportUrl = "{{ route('dashboard.report.exportProductCategories') }}";
+                        window.location.href = exportUrl;
+                    });
+                    $('#btn-laporan-produk').on('click', function() {
+                        var exportUrl = "{{ route('dashboard.report.exportProducts') }}";
+                        window.location.href = exportUrl;
+                    });
+                    $('#btn-laporan-all-transaksi').on('click', function() {
+                        var exportUrl = "{{ route('dashboard.report.exportAllTransactions') }}";
+                        window.location.href = exportUrl;
+                    });
+                    $('#btn-laporan-transaksi-success').on('click', function() {
+                        var exportUrl = "{{ route('dashboard.report.exportTransactionSuccess') }}";
+                        window.location.href = exportUrl;
+                    });
+                    $('#btn-laporan-transaksi-pending').on('click', function() {
+                        var exportUrl = "{{ route('dashboard.report.exportTransactionPending') }}";
+                        window.location.href = exportUrl;
+                    });
+                    $('#btn-laporan-transaksi-cancelled').on('click', function() {
+                        var exportUrl = "{{ route('dashboard.report.exportTransactionCancelled') }}";
+                        window.location.href = exportUrl;
+                    });
+                });
+            </script>
+        @endpush
 
     </x-slot>
 

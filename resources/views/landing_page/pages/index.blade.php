@@ -9,7 +9,7 @@
                         <div class="col-lg-6">
                             <div class="hero__text">
                                 <h5>Starting At Only $ 2.8/month</h5>
-                                <h2>Welcome to the best<br /> hosting company</h2>
+                                <h2>Welcome to the best<br /> Network WiFi</h2>
                                 <a href="#" class="primary-btn">Get started now</a>
                             </div>
                         </div>
@@ -27,7 +27,7 @@
                         <div class="col-lg-6">
                             <div class="hero__text">
                                 <h5>Starting At Only $ 2.8/month</h5>
-                                <h2>Welcome to the best<br /> hosting company</h2>
+                                <h2>Welcome to the best<br /> Toko Kami Networking</h2>
                                 <a href="#" class="primary-btn">Get started now</a>
                             </div>
                         </div>
@@ -50,9 +50,9 @@
                 <div class="col-lg-8">
                     <div class="register__text">
                         <div class="section-title">
-                            <h3>Register Your Domain Now!</h3>
+                            <h3>Join To Networking WiFi!</h3>
                         </div>
-                        <div class="register__form">
+                        {{-- <div class="register__form">
                             <form action="#">
                                 <input type="text" placeholder="ex: cloudhost">
                                 <div class="change__extension">
@@ -65,14 +65,14 @@
                                 </div>
                                 <button type="submit" class="site-btn">Search</button>
                             </form>
-                        </div>
+                        </div> --}}
                         <div class="register__result">
                             <ul>
-                                <li>.com <span>$1.95</span></li>
-                                <li>.net <span>$1.95</span></li>
-                                <li>.org <span>$1.95</span></li>
-                                <li>.us <span>$1.95</span></li>
-                                <li>.in <span>$1.95</span></li>
+                                <li>1 <span>Mbps</span></li>
+                                <li>2 <span>Mbps</span></li>
+                                <li>3 <span>Mbps</span></li>
+                                <li>4 <span>Mbps</span></li>
+                                <li>5 <span>Mbps</span></li>
                             </ul>
                         </div>
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
@@ -104,7 +104,7 @@
                 </div>
                 <div class="col-lg-4 col-md-4 col-sm-6">
                     <div class="services__item">
-                        <h5>Wordpress Hosting</h5>
+                        <h5>IndiHome</h5>
                         <span>Starts At $1.84</span>
                         <p>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
                     </div>
@@ -116,7 +116,7 @@
                         <p>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-4 col-sm-6">
+                {{-- <div class="col-lg-4 col-md-4 col-sm-6">
                     <div class="services__item">
                         <h5>SSL certificate</h5>
                         <span>Starts At $1.84</span>
@@ -136,7 +136,7 @@
                         <span>Starts At $1.84</span>
                         <p>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
                     </div>
-                </div>
+                </div> --}}
             </div>
         </div>
     </section>
@@ -165,8 +165,8 @@
             <div class="row monthly__plans active">
                 <div class="col-lg-3 col-md-6 col-sm-6">
                     <div class="pricing__item">
-                        <h4>Started</h4>
-                        <h3>$15.90 <span>/ month</span></h3>
+                        <h4>1 Mbps</h4>
+                        <h3>IDR 100.000 <span>/ month</span></h3>
                         <ul>
                             <li>2,5 GB web space</li>
                             <li>Free site buiding tools</li>
@@ -181,8 +181,8 @@
                 </div>
                 <div class="col-lg-3 col-md-6 col-sm-6">
                     <div class="pricing__item">
-                        <h4>Business</h4>
-                        <h3>$25.90 <span>/ month</span></h3>
+                        <h4>2 Mbps</h4>
+                        <h3>IDR 150.000 <span>/ month</span></h3>
                         <ul>
                             <li>90 GB web space</li>
                             <li>Free site buiding tools</li>
@@ -197,8 +197,8 @@
                 </div>
                 <div class="col-lg-3 col-md-6 col-sm-6">
                     <div class="pricing__item">
-                        <h4>Premium</h4>
-                        <h3>$35.90 <span>/ month</span></h3>
+                        <h4>3 Mbps</h4>
+                        <h3>IDR 200.000 <span>/ month</span></h3>
                         <ul>
                             <li>150 GB web space</li>
                             <li>Free site buiding tools</li>
@@ -213,8 +213,8 @@
                 </div>
                 <div class="col-lg-3 col-md-6 col-sm-6">
                     <div class="pricing__item">
-                        <h4>Dedicated</h4>
-                        <h3>$45.90 <span>/ month</span></h3>
+                        <h4>4 Mbps</h4>
+                        <h3>IDR 250.000 <span>/ month</span></h3>
                         <ul>
                             <li>Unlimited web space</li>
                             <li>Free site buiding tools</li>
@@ -231,40 +231,12 @@
             <div class="row yearly__plans">
                 <div class="col-lg-3 col-md-6 col-sm-6">
                     <div class="pricing__item">
-                        <h4>Started</h4>
-                        <h3>$150 <span>/ month</span></h3>
-                        <ul>
-                            <li>2,5 GB web space</li>
-                            <li>Free site buiding tools</li>
-                            <li>Free domain registar</li>
-                            <li>24/7 Support</li>
-                            <li>Free marketing tool</li>
-                            <li>99,9% Services uptime</li>
-                            <li>30 day money back</li>
-                        </ul>
-                        <a href="#" class="primary-btn">Choose plan</a>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="pricing__item">
-                        <h4>Business</h4>
-                        <h3>$250 <span>/ month</span></h3>
-                        <ul>
-                            <li>90 GB web space</li>
-                            <li>Free site buiding tools</li>
-                            <li>Free domain registar</li>
-                            <li>24/7 Support</li>
-                            <li>Free marketing tool</li>
-                            <li>99,9% Services uptime</li>
-                            <li>30 day money back</li>
-                        </ul>
-                        <a href="#" class="primary-btn">Choose plan</a>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="pricing__item">
-                        <h4>Premium</h4>
-                        <h3>$350 <span>/ month</span></h3>
+                        <h4>1 Mbps</h4>
+                        <h3>IDR 1.200.000
+                            <div class="">
+                                <span>Yearly</span>
+                            </div>
+                        </h3>
                         <ul>
                             <li>150 GB web space</li>
                             <li>Free site buiding tools</li>
@@ -279,8 +251,52 @@
                 </div>
                 <div class="col-lg-3 col-md-6 col-sm-6">
                     <div class="pricing__item">
-                        <h4>Dedicated</h4>
-                        <h3>$450 <span>/ month</span></h3>
+                        <h4>2 Mbps</h4>
+                        <h3>IDR 1.800.000
+                            <div class="">
+                                <span>Yearly</span>
+                            </div>
+                        </h3>
+                        <ul>
+                            <li>150 GB web space</li>
+                            <li>Free site buiding tools</li>
+                            <li>Free domain registar</li>
+                            <li>24/7 Support</li>
+                            <li>Free marketing tool</li>
+                            <li>99,9% Services uptime</li>
+                            <li>30 day money back</li>
+                        </ul>
+                        <a href="#" class="primary-btn">Choose plan</a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-6">
+                    <div class="pricing__item">
+                        <h4>3 Mbps</h4>
+                        <h3>IDR 2.400.000
+                            <div class="">
+                                <span>Yearly</span>
+                            </div>
+                        </h3>
+                        <ul>
+                            <li>150 GB web space</li>
+                            <li>Free site buiding tools</li>
+                            <li>Free domain registar</li>
+                            <li>24/7 Support</li>
+                            <li>Free marketing tool</li>
+                            <li>99,9% Services uptime</li>
+                            <li>30 day money back</li>
+                        </ul>
+                        <a href="#" class="primary-btn">Choose plan</a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-6">
+                    <div class="pricing__item">
+                        <h4>4 Mbps</h4>
+                        <h3>IDR 3.600.000
+                            <div class="">
+                                <span>Yearly</span>
+                            </div>
+                        </h3>
                         <ul>
                             <li>Unlimited web space</li>
                             <li>Free site buiding tools</li>
