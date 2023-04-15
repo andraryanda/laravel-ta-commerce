@@ -19,14 +19,6 @@
 
     @section('user')
 
-        <x-slot name="script">
-            <script>
-                function goBack() {
-                    window.history.back();
-                }
-            </script>
-        </x-slot>
-
         <div class="py-3">
             <div
                 class="w-full p-6 mx-auto sm:px-6 lg:px-8 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
@@ -113,11 +105,12 @@
                         <div class="flex flex-wrap -mx-3 mb-6">
                             <div class="w-full px-3 text-right">
                                 <button type="submit"
-                                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-right">
+                                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-right"
+                                    onclick="disableButton(this);">
                                     <div class="flex items-center">
                                         <img src="{{ asset('icon/save.png') }}" alt="save" class="mr-2" width="20"
                                             height="20">
-                                        <p>Simpan User</p>
+                                        <p id="buttonText">Simpan User</p>
                                     </div>
                                 </button>
                             </div>
@@ -126,6 +119,24 @@
                 </div>
             </div>
         </div>
+
+
+        @push('javascript')
+            <script>
+                function disableButton(button) {
+                    button.disabled = true;
+                    var buttonText = document.getElementById("buttonText");
+                    buttonText.innerText = "Tunggu...";
+                    button.form.submit();
+                }
+            </script>
+
+            <script>
+                function goBack() {
+                    window.history.back();
+                }
+            </script>
+        @endpush
     @endsection
 
 </x-layout.apps>

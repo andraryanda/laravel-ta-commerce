@@ -254,11 +254,10 @@
                 </div>
                 <div>
                     <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
-                        Total Users
+                        Total User Customer
                     </p>
                     <p class="counter text-lg font-semibold text-gray-700 dark:text-gray-200"
-                        data-target="{{ $users_count }}">
-                        {{-- {{ $users_count ?? '0' }} --}}
+                        data-target="{{ $users_customer_count }}">
                         0
                     </p>
                 </div>
@@ -275,7 +274,7 @@
                 </div>
                 <div>
                     <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
-                        Account Balance
+                        Transaksi Sukses
                     </p>
                     <p class="count-up text-lg font-semibold text-gray-700 dark:text-gray-200"
                         data-value="{{ $total_amount_success }}" data-is-price="true">
@@ -297,7 +296,7 @@
                 </div>
                 <div>
                     <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
-                        Account Pending
+                        Transaksi Pending
                     </p>
                     <p class="count-up text-lg font-semibold text-gray-700 dark:text-gray-200"
                         data-value="{{ $total_amount_pending }}" data-is-price="true">

@@ -26,18 +26,19 @@ class ProductCategoryController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            $query = ProductCategory::query();
+            $query = ProductCategory::query()->OrderByDesc('created_at');
 
             return DataTables::of($query)
                 ->addColumn('action', function ($item) {
                     $encryptedId = Crypt::encrypt($item->id);
                     return '
                     <div class="flex justify-start items-center space-x-3.5">
-                        <a href="' . route('dashboard.category.edit', $encryptedId) . '" title="Edit"
-                            class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-yellow-500 bg-yellow-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-yellow-500 focus:outline-none focus:shadow-outline">
-                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/edit.png') . '" alt="edit" loading="lazy" width="20" />
-                            <p class="mt-1 text-xs">Edit</p>
-                        </a>
+                <button type="button" title="Edit"
+                    class="flex flex-col edit-button shadow-sm items-center justify-center w-20 h-12 border border-yellow-500 bg-yellow-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-yellow-500 focus:outline-none focus:shadow-outline"
+                    data-id="' . $encryptedId . '">
+                    <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/edit.png') . '" alt="delete" loading="lazy" width="20" />
+                    <p class="mt-1 text-xs">Edit</p>
+                </button>
                         <button type="button" title="Delete"
                             class="flex flex-col delete-button shadow-sm items-center justify-center w-20 h-12 border border-red-500 bg-red-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-red-500 focus:outline-none focus:shadow-outline"
                             data-id="' . $encryptedId . '">
@@ -155,7 +156,8 @@ class ProductCategoryController extends Controller
 
         $category->update($data);
 
-        return redirect()->route('dashboard.category.index');
+        return redirect()->route('dashboard.category.index')
+            ->withSuccess('Category berhasil diupdate!');
     }
 
     /**

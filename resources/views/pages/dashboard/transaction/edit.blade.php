@@ -48,8 +48,8 @@
                             </div>
                         </div>
                     @endif
-                    <form class="w-full" action="{{ route('dashboard.transaction.update', $item->id) }}" method="post"
-                        enctype="multipart/form-data">
+                    <form class="w-full" action="{{ route('dashboard.transaction.update', encrypt($item->id)) }}"
+                        method="post" enctype="multipart/form-data">
                         @csrf
                         @method('put')
                         <div class="flex flex-wrap -mx-3 mb-6">

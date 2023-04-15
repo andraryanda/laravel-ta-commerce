@@ -11,7 +11,12 @@ use Illuminate\Http\Request;
 use Midtrans\SnapPreferences;
 use App\Models\TransactionItem;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Crypt;
 use Yajra\DataTables\Facades\DataTables;
+use App\Notifications\TransactionSuccessNotification;
+use Illuminate\Contracts\Encryption\DecryptException;
 
 class MidtransWebhookController extends Controller
 {
@@ -285,8 +290,16 @@ class MidtransWebhookController extends Controller
 
         $transaction->save();
 
+        // Get the transaction and user data
+        $transaction = Transaction::find($transaction->id);
+        $user = Auth::user();
+
+        // Send the email
+        Mail::to('andraryandra38@gmail.com')->send(new TransactionSuccessNotification($transaction, $user));
+
+
         // return redirect()->route('dashboard.transaction.indexSuccess');
-        return redirect()->route('dashboard.midtrans.show', $transaction->id);
+        return redirect()->route('dashboard.midtrans.show', encrypt($transaction->id));
     }
 
 
@@ -326,19 +339,31 @@ class MidtransWebhookController extends Controller
         }
     }
 
-    public function show(Transaction $transaction)
+    public function show($encryptedId)
     {
-        if (request()->ajax()) {
-            $query = TransactionItem::with(['product'])->where('transactions_id', $transaction->id);
 
-            return DataTables::of($query)
-                ->editColumn('product.price', function ($item) {
-                    return number_format($item->product->price);
-                })
-                ->make();
+        try {
+            $id = Crypt::decrypt($encryptedId); // Mendekripsi ID transaksi
+            $transaction = Transaction::find($id);
+            if (!$transaction) {
+                // Lakukan penanganan jika transaksi tidak ditemukan
+                abort(404);
+            }
+
+            if (request()->ajax()) {
+                $query = TransactionItem::with(['product'])->where('transactions_id', $transaction->id);
+
+                return DataTables::of($query)
+                    ->editColumn('product.price', function ($item) {
+                        return number_format($item->product->price);
+                    })
+                    ->make();
+            }
+
+            return view('pages.midtrans.index', compact('transaction'));
+        } catch (DecryptException $e) {
+            return redirect()->route('dashboard.index')->with('error', 'Terjadi kesalahan dalam menampilkan transaksi');
         }
-
-        return view('pages.midtrans.index', compact('transaction'));
     }
 }
 

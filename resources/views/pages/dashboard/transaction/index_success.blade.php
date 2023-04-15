@@ -274,7 +274,7 @@
                 </div>
                 <div>
                     <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
-                        Account Balance
+                        Transaksi Sukses
                     </p>
                     <p class="count-up text-lg font-semibold text-gray-700 dark:text-gray-200"
                         data-value="{{ $total_amount_success }}" data-is-price="true">

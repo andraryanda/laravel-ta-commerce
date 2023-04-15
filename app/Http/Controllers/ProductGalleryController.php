@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Models\ProductGallery;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\ProductGalleryRequest;
+use Illuminate\Contracts\Encryption\DecryptException;
 
 class ProductGalleryController extends Controller
 {
@@ -16,27 +18,29 @@ class ProductGalleryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Product $product)
+    public function index($encryptedProduct)
     {
+        $productId = Crypt::decrypt($encryptedProduct);
+        $product = Product::find($productId);
         if (request()->ajax()) {
             $query = ProductGallery::where('products_id', $product->id);
 
             return DataTables::of($query)
                 ->addColumn('action', function ($item) {
                     return '
-                    <div class="flex justify-start items-center space-x-3.5">
-                        <button type="button" title="Delete"
-                            class="flex flex-col delete-button shadow-sm items-center justify-center w-20 h-12 border border-red-500 bg-red-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-red-500 focus:outline-none focus:shadow-outline"
-                            data-id="' . $item->id . '">
-                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/delete.png') . '" alt="delete" loading="lazy" width="20" />
-                            <p class="mt-1 text-xs">Delete</p>
-                        </button>
-                    </div>
-                        ';
+            <div class="flex justify-start items-center space-x-3.5">
+                <button type="button" title="Delete"
+                    class="flex flex-col delete-button shadow-sm items-center justify-center w-20 h-12 border border-red-500 bg-red-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-red-500 focus:outline-none focus:shadow-outline"
+                    data-id="' . Crypt::encrypt($item->id) . '">
+                    <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/delete.png') . '" alt="delete" loading="lazy" width="20" />
+                    <p class="mt-1 text-xs">Delete</p>
+                </button>
+            </div>
+                ';
                 })
                 ->editColumn('url', function ($item) {
                     return '
-                    <img style="max-width: 150px;" src="' . $item->url . '"/>';
+            <img style="max-width: 150px;" src="' . $item->url . '"/>';
                 })
                 // <p>'.$item->url.'</p>
                 ->editColumn('is_featured', function ($item) {
@@ -54,10 +58,14 @@ class ProductGalleryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Product $product)
+    public function create($encryptedProduct)
     {
+        $productId = Crypt::decrypt($encryptedProduct);
+        $product = Product::find($productId);
+
         return view('pages.dashboard.gallery.create', compact('product'));
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -66,24 +74,35 @@ class ProductGalleryController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function store(ProductGalleryRequest $request, Product $product)
+    public function store(ProductGalleryRequest $request, $productId)
     {
-        $files = $request->file('files');
-        if ($request->hasFile('files')) {
-            foreach ($files as $file) {
-                $extension = $file->getClientOriginalExtension();
-                $filename = hash('sha256', time()) . '.' . $extension;
-                $path = $file->storeAs('public/gallery', $filename);
+        try {
+            // Dekripsi productId untuk mendapatkan id produk asli
+            $productId = decrypt($productId);
+            $product = Product::findOrFail($productId);
 
-                ProductGallery::create([
-                    'products_id' => $product->id,
-                    'url' => $path
-                ]);
+            $files = $request->file('files');
+            if ($request->hasFile('files')) {
+                foreach ($files as $file) {
+                    $extension = $file->getClientOriginalExtension();
+                    $filename = hash('sha256', time()) . '.' . $extension;
+                    $path = $file->storeAs('public/gallery', $filename);
+
+                    ProductGallery::create([
+                        'products_id' => $product->id,
+                        'url' => $path
+                    ]);
+                }
             }
-        }
 
-        return redirect()->route('dashboard.product.gallery.index', $product->id);
+            return redirect()->route('dashboard.product.gallery.index', encrypt($product->id))
+                ->withSuccess('Gallery berhasil ditambahkan!');
+        } catch (DecryptException $e) {
+            // Handling jika terjadi kesalahan dekripsi
+            return back()->withError(['error' => 'Invalid payload.']);
+        }
     }
+
 
 
     /**
@@ -126,10 +145,27 @@ class ProductGalleryController extends Controller
      * @param  \App\Models\ProductGallery  $productGallery
      * @return \Illuminate\Http\Response
      */
-    public function destroy(ProductGallery $gallery)
+    public function destroy($encryptedId)
     {
-        $gallery->delete();
+        try {
+            // Mendekripsi ID galeri
+            $id = Crypt::decrypt($encryptedId);
 
-        return redirect()->route('dashboard.product.gallery.index', $gallery->products_id);
+            // Menemukan galeri berdasarkan ID
+            $gallery = ProductGallery::find($id);
+
+            if (!$gallery) {
+                // Lakukan penanganan jika galeri tidak ditemukan
+                abort(404);
+            }
+
+            $gallery->delete();
+
+            return redirect()->route('dashboard.product.gallery.index', $gallery->products_id)
+                ->with('success', 'Gallery successfully deleted.');
+        } catch (DecryptException $e) {
+            // Tangani exception jika terjadi error pada dekripsi
+            return back()->withErrors(['error' => 'Invalid payload.']);
+        }
     }
 }

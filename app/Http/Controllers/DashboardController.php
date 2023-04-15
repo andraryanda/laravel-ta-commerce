@@ -118,7 +118,7 @@ class DashboardController extends Controller
             // Tambahkan label untuk setiap data produk
             ->label($bestSellingProducts->pluck('product_name')->toArray());
 
-        $users_count = User::count();
+        $users_customer_count = User::where('roles', '=', 'USER')->count();
         $new_transaction = Transaction::count();
         $total_amount_success = Transaction::where('status', '=', 'SUCCESS')->sum('total_price');
         $total_amount_pending = Transaction::where('status', '=', 'PENDING')->sum('total_price');
@@ -230,7 +230,7 @@ class DashboardController extends Controller
         return view(
             'dashboard2',
             compact(
-                'users_count',
+                'users_customer_count',
                 'new_transaction',
                 'list_transaction',
                 'total_amount_success',

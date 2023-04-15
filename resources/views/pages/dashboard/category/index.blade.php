@@ -127,10 +127,10 @@
                             }
                         ],
                         pagingType: 'full_numbers',
-                        order: [
-                            [1, 'desc'], // Kolom indeks 1 diurutkan secara descending
-                            // [0, 'asc'] // Kolom indeks 0 (DT_RowIndex) diurutkan secara ascending
-                        ],
+                        // order: [
+                        //     [1, 'desc'], // Kolom indeks 1 diurutkan secara descending
+                        //     // [0, 'asc'] // Kolom indeks 0 (DT_RowIndex) diurutkan secara ascending
+                        // ],
                         language: {
                             searchPlaceholder: "Search Data Category",
                             decimal: ',',
@@ -280,6 +280,25 @@
 
         @push('javascript')
             <script>
+                $('body').on('click', '.edit-button', function() {
+                    var category_id = $(this).data('id');
+                    $.ajax({
+                        url: "{{ route('dashboard.category.edit', ['category' => ':id']) }}".replace(':id',
+                            category_id),
+                        cache: false,
+                        type: "GET",
+                        success: function(response) {
+                            window.location.href =
+                                "{{ route('dashboard.category.edit', ['category' => ':id']) }}".replace(':id',
+                                    category_id) + '?_=' + new Date().getTime();
+                        },
+                        error: function() {
+                            console.log('Error: Failed to open edit page.');
+                        }
+                    });
+                });
+            </script>
+            <script>
                 $(document).ready(function() {
                     $('body').on('click', '.delete-button', function() {
                         var category_id = $(this).data("id");
@@ -295,8 +314,9 @@
                             if (result.isConfirmed) {
                                 $.ajax({
                                     type: "DELETE",
-                                    url: "{{ route('dashboard.category.destroy', ':id') }}".replace(
-                                        ':id', category_id),
+                                    url: "{{ route('dashboard.category.destroy', ':id') }}"
+                                        .replace(
+                                            ':id', category_id),
                                     data: {
                                         "_token": "{{ csrf_token() }}"
                                     },

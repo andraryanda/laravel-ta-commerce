@@ -7,38 +7,23 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ __('Store') }}</title>
     {{-- <title>{{ __('Als Store RT/RW NET') }}</title> --}}
+
     <link rel="shortcut icon" href="{{ asset('icon/store.png') }}">
 
-    <link href="{{ url('https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css') }}"
-        rel="stylesheet" />
-    <script src="{{ url('https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js') }}"></script>
-
     <link href="{{ url('https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.4/flowbite.min.css') }}" rel="stylesheet" />
-    <script src="{{ url('https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.4/flowbite.min.js') }}"></script>
-
     <link rel="stylesheet"
         href="{{ url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200') }}" />
-    {{-- <script src="https://kit.fontawesome.com/fe6aa2d4ea.js" crossorigin="anonymous"></script> --}}
-
     <link rel="stylesheet"
         href="{{ url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/tailwind.output.css') }}">
-
-    <script src="{{ url('https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js') }}"></script>
-    <script src="{{ asset('assets/js/init-alpine.js') }}"></script>
-
     <link rel="stylesheet" href="{{ mix('css/app.css') }}">
-
-    <link rel="stylesheet" href="{{ url('https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css') }}">
-
-    <script src="{{ asset('assets/js/charts-lines.js') }}" defer></script>
-    <script src="{{ asset('assets/js/charts-pie.js') }}" defer></script>
-
-    <script src="{{ url('https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js') }}"></script>
-
     <link href="{{ url('https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css') }}" rel="stylesheet">
     <link href="{{ url('https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css') }}"
         rel="stylesheet">
+    <link rel="stylesheet" href="{{ url('https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css') }}">
+
+
+
     <style>
         /*Form fields*/
         .dataTables_wrapper select,
@@ -183,33 +168,38 @@
 
     <link rel="stylesheet" href="{{ asset('css/loader.css') }}">
 
+
+
+    <!-- Scripts -->
+    <script src="{{ mix('js/app.js') }}" defer></script>
+    <script src="{{ url('https://code.jquery.com/jquery-3.6.0.min.js') }}"></script>
+    <script src="{{ url('https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ url('https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js') }}"></script>
+    <script src="{{ url('https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.4/flowbite.min.js') }}"></script>
+    <script src="{{ asset('assets/js/focus-trap.js') }}" defer></script>
+    <script src="{{ url('https://cdn.jsdelivr.net/npm/sweetalert2@11') }}"></script>
+    <script src="{{ url('https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js') }}"></script>
+    <script src="{{ asset('assets/js/init-alpine.js') }}"></script>
+
+
+
     {{-- @vite('resources/css/app.css') --}}
+    {{-- <script src="{{ url('https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js') }}"></script> --}}
+    {{-- <script src="{{ asset('assets/js/charts-lines.js') }}" defer></script> --}}
+    {{-- <script src="{{ asset('assets/js/charts-pie.js') }}" defer></script> --}}
+    {{-- <script type="text/javascript" src="{{ url('https://code.jquery.com/jquery-3.4.1.min.js') }}"></script> --}}
+    <!-- You need focus-trap.js to make the modal accessible -->
 
     {{-- <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script> --}}
 
     {{-- <script src="{{ url('https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.4/flowbite.min.js') }}"></script> --}}
-
-    <script src="{{ mix('js/app.js') }}" defer></script>
-
-
-    <!-- Scripts -->
-
-    <script src="{{ url('https://cdn.jsdelivr.net/npm/sweetalert2@11') }}"></script>
-
-    <script src="{{ url('https://code.jquery.com/jquery-3.6.0.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url('https://code.jquery.com/jquery-3.4.1.min.js') }}"></script>
-    <script src="{{ url('https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ url('https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js') }}"></script>
-    <!-- You need focus-trap.js to make the modal accessible -->
-    <script src="{{ asset('assets/js/focus-trap.js') }}" defer></script>
-
-
 
 </head>
 
 <body>
     {{-- <div class="loader"></div> --}}
     {{ $styles ?? '' }}
+
 
     @include('sweetalert::alert')
     @stack('style')
@@ -334,12 +324,14 @@
 
         // Uncomment the following code if you have other menus to close
         /*
-              if (!event.target.closest("#menu3") && !event.target.closest("#icon3")) {
-                  showMenu3(false);
-              }
-              */
+        if (!event.target.closest("#menu3") && !event.target.closest("#icon3")) {
+        showMenu3(false);
+        }
+        */
     });
 </script>
+
+
 
 <script type="text/javascript">
     $(document).ready(function() {

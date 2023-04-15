@@ -151,7 +151,7 @@
                         <h3>Choose your plan</h3>
                     </div>
                 </div>
-                <div class="col-lg-5 col-md-5">
+                {{-- <div class="col-lg-5 col-md-5">
                     <div class="pricing__swipe-btn">
                         <label for="month" class="active">Monthly
                             <input type="radio" id="month">
@@ -160,154 +160,36 @@
                             <input type="radio" id="yearly">
                         </label>
                     </div>
-                </div>
+                </div> --}}
             </div>
-            <div class="row monthly__plans active">
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="pricing__item">
-                        <h4>1 Mbps</h4>
-                        <h3>IDR 100.000 <span>/ month</span></h3>
-                        <ul>
-                            <li>2,5 GB web space</li>
-                            <li>Free site buiding tools</li>
-                            <li>Free domain registar</li>
-                            <li>24/7 Support</li>
-                            <li>Free marketing tool</li>
-                            <li>99,9% Services uptime</li>
-                            <li>30 day money back</li>
-                        </ul>
-                        <a href="#" class="primary-btn">Choose plan</a>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="pricing__item">
-                        <h4>2 Mbps</h4>
-                        <h3>IDR 150.000 <span>/ month</span></h3>
-                        <ul>
-                            <li>90 GB web space</li>
-                            <li>Free site buiding tools</li>
-                            <li>Free domain registar</li>
-                            <li>24/7 Support</li>
-                            <li>Free marketing tool</li>
-                            <li>99,9% Services uptime</li>
-                            <li>30 day money back</li>
-                        </ul>
-                        <a href="#" class="primary-btn">Choose plan</a>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="pricing__item">
-                        <h4>3 Mbps</h4>
-                        <h3>IDR 200.000 <span>/ month</span></h3>
-                        <ul>
-                            <li>150 GB web space</li>
-                            <li>Free site buiding tools</li>
-                            <li>Free domain registar</li>
-                            <li>24/7 Support</li>
-                            <li>Free marketing tool</li>
-                            <li>99,9% Services uptime</li>
-                            <li>30 day money back</li>
-                        </ul>
-                        <a href="#" class="primary-btn">Choose plan</a>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="pricing__item">
-                        <h4>4 Mbps</h4>
-                        <h3>IDR 250.000 <span>/ month</span></h3>
-                        <ul>
-                            <li>Unlimited web space</li>
-                            <li>Free site buiding tools</li>
-                            <li>Free domain registar</li>
-                            <li>24/7 Support</li>
-                            <li>Free marketing tool</li>
-                            <li>99,9% Services uptime</li>
-                            <li>30 day money back</li>
-                        </ul>
-                        <a href="#" class="primary-btn">Choose plan</a>
-                    </div>
-                </div>
-            </div>
-            <div class="row yearly__plans">
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="pricing__item">
-                        <h4>1 Mbps</h4>
-                        <h3>IDR 1.200.000
-                            <div class="">
-                                <span>Yearly</span>
+            <div class="container-fluid">
+                <div class="row justify-content-center">
+                    @forelse ($products as $product)
+                        <div class="col-12  col-md-4 col-sm-12 col-xs-12">
+                            <div class="card " style="width: 300px; margin: 10px;">
+                                <img src="{{ $product->productGallery->first()->url ?? 'Not Found!' }}" class="card-img-top"
+                                    alt="{{ $product->name }}">
+                                <div class="card-body">
+                                    <h5 class="card-title font-weight-bold">{{ $product->name }}</h5>
+                                </div>
+                                <div class="card-footer"
+                                    style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #ddd;">
+                                    <h5 class="align-self-center font-weight-bold">Rp
+                                        {{ number_format($product->price, 0, ',', '.') }}</h5>
+                                    <button
+                                        onclick="window.location.href='{{ route('landingPage.checkout.shipping', encrypt($product->id)) }}'"
+                                        class="btn btn-primary rounded-pill font-weight-bold px-4 py-2">
+                                        {{ __('Buy') }}
+                                        <span class="fa fa-shopping-cart ml-2" style="font-size: 1.2em;"></span>
+                                    </button>
+                                </div>
                             </div>
-                        </h3>
-                        <ul>
-                            <li>150 GB web space</li>
-                            <li>Free site buiding tools</li>
-                            <li>Free domain registar</li>
-                            <li>24/7 Support</li>
-                            <li>Free marketing tool</li>
-                            <li>99,9% Services uptime</li>
-                            <li>30 day money back</li>
-                        </ul>
-                        <a href="#" class="primary-btn">Choose plan</a>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="pricing__item">
-                        <h4>2 Mbps</h4>
-                        <h3>IDR 1.800.000
-                            <div class="">
-                                <span>Yearly</span>
-                            </div>
-                        </h3>
-                        <ul>
-                            <li>150 GB web space</li>
-                            <li>Free site buiding tools</li>
-                            <li>Free domain registar</li>
-                            <li>24/7 Support</li>
-                            <li>Free marketing tool</li>
-                            <li>99,9% Services uptime</li>
-                            <li>30 day money back</li>
-                        </ul>
-                        <a href="#" class="primary-btn">Choose plan</a>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="pricing__item">
-                        <h4>3 Mbps</h4>
-                        <h3>IDR 2.400.000
-                            <div class="">
-                                <span>Yearly</span>
-                            </div>
-                        </h3>
-                        <ul>
-                            <li>150 GB web space</li>
-                            <li>Free site buiding tools</li>
-                            <li>Free domain registar</li>
-                            <li>24/7 Support</li>
-                            <li>Free marketing tool</li>
-                            <li>99,9% Services uptime</li>
-                            <li>30 day money back</li>
-                        </ul>
-                        <a href="#" class="primary-btn">Choose plan</a>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="pricing__item">
-                        <h4>4 Mbps</h4>
-                        <h3>IDR 3.600.000
-                            <div class="">
-                                <span>Yearly</span>
-                            </div>
-                        </h3>
-                        <ul>
-                            <li>Unlimited web space</li>
-                            <li>Free site buiding tools</li>
-                            <li>Free domain registar</li>
-                            <li>24/7 Support</li>
-                            <li>Free marketing tool</li>
-                            <li>99,9% Services uptime</li>
-                            <li>30 day money back</li>
-                        </ul>
-                        <a href="#" class="primary-btn">Choose plan</a>
-                    </div>
+                        </div>
+                    @empty
+                        <div class="col-12">
+                            <p>No products available.</p>
+                        </div>
+                    @endforelse
                 </div>
             </div>
         </div>
@@ -321,29 +203,29 @@
                 <div class="col-lg-3 col-md-3 col-sm-6">
                     <div class="achievement__item">
                         <span class="fa fa-user-o"></span>
-                        <h2 class="achieve-counter">2468</h2>
+                        <h2 class="achieve-counter">{{ $users_customer_count ?? '0' }}</h2>
                         <p>Clients</p>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-3 col-sm-6">
                     <div class="achievement__item">
                         <span class="fa fa-edit"></span>
-                        <h2 class="achieve-counter">2468</h2>
-                        <p>Domains</p>
+                        <h2 class="achieve-counter">{{ $new_transaction ?? '0' }}</h2>
+                        <p>Total Transaksi</p>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-3 col-sm-6">
                     <div class="achievement__item">
                         <span class="fa fa-clone"></span>
-                        <h2 class="achieve-counter">2468</h2>
-                        <p>Server</p>
+                        <h2 class="achieve-counter">{{ $total_amount_success ?? '0' }}</h2>
+                        <p>Transaksi Sukses</p>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-3 col-sm-6">
                     <div class="achievement__item">
                         <span class="fa fa-cog"></span>
-                        <h2 class="achieve-counter">2468</h2>
-                        <p>Installs</p>
+                        <h2 class="achieve-counter">{{ $total_product ?? '0' }}</h2>
+                        <p>Total Produk</p>
                     </div>
                 </div>
             </div>
@@ -416,4 +298,23 @@
         </div>
     </section>
     <!-- Choose Plan Section End -->
+
+    @push('javascript')
+        <script>
+            $(document).ready(function() {
+                $('#productSlider').slick({
+                    slidesToShow: 4, // Jumlah kartu produk yang ditampilkan dalam satu baris
+                    slidesToScroll: 1, // Jumlah kartu produk yang digeser saat tombol panah ditekan
+                    autoplay: true, // Mengaktifkan autoplay untuk menggeser kartu produk secara otomatis
+                    autoplaySpeed: 3000, // Kecepatan autoplay dalam milidetik
+                    responsive: [{
+                        breakpoint: 768, // Breakpoint untuk layar berlebar 768px
+                        settings: {
+                            slidesToShow: 1 // Jumlah kartu produk yang ditampilkan dalam satu baris pada breakpoint 768px
+                        }
+                    }]
+                });
+            });
+        </script>
+    @endpush
 @endsection

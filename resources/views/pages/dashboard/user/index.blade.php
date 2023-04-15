@@ -181,9 +181,6 @@
                             $('#crudTable th:first-child .fa').remove();
                         }
                     });
-
-
-
                 });
             </script>
 
@@ -211,6 +208,25 @@
         </x-slot>
 
         @push('javascript')
+            <script>
+                $('body').on('click', '.edit-button', function() {
+                    var user_id = $(this).data('id');
+                    $.ajax({
+                        url: "{{ route('dashboard.user.edit', ['user' => ':id']) }}".replace(':id',
+                            user_id),
+                        cache: false,
+                        type: "GET",
+                        success: function(response) {
+                            window.location.href =
+                                "{{ route('dashboard.user.edit', ['user' => ':id']) }}".replace(':id',
+                                    user_id) + '?_=' + new Date().getTime();
+                        },
+                        error: function() {
+                            console.log('Error: Failed to open edit page.');
+                        }
+                    });
+                });
+            </script>
             <script>
                 $(document).ready(function() {
                     $('body').on('click', '.delete-button', function() {

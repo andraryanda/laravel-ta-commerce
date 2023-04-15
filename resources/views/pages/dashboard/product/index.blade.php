@@ -103,29 +103,6 @@
                                 render: function(data, type, row, meta) {
                                     return "Rp " + numberWithCommas(data);
                                 },
-                                // render: $.fn.dataTable.render.number('0', '0', 'Rp '),
-                                // render: function(data, type, row) {
-                                //     if (type === 'display') {
-                                //         return 'Rp ' + parseFloat(data).toFixed(2).replace(
-                                //             /(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-                                //     }
-                                //     return data;
-                                // }
-                                // render: $.fn.dataTable.render.number(',', '.', 0, 'Rp ')
-                                // render: function(data, type, row) {
-                                //     return 'Rp ' + parseFloat(data).toLocaleString('id-ID', {
-                                //         minimumFractionDigits: 2
-                                //     });
-                                // }
-                                // render: $.fn.dataTable.render.number(',', '.', 2, 'Rp ', ',000.00'),
-                                // render: function(data, type, full, meta) {
-                                //     return 'Rp ' + parseFloat(data).toFixed(2).replace(/\d(?=(\d{3})+\.)/g,
-                                //         '$&,');
-                                // },
-                                // type: 'num-fmt',
-                                // render: function(data, type, row, meta) {
-                                //     return "Rp " + $.number(data, 0, ',', '.');
-                                // },
                             },
                             {
                                 data: 'action',
@@ -214,5 +191,102 @@
             </div>
         </div>
         <br>
+
+        @push('javascript')
+            <script>
+                $('body').on('click', '.gallery-button', function() {
+                    var gallery_id = $(this).data('id');
+                    var url = "/dashboard/product/" + gallery_id +
+                        "/gallery"; // Replace with the actual URL for dashboard.product.gallery.index
+                    $.ajax({
+                        url: url,
+                        cache: false,
+                        type: "GET",
+                        success: function(response) {
+                            window.location.href = url + '?_=' + new Date().getTime();
+                        },
+                        error: function() {
+                            console.log('Error: Failed to open edit page.');
+                        }
+                    });
+                });
+            </script>
+
+            <script>
+                $('body').on('click', '.edit-button', function() {
+                    var product_id = $(this).data('id');
+                    $.ajax({
+                        url: "{{ route('dashboard.product.edit', ['product' => ':id']) }}".replace(':id',
+                            product_id),
+                        cache: false,
+                        type: "GET",
+                        success: function(response) {
+                            window.location.href =
+                                "{{ route('dashboard.product.edit', ['product' => ':id']) }}".replace(':id',
+                                    product_id) + '?_=' + new Date().getTime();
+                        },
+                        error: function() {
+                            console.log('Error: Failed to open edit page.');
+                        }
+                    });
+                });
+            </script>
+            <script>
+                $(document).ready(function() {
+                    $('body').on('click', '.delete-button', function() {
+                        var product_id = $(this).data("id");
+                        Swal.fire({
+                            title: 'Apakah anda yakin ingin menghapus product ini?',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#3085d6',
+                            confirmButtonText: 'Hapus',
+                            cancelButtonText: 'Batal'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                $.ajax({
+                                    type: "DELETE",
+                                    url: "{{ route('dashboard.product.destroy', ':id') }}"
+                                        .replace(
+                                            ':id', product_id),
+                                    data: {
+                                        "_token": "{{ csrf_token() }}"
+                                    },
+                                    error: function(data) {
+                                        console.log('Error:', data);
+                                    }
+                                });
+                                setTimeout(function() {
+                                        location.reload();
+                                    },
+                                    1000
+                                ); // memberikan jeda selama 1000 milidetik atau 1 detik sebelum reload
+                                let timerInterval;
+                                Swal.fire({
+                                    title: 'Deleted!',
+                                    text: 'Your data has been deleted.',
+                                    icon: 'success',
+                                    timer: 1500,
+                                    timerProgressBar: true,
+                                    didOpen: () => {
+                                        Swal.showLoading();
+                                        timerInterval = setInterval(() => {}, 100);
+                                    },
+                                    willClose: () => {
+                                        clearInterval(timerInterval);
+                                        location.reload();
+                                    }
+                                }).then((result) => {
+                                    if (result.dismiss === Swal.DismissReason.timer) {
+                                        console.log('I was closed by the timer');
+                                    }
+                                });
+                            }
+                        });
+                    });
+                });
+            </script>
+        @endpush
     @endsection
 </x-layout.apps>

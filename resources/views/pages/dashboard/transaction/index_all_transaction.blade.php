@@ -5,9 +5,6 @@
         </h2>
     </x-slot>
 
-    {{-- <x-slot name="slot">
-    </x-slot> --}}
-
     @section('transaction')
         <x-slot name="styles">
             <style>
@@ -274,7 +271,7 @@
                 </div>
                 <div>
                     <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
-                        Account Balance
+                        Transaksi Success
                     </p>
                     <p class="count-up text-lg font-semibold text-gray-700 dark:text-gray-200"
                         data-value="{{ $total_amount_success }}" data-is-price="true">
@@ -294,7 +291,7 @@
                 </div>
                 <div>
                     <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
-                        Account Pending
+                        Transaksi Pending
                     </p>
                     <p class="count-up text-lg font-semibold text-gray-700 dark:text-gray-200"
                         data-value="{{ $total_amount_pending }}" data-is-price="true">
@@ -314,7 +311,7 @@
                 </div>
                 <div>
                     <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
-                        Account Cancelled
+                        Transaksi Cancelled
                     </p>
                     <p class="count-up text-lg font-semibold text-gray-700 dark:text-gray-200"
                         data-value="{{ $total_amount_cancelled }}" data-is-price="true">
@@ -327,6 +324,15 @@
         <div class="w-full overflow-hidden rounded-lg shadow-xs">
             <div class=" overflow-x-auto bg-white ">
                 <div class="mb-5 mt-3 flex justify-start space-x-2 my-3 mx-3 py-2">
+                    <button type="button" onclick="window.location.href='{{ route('dashboard.transaction.create') }}'"
+                        title="Create"
+                        class="text-gray-900 shadow-sm bg-white hover:bg-green-100 border border-green-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 mr-2 mb-2">
+                        <div class="flex items-center">
+                            <img src="{{ asset('icon/create.png') }}" alt="Create" width="25" class="mr-2">
+                            <p>Create Transaction</p>
+                        </div>
+                    </button>
+
                     <button type="button"
                         onclick="window.location.href='{{ route('dashboard.report.exportAllTransactions') }}'"
                         title="Export All Transactions"

@@ -18,6 +18,8 @@
         <div class="loader"></div>
     </div>
 
+    @stack('styles')
+
     {{-- Body/Halaman Landing Page --}}
     @include('landing_page.layout_landing_page.components.navbar')
 
@@ -34,6 +36,9 @@
     <!-- Footer Section End -->
 
     @include('landing_page.layout_landing_page.partials.javascript.js')
+
+
+    @stack('javascript')
 </body>
 
 </html>

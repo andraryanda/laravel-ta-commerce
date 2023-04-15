@@ -47,6 +47,8 @@ Route::get('pages/pricing', [PricingController::class, 'index'])->name('landingP
 
 Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::get('dashboard', [DashboardController::class, 'statusDashboard'])->name('dashboard.index');
+    Route::get('checkout-shipping/{id}', [HalamanUtamaController::class, 'show'])->name('landingPage.checkout.shipping');
+    Route::post('checkout', [HalamanUtamaController::class, 'checkout'])->name('landingPage.checkout');
 
     Route::name('dashboard.')->prefix('dashboard')->group(function () {
         // Route::get('dashboard', [DashboardController::class, 'statusDashboard'])->name('index');
@@ -60,7 +62,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
 
             Route::post('importCategory', [ProductCategoryController::class, 'importCategory'])->name('category.importCategory');
             Route::resource('transaction', TransactionController::class)->only([
-                'index', 'show', 'edit', 'update'
+                'index', 'show', 'create', 'store', 'edit', 'update'
             ]);
             Route::get('sendMessage-{transaction}', [TransactionController::class, 'sendMessage'])->name('transaction.sendMessage');
             Route::get('transactionAllTransaction', [TransactionController::class, 'indexAllTransaction'])->name('transaction.indexAllTransaction');
