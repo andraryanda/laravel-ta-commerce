@@ -12,6 +12,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ReportController extends Controller
@@ -399,32 +401,43 @@ class ReportController extends Controller
 
 
     // Export Transaction
-    public function exportPDF(Transaction $transaction)
+    // Export Transaction
+    public function exportPDF($encryptedId)
     {
-        $transaction_id = $transaction->id;
+        try {
+            $transaction_id = Crypt::decrypt($encryptedId); // Mendekripsi ID transaksi
+            $transaction = Transaction::findOrFail($transaction_id);
 
-        $items = DB::table('transaction_items')
-            ->join('products', 'transaction_items.products_id', '=', 'products.id')
-            ->select('products.name', 'products.price', 'transaction_items.quantity')
-            ->where('transactions_id', $transaction_id)
-            ->get();
+            // Verifikasi role pengguna
+            if (auth()->user()->roles != 'ADMIN' && $transaction->users_id != auth()->user()->id) {
+                return redirect()->route('landingPage.index')->with('error', 'Anda tidak memiliki akses untuk ekspor PDF transaksi ini');
+            }
 
-        $total = 0;
-        foreach ($items as $item) {
-            $total += $item->price * $item->quantity;
+            $items = DB::table('transaction_items')
+                ->join('products', 'transaction_items.products_id', '=', 'products.id')
+                ->select('products.name', 'products.price', 'transaction_items.quantity')
+                ->where('transactions_id', $transaction_id)
+                ->get();
+
+            $total = 0;
+            foreach ($items as $item) {
+                $total += $item->price * $item->quantity;
+            }
+
+            $pdf = new Dompdf();
+            $pdf->loadHtml(view('pages.dashboard.transaction.print', compact('transaction', 'items', 'total')));
+            $pdf->setPaper('A4', 'portrait');
+            $pdf->render();
+            $output = $pdf->output();
+            $file_name = 'Kwitansi_' . $transaction->user->name . '_' . date('d-m-Y', strtotime($transaction->created_at)) . '.pdf';
+            file_put_contents($file_name, $output);
+            $pdf->stream($file_name);
+        } catch (DecryptException $e) {
+            return redirect()->route('landingPage.index')->with('error', 'Terjadi kesalahan dalam menghasilkan PDF transaksi');
         }
-
-        $pdf = new Dompdf();
-        $pdf->loadHtml(view('pages.dashboard.transaction.print', compact('transaction', 'items', 'total')));
-        $pdf->setPaper('A4', 'portrait');
-        $pdf->render();
-        $output = $pdf->output();
-        // file_put_contents('Kwitansi_' . $transaction->user->name . '_' . date('d-m-Y') . '.pdf', $output);
-        // $pdf->stream('Kwitansi_' . $transaction->user->name . '_' . date('d-m-Y') . '.pdf');
-        $file_name = 'Kwitansi_' . $transaction->user->name . '_' . date('d-m-Y', strtotime($transaction->created_at)) . '.pdf';
-        file_put_contents($file_name, $output);
-        $pdf->stream($file_name);
     }
+
+
 
     public function exportAllTransactions()
     {

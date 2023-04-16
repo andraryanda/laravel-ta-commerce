@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ChartController;
+use App\Http\Controllers\Customer\PricingCustomerController;
+use App\Http\Controllers\Customer\TransactionCustomerController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\ProductController;
@@ -46,14 +48,42 @@ Route::get('contact', [ContactController::class, 'index'])->name('landingPage.co
 Route::get('pages/pricing', [PricingController::class, 'index'])->name('landingPage.pricing');
 
 Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
-    Route::get('dashboard', [DashboardController::class, 'statusDashboard'])->name('dashboard.index');
+    Route::get('dashboard', [DashboardController::class, 'statusDashboard'])->name('dashboard.index')->middleware('admin');
+    Route::get('dashboardCustomer', [DashboardController::class, 'indexDashboardCustomer'])->name('dashboard.indexDashboardCustomer')->middleware('customer');
     Route::get('checkout-shipping/{id}', [HalamanUtamaController::class, 'show'])->name('landingPage.checkout.shipping');
     Route::post('checkout', [HalamanUtamaController::class, 'checkout'])->name('landingPage.checkout');
 
     Route::name('dashboard.')->prefix('dashboard')->group(function () {
         // Route::get('dashboard', [DashboardController::class, 'statusDashboard'])->name('index');
 
+
+        // Midtrans
+        Route::get('dashboard/payment/cancel/{id}', [MidtransWebhookController::class, 'cancelPayment'])->name('midtrans.cancel');
+
+        Route::get('transaction/{id}/payment', [MidtransWebhookController::class, 'payment'])->name('payment');
+        Route::post('payment/notification', [MidtransWebhookController::class, 'notification'])->name('transaction.paymentNotification');
+        Route::post('recurring/notification', [MidtransWebhookController::class, 'notificationHandler'])->name('transaction.recurring');
+        Route::post('payAccount/notification', [MidtransWebhookController::class, 'handlePayAccountNotification'])->name('transaction.payAccount');
+        Route::get('payment/finish/{id}', [MidtransWebhookController::class, 'handlefinish'])->name('payment.finish');
+        Route::get('payment/unfinish/{id}', [MidtransWebhookController::class, 'handleUnfinish'])->name('payment.unfinish');
+        Route::get('payment/error', [MidtransWebhookController::class, 'handleError'])->name('payment.error');
+        Route::get('transactionShowMidtrans/{transaction}', [MidtransWebhookController::class, 'show'])->name('midtrans.show');
+        Route::get('transactionCustomerMidtrans/{transaction}', [MidtransWebhookController::class, 'showCustomer'])->name('midtrans.showCustomer');
+
+        Route::get('exportPDF-{transaction}', [ReportController::class, 'exportPDF'])->name('report.exportPDF');
+
+
+        Route::middleware(['customer'])->group(function () {
+            Route::resource('transactionCustomer', TransactionCustomerController::class)->only([
+                'index', 'show'
+            ]);
+            Route::resource('pricingCustomer', PricingCustomerController::class)->only([
+                'index'
+            ]);
+        });
+
         Route::middleware(['admin'])->group(function () {
+            Route::get('dashboard', [DashboardController::class, 'statusDashboard'])->name('dashboard.index');
             Route::resource('product', ProductController::class);
             Route::resource('category', ProductCategoryController::class);
             Route::resource('product.gallery', ProductGalleryController::class)->shallow()->only([
@@ -106,7 +136,6 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
             Route::get('exportAllProducts', [ReportController::class, 'exportProducts'])->name('report.exportProducts');
             Route::get('exportCustomProducts', [ReportController::class, 'exportCustomProducts'])->name('report.exportCustomProducts');
 
-            Route::get('exportPDF-{transaction}', [ReportController::class, 'exportPDF'])->name('report.exportPDF');
             Route::get('exportAllTransactions', [ReportController::class, 'exportAllTransactions'])->name('report.exportAllTransactions');
             Route::get('exportAllCustomTransactions', [ReportController::class, 'exportAllCustomTransactions'])->name('report.exportAllCustomTransactions');
             Route::get('exportTransactionCancelled', [ReportController::class, 'exportTransactionCancelled'])->name('report.exportTransactionCancelled');
@@ -129,17 +158,6 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
             // Route::get('transactionShowMidtrans/{transaction}', [TransactionController::class, 'show'])->name('midtrans.show');
 
 
-            // Midtrans
-            Route::get('dashboard/payment/cancel/{id}', [MidtransWebhookController::class, 'cancelPayment'])->name('midtrans.cancel');
-
-            Route::get('transaction/{id}/payment', [MidtransWebhookController::class, 'payment'])->name('payment');
-            Route::post('payment/notification', [MidtransWebhookController::class, 'notification'])->name('transaction.paymentNotification');
-            Route::post('recurring/notification', [MidtransWebhookController::class, 'notificationHandler'])->name('transaction.recurring');
-            Route::post('payAccount/notification', [MidtransWebhookController::class, 'handlePayAccountNotification'])->name('transaction.payAccount');
-            Route::get('payment/finish/{id}', [MidtransWebhookController::class, 'handlefinish'])->name('payment.finish');
-            Route::get('payment/unfinish/{id}', [MidtransWebhookController::class, 'handleUnfinish'])->name('payment.unfinish');
-            Route::get('payment/error', [MidtransWebhookController::class, 'handleError'])->name('payment.error');
-            Route::get('transactionShowMidtrans/{transaction}', [MidtransWebhookController::class, 'show'])->name('midtrans.show');
 
 
             // Route::post('/midtrans/webhook', [TransactionController::class, 'handleWebhook'])->name('transaction.handleWebhook');

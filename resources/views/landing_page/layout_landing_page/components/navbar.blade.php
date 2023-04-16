@@ -187,11 +187,21 @@
                              @if (Route::has('login'))
                                  @auth
                                      <li>
-                                         <a href="{{ url('/dashboard') }}"
-                                             class="btn btn-primary btn-action rounded-pill"><span
-                                                 class="fa fa-home"></span>
-                                             {{ __('Dashboard') }}
-                                         </a>
+                                         @if (Auth::user()->roles == 'ADMIN')
+                                             <a href="{{ url('/dashboard') }}"
+                                                 class="btn btn-primary btn-action rounded-pill"><span
+                                                     class="fa fa-home"></span>
+                                                 {{ __('Dashboard') }}
+                                             </a>
+                                         @elseif (Auth::user()->roles == 'USER')
+                                             <a href="{{ url('/dashboardCustomer') }}"
+                                                 class="btn btn-primary btn-action rounded-pill"><span
+                                                     class="fa fa-home"></span>
+                                                 {{ __('Dashboard') }}
+                                             </a>
+                                         @else
+                                             <span class="btn btn-danger btn-action rounded-pill">Not Found</span>
+                                         @endif
                                      </li>
                                  @else
                                      <li>

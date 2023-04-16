@@ -15,24 +15,72 @@
 
 
     @section('transaction')
-        <x-slot name="script">
+        @push('style')
+            <style>
+                /* Memberikan jarak atas dan bawah pada bagian Show dan Search */
+                #crudTable_length,
+                #crudTable_filter {
+                    margin-top: 20px;
+                    margin-bottom: 10px;
+                    margin-left: 20px;
+                    margin-right: 20px;
+                }
+            </style>
+        @endpush
+
+        @push('javascript')
             <script>
                 function goBack() {
                     window.history.back();
                 }
             </script>
+
             <script>
                 $(document).ready(function() {
                     // Setup - add a text input to each footer cell
-                    $('#crudTable tfoot th').each(function() {
+                    $('#crudTable tfoot th:not(.no-search)').each(function() {
                         var title = $(this).text();
                         $(this).html(
-                            '<input type="text" class="text-xs rounded-full font-semibold tracking-wide text-left " placeholder="Search ..." ' +
-                            title + '" />');
+                            '<input type="text" class="text-xs rounded-full font-semibold tracking-wide text-left w-full" style="text-align: left;" placeholder="Search ... ' +
+                            title + '" />'
+                        );
                     });
 
                     // DataTable
                     var table = $('#crudTable').DataTable({
+                        initComplete: function() {
+                            // Apply the search
+                            this.api()
+                                .columns(':not(:last-child)')
+                                .every(function() {
+                                    var that = this;
+
+                                    $('input', this.footer()).on('keyup change clear', function() {
+                                        if (that.search() !== this.value) {
+                                            that.search(this.value).draw();
+                                        }
+                                    });
+                                });
+                            // Set width for search tfoot
+                            $('tfoot tr').children().each(function(index, element) {
+                                if (index == 0) {
+                                    $(element).css('width', '2%'); // Set width for id column
+                                } else if (index == 1) {
+                                    $(element).css('width', '8.5%'); // Set width for id column
+                                } else if (index == 2) {
+                                    $(element).css('width', '10%'); // Set width for id column
+                                } else if (index == 3) {
+                                    $(element).css('width', '5%'); // Set width for id column
+                                } else if (index == 4) {
+                                    $(element).css('width', '10.5%'); // Set width for id column
+                                } else if (index == 5) {
+                                    $(element).css('width', '10%'); // Set width for id column
+                                } else {
+                                    $(element).css('width', 'auto'); // Set width for other columns
+                                }
+                            });
+                        },
+                        processing: true,
                         ajax: {
                             url: '{!! url()->current() !!}',
                         },
@@ -88,11 +136,9 @@
                     })
                 });
             </script>
-        </x-slot>
-
+        @endpush
 
         <div class="py-2">
-            {{-- <div class="max-w-7xl mx-auto sm:px-6 lg:px-8"> --}}
             <h2 class="font-semibold text-lg text-gray-800 leading-tight mb-5">Transaction Details</h2>
             <div class="bg-white overflow-hidden shadow sm:rounded-lg mb-10">
                 <div class="p-6 bg-white border-b border-gray-200">
@@ -140,14 +186,11 @@
                     </table>
                 </div>
             </div>
-            {{-- </div> --}}
         </div>
-
-
 
         <h2 class="font-semibold text-lg text-gray-800 leading-tight mb-5">Transaction Items</h2>
         <div class="w-full overflow-hidden rounded-lg shadow-xs">
-            <div class="px-3 py-3 overflow-x-auto bg-white sm:p-6">
+            <div class="overflow-x-auto bg-white">
                 <table id="crudTable" class="w-full row-border whitespace-no-wrap mt-2 pt-2">
                     <thead>
                         <tr class="text-xs font-semibold tracking-wide text-left text-gray-700 uppercase border-b">
@@ -156,6 +199,7 @@
                             <th>Harga Produk</th>
                             <th>Qty</th>
                             <th>Tanggal Transaksi</th>
+
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">

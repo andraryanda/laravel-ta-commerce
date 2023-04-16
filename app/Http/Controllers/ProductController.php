@@ -85,9 +85,14 @@ class ProductController extends Controller
     {
         $data = $request->all();
 
-        Product::create($data);
+        $product = Product::create($data);
 
-        return redirect()->route('dashboard.product.index');
+        if (!$product) {
+            return redirect()->back()->withError('Gagal menambahkan produk');
+        } else {
+            return redirect()->route('dashboard.product.index')->withSuccess('Berhasil menambahkan produk');
+        }
+        // return redirect()->route('dashboard.product.index');
     }
 
     /**

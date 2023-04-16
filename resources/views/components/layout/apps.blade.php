@@ -212,6 +212,7 @@
             <main class="h-full overflow-y-auto">
                 <div class="container px-6 mx-auto grid">
                     {{ $header }}
+                    {{-- Admin --}}
                     {{ $slot }}
                     @yield('dashboard')
                     @yield('user')
@@ -222,6 +223,10 @@
                     @yield('chart')
                     @yield('notification')
                     @yield('report')
+                    {{-- Admin Penutup --}}
+                    {{-- Customer --}}
+                    @yield('transactionCustomer')
+                    {{-- Customer penutup --}}
                 </div>
             </main>
         </div>

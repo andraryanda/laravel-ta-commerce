@@ -95,7 +95,7 @@
                         <div class="flex flex-wrap -mx-3 mb-6">
                             <div class="w-full px-3">
                                 <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                    for="grid-last-name">
+                                    for="price">
                                     Price
                                 </label>
                                 <input value="{{ old('price') }}" name="price"
@@ -123,12 +123,30 @@
     @endsection
 
     @push('javascript')
-        <script>
+        {{-- <script>
             function disableButton(button) {
                 button.disabled = true;
                 var buttonText = document.getElementById("buttonText");
                 buttonText.innerText = "Tunggu...";
                 button.form.submit();
+            }
+        </script> --}}
+
+        <script>
+            function disableButton(button) {
+                button.disabled = true;
+                var buttonText = document.getElementById("buttonText");
+                buttonText.innerText = "Tunggu...";
+
+                // Mengganti format angka sebelum submit
+                var inputHarga = document.getElementById('input-harga');
+                var nilaiInput = inputHarga.value.replace(/\D/g, '');
+                inputHarga.value = nilaiInput;
+
+                // Menjalankan submit form setelah 500ms
+                setTimeout(function() {
+                    button.form.submit();
+                }, 500);
             }
         </script>
 
@@ -137,6 +155,7 @@
                 window.history.back();
             }
         </script>
+
 
         <script>
             function formatRupiah(angka) {
@@ -147,24 +166,22 @@
                 return 'Rp. ' + rupiah.split('', rupiah.length - 1).reverse().join('');
             }
 
-            var inputHarga = document.querySelector('.input-harga');
+            var inputHarga = document.getElementById('input-harga');
             inputHarga.addEventListener('input', function(e) {
-                if (e.target.classList.contains('input-harga')) {
-                    var nilaiInput = e.target.value.replace(/\D/g, '');
-                    var nilaiFormat = formatRupiah(nilaiInput);
-                    e.target.value = nilaiFormat;
-                }
+                var nilaiInput = e.target.value.replace(/\D/g, '');
+                var nilaiFormat = formatRupiah(nilaiInput);
+                e.target.value = nilaiFormat;
             });
 
             var form = document.querySelector('form');
             form.addEventListener('submit', function(e) {
-                var inputHarga = document.querySelector('.input-harga');
+                var inputHarga = document.getElementById('input-harga');
                 var nilaiInput = inputHarga.value.replace(/\D/g, '');
                 inputHarga.value = nilaiInput;
             });
         </script>
 
-        <script>
+        {{-- <script>
             function formatRupiah(angka, prefix) {
                 var number_string = angka.replace(/[^,\d]/g, "").toString(),
                     split = number_string.split(","),
@@ -188,7 +205,7 @@
                 var nilaiRupiah = formatRupiah(nilaiInput, "Rp. ");
                 e.target.value = nilaiRupiah;
             });
-        </script>
+        </script> --}}
     @endpush
 
     </x-layout.ap>

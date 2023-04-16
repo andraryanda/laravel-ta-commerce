@@ -16,6 +16,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Charts\TransactionPriceChart;
 use App\Charts\UserRegistrationChart;
+use Illuminate\Support\Facades\Crypt;
 use App\Models\NotificationTransaction;
 use Yajra\DataTables\Facades\DataTables;
 // use ConsoleTVs\Charts\Classes\Chartjs\Chart;
@@ -198,6 +199,8 @@ class DashboardController extends Controller
                 })
 
                 ->addColumn('action', function ($item) {
+                    $encryptedId = Crypt::encrypt($item->id);
+
                     return '
                     <div class="flex justify-start items-center space-x-3.5">
                         <a href="' . route('dashboard.transaction.sendMessage', $item->id) . '" title="WhatsApp" target="_blank"
@@ -205,12 +208,12 @@ class DashboardController extends Controller
                             <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/whatsapp.png') . '" alt="whatsapp" loading="lazy" width="20" />
                             <p class="mt-1 text-xs">WhatsApp</p>
                         </a>
-                        <a href="' . route('dashboard.report.exportPDF', $item->id) . '" title="Kwitansi"
+                        <a href="' . route('dashboard.report.exportPDF', $encryptedId) . '" title="Kwitansi"
                             class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-indigo-500 bg-indigo-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-indigo-500 focus:outline-none focus:shadow-outline">
                             <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/printer.png') . '" alt="printer" loading="lazy" width="20" />
                             <p class="mt-1 text-xs">Kwitansi</p>
                         </a>
-                        <a href="' . route('dashboard.transaction.show', $item->id) . '" title="Show"
+                        <a href="' . route('dashboard.transaction.show', $encryptedId) . '" title="Show"
                             class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-blue-500 bg-blue-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-blue-500 focus:outline-none focus:shadow-outline">
                             <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/show.png') . '" alt="show" loading="lazy" width="20" />
                             <p class="mt-1 text-xs">Lihat</p>
@@ -242,6 +245,28 @@ class DashboardController extends Controller
 
             )
         );
+    }
+
+    public function indexDashboardCustomer()
+    {
+
+        $new_transaction = Transaction::where('users_id', Auth::user()->id)->count();
+        $total_amount_success = Transaction::where('status', 'SUCCESS')->where('users_id', Auth::user()->id)->sum('total_price');
+        $total_amount_pending = Transaction::where('status', 'PENDING')->where('users_id', Auth::user()->id)->sum('total_price');
+        $list_transaction = Transaction::where('users_id', Auth::user()->id)->orderBy('total_price', 'desc')->get();
+
+
+        return view('dashboardCustomer', compact(
+            'new_transaction',
+            'total_amount_success',
+            'total_amount_pending',
+            'list_transaction',
+        ));
+    }
+
+    public function indexDashboardAdmin()
+    {
+        return view('dashboardAdmin');
     }
 
     // public function UserChart()

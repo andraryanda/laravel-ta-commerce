@@ -2,11 +2,12 @@
 
 namespace App\Providers;
 
-use Illuminate\Cache\RateLimiting\Limit;
-use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -17,7 +18,10 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @var string
      */
+
+    // protected $redirectTo = '/dashboard';
     public const HOME = '/dashboard';
+
 
     /**
      * The controller namespace for the application.
@@ -47,6 +51,11 @@ class RouteServiceProvider extends ServiceProvider
                 ->namespace($this->namespace)
                 ->group(base_path('routes/web.php'));
         });
+
+        // Custom login redirect based on user role
+        $this->app->booted(function () {
+            $this->redirectBasedOnRole();
+        });
     }
 
     /**
@@ -59,5 +68,19 @@ class RouteServiceProvider extends ServiceProvider
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by(optional($request->user())->id ?: $request->ip());
         });
+    }
+
+    protected function redirectBasedOnRole()
+    {
+        if (Auth::check()) {
+            $user = Auth::user();
+            $role = $user->roles; // Ganti dengan atribut yang sesuai untuk mendapatkan peran (role) pengguna
+
+            if ($role == 'USER') {
+                return redirect('/dashboardCustomer');
+            } elseif ($role == 'ADMIN') {
+                return redirect('/dashboard');
+            }
+        }
     }
 }

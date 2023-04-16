@@ -1,25 +1,48 @@
 <!-- Desktop sidebar -->
 <aside class="z-20 hidden w-64 overflow-y-auto bg-white dark:bg-gray-800 md:block flex-shrink-0">
     <div class="py-4 text-gray-500 dark:text-gray-400">
-        <a class="ml-6 flex items-center text-lg font-bold text-gray-800 dark:text-gray-200"
-            href="{{ route('dashboard.index') }}">
-            {{-- <img src="{{ asset('icon/store.png') }}" alt="Al's Store" width="50" class="mr-2"> {{ __('Als Store') }} --}}
-            <img src="{{ asset('icon/store.png') }}" alt="Al's Store" width="50" class="mr-2"> {{ __('Store') }}
-        </a>
+        @if (Auth::user()->roles == 'ADMIN')
+            <a class="ml-6 flex items-center text-lg font-bold text-gray-800 dark:text-gray-200"
+                href="{{ route('dashboard.index') }}">
+                <img src="{{ asset('icon/store.png') }}" alt="Al's Store" width="50" class="mr-2"> {{ __('Store') }}
+            </a>
 
-        <ul class="mt-6">
-            <li class="relative px-6 py-3">
-                <x-jet-nav-link href="{{ route('dashboard.index') }}" :active="request()->routeIs('dashboard.index')">
-                    <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke-linecap="round"
-                        stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
-                        <path
-                            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
-                        </path>
-                    </svg>
-                    <span class="ml-4">{{ __('Halaman Utama') }}</span>
-                </x-jet-nav-link>
-            </li>
-        </ul>
+            <ul class="mt-6">
+                <li class="relative px-6 py-3">
+                    <x-jet-nav-link href="{{ route('dashboard.index') }}" :active="request()->routeIs('dashboard.index')">
+                        <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke-linecap="round"
+                            stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+                            <path
+                                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                            </path>
+                        </svg>
+                        <span class="ml-4">{{ __('Halaman Utama') }}</span>
+                    </x-jet-nav-link>
+                </li>
+            </ul>
+        @elseif (Auth::user()->roles == 'USER')
+            <a class="ml-6 flex items-center text-lg font-bold text-gray-800 dark:text-gray-200"
+                href="{{ route('dashboard.indexDashboardCustomer') }}">
+                <img src="{{ asset('icon/store.png') }}" alt="Al's Store" width="50" class="mr-2">
+                {{ __('Store') }}
+            </a>
+
+            <ul class="mt-6">
+                <li class="relative px-6 py-3">
+                    <x-jet-nav-link href="{{ route('dashboard.indexDashboardCustomer') }}" :active="request()->routeIs('dashboard.indexDashboardCustomer')">
+                        <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke-linecap="round"
+                            stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+                            <path
+                                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                            </path>
+                        </svg>
+                        <span class="ml-4">{{ __('Halaman Utama') }}</span>
+                    </x-jet-nav-link>
+                </li>
+            </ul>
+        @endif
+
+
         <ul>
 
             @if (Auth::user()->roles == 'ADMIN')
@@ -84,9 +107,9 @@
                                     class="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 ">
                                     <x-jet-nav-link href="{{ route('dashboard.user.indexUserCustomer') }}"
                                         :active="request()->routeIs('dashboard.user.indexUserCustomer')">
-                                        <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke-linecap="round"
-                                            stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"
-                                            stroke="currentColor">
+                                        <svg class="w-5 h-5" aria-hidden="true" fill="none"
+                                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                 d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z">
                                             </path>
@@ -535,6 +558,29 @@
                         </div>
                     @endif
                 </li>
+            @elseif (Auth::user()->roles == 'USER')
+                <li class="relative px-6 py-3">
+                    <x-jet-nav-link href="{{ route('dashboard.pricingCustomer.index') }}" :active="request()->routeIs('dashboard.pricingCustomer*')">
+                        <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke-linecap="round"
+                            stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9">
+                            </path>
+                        </svg>
+                        <span class="ml-4">{{ __('Pricing Produk') }}</span>
+                    </x-jet-nav-link>
+                </li>
+                <li class="relative px-6 py-3">
+                    <x-jet-nav-link href="{{ route('dashboard.transactionCustomer.index') }}" :active="request()->routeIs('dashboard.transactionCustomer*')">
+                        <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke-linecap="round"
+                            stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z">
+                            </path>
+                        </svg>
+                        <span class="ml-4">{{ __('Transaksi') }}</span>
+                    </x-jet-nav-link>
+                </li>
             @endif
 
         </ul>
@@ -885,7 +931,8 @@
                         class="inline-flex items-center focus:outline-none justify-between w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200">
                         <span class="inline-flex items-center">
                             <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke-linecap="round"
-                                stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+                                stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"
+                                stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z">
                                 </path>
@@ -897,12 +944,13 @@
                             fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd"
                                 d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                clip-rule="evenodd" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                stroke-linejoin="round" />
+                                clip-rule="evenodd" stroke="currentColor" stroke-width="1.5"
+                                stroke-linecap="round" stroke-linejoin="round" />
                             </path>
                         </svg>
                     </button>
-                    <div id="menu12" class="flex justify-start flex-col w-full md:w-auto items-start pb-1 hidden">
+                    <div id="menu12"
+                        class="flex justify-start flex-col w-full md:w-auto items-start pb-1 hidden">
                         <ul x-transition:enter="transition-all ease-in-out duration-300"
                             x-transition:enter-start="opacity-25 max-h-0"
                             x-transition:enter-end="opacity-100 max-h-xl"
@@ -912,9 +960,9 @@
                                 class="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 ">
                                 <x-jet-nav-link href="{{ route('dashboard.transaction.indexAllTransaction') }}"
                                     :active="request()->routeIs('dashboard.transaction.indexAllTransaction')">
-                                    <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke-linecap="round"
-                                        stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"
-                                        stroke="currentColor">
+                                    <svg class="w-5 h-5" aria-hidden="true" fill="none"
+                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round"
                                             d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z">
                                         </path>

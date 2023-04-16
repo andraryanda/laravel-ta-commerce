@@ -1,7 +1,8 @@
 <?php
 
-use App\Providers\RouteServiceProvider;
 use Laravel\Fortify\Features;
+use Illuminate\Support\Facades\Auth;
+use App\Providers\RouteServiceProvider;
 
 return [
 
@@ -61,7 +62,20 @@ return [
     |
     */
 
-    'home' => RouteServiceProvider::HOME,
+    // 'home' => RouteServiceProvider::HOME,
+    'home' => function () {
+        // Mendapatkan role pengguna yang telah login
+        $userRole = Auth::user()->roles;
+
+        // Mengatur redirect home berdasarkan role pengguna
+        if ($userRole == 'USER') {
+            return '/dashboardCustomer';
+        } elseif ($userRole == 'ADMIN') {
+            return '/dashboard';
+        }
+    },
+
+
 
     /*
     |--------------------------------------------------------------------------

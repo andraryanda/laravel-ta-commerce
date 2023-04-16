@@ -1,6 +1,6 @@
 <x-layout.apps>
     <x-slot name="header">
-        <button onclick="goBack()"
+        <button onclick="window.location.href='{{ route('dashboard.transactionCustomer.index') }}'"
             class="w-24 my-6 text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 shadow-lg shadow-purple-500/50 dark:shadow-lg dark:shadow-purple-800/80 font-medium rounded-lg text-sm px-3 py-2.5 text-center mr-2 mb-2">
             <div class="flex items-center">
                 <img src="{{ asset('icon/left.png') }}" class="mr-2 bg-white rounded-full" alt="Back" width="25">
@@ -15,7 +15,20 @@
 
 
     @section('transaction')
-        <x-slot name="script">
+        @push('style')
+            <style>
+                /* Memberikan jarak atas dan bawah pada bagian Show dan Search */
+                #crudTable_length,
+                #crudTable_filter {
+                    margin-top: 20px;
+                    margin-bottom: 10px;
+                    margin-left: 20px;
+                    margin-right: 20px;
+                }
+            </style>
+        @endpush
+
+        @push('javascript')
             <script>
                 function goBack() {
                     window.history.back();
@@ -88,11 +101,33 @@
                     })
                 });
             </script>
-        </x-slot>
+        @endpush
+
+        @if ($transaction->status == 'CANCELLED')
+            <div id="error-message"
+                class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 my-2.5 rounded relative"
+                role="alert">
+                <strong class="font-bold">Warning!</strong>
+                <span class="block sm:inline">Jika anda ingin mengubah metode pembayaran anda, maka akan otomatis terbaca
+                    Cancelled Jika mengeklik <strong>"Back To Merchant".</strong></span>
+            </div>
+            <div id="error-message" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 my-2.5 rounded relative"
+                role="alert">
+                <strong class="font-bold">Cancelled!</strong>
+                <span class="block sm:inline">Pesanan anda telah dibatalkan, silahkan melakukan pembelian kembali.</span>
+            </div>
+        @elseif ($transaction->status == 'SUCCESS')
+            <div id="error-message"
+                class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 my-2.5 rounded relative"
+                role="alert">
+                <strong class="font-bold">Success!</strong>
+                <span class="block sm:inline">Terimakasih telah memesan produk kami, kami harap anda bisa menjadi pelanggan
+                    tetap kami.</span>
+            </div>
+        @endif
 
 
         <div class="py-2">
-            {{-- <div class="max-w-7xl mx-auto sm:px-6 lg:px-8"> --}}
             <h2 class="font-semibold text-lg text-gray-800 leading-tight mb-5">Transaction Details</h2>
             <div class="bg-white overflow-hidden shadow sm:rounded-lg mb-10">
                 <div class="p-6 bg-white border-b border-gray-200">
@@ -140,14 +175,11 @@
                     </table>
                 </div>
             </div>
-            {{-- </div> --}}
         </div>
-
-
 
         <h2 class="font-semibold text-lg text-gray-800 leading-tight mb-5">Transaction Items</h2>
         <div class="w-full overflow-hidden rounded-lg shadow-xs">
-            <div class="px-3 py-3 overflow-x-auto bg-white sm:p-6">
+            <div class="overflow-x-auto bg-white">
                 <table id="crudTable" class="w-full row-border whitespace-no-wrap mt-2 pt-2">
                     <thead>
                         <tr class="text-xs font-semibold tracking-wide text-left text-gray-700 uppercase border-b">
@@ -156,6 +188,7 @@
                             <th>Harga Produk</th>
                             <th>Qty</th>
                             <th>Tanggal Transaksi</th>
+
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">

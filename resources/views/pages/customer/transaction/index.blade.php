@@ -1,29 +1,20 @@
 <x-layout.apps>
     <x-slot name="header">
         <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
-            {{ __('All Transaction') }}
+            {{ __('Transaction - ' . Auth::user()->name) }}
         </h2>
     </x-slot>
 
-    @section('transaction')
+    @section('transactionCustomer')
         @push('style')
             <style>
-                #crudTable tbody tr:hover {
-                    background-color: #f7fafc;
-                    transition: all 0.3s ease-in-out;
-                    /* background-color: rgba(0, 0, 0, 0.075); */
-                }
-
-                #crudTable:hover {
-                    cursor: pointer;
-                }
-
-                #crudTable.hover:bg-gray-100 tbody tr:hover {
-                    background-color: #edf2f7;
-                }
-
-                #crudTable tfoot input {
-                    width: 100%;
+                /* Memberikan jarak atas dan bawah pada bagian Show dan Search */
+                #crudTable_length,
+                #crudTable_filter {
+                    margin-top: 20px;
+                    margin-bottom: 10px;
+                    margin-left: 20px;
+                    margin-right: 20px;
                 }
             </style>
         @endpush
@@ -271,7 +262,7 @@
                 </div>
                 <div>
                     <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
-                        Transaksi Success
+                        Transaksi Sukses
                     </p>
                     <p class="count-up text-lg font-semibold text-gray-700 dark:text-gray-200"
                         data-value="{{ $total_amount_success }}" data-is-price="true">
@@ -299,50 +290,11 @@
                     </p>
                 </div>
             </div>
-            <!-- Card -->
-            <div
-                class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800 hover:bg-red-100 transition duration-300 ease-in-out">
-                <div class="p-3 mr-4 text-red-500 bg-red-100 rounded-full dark:text-red-100 dark:bg-red-500">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd"
-                            d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"
-                            clip-rule="evenodd"></path>
-                    </svg>
-                </div>
-                <div>
-                    <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
-                        Transaksi Cancelled
-                    </p>
-                    <p class="count-up text-lg font-semibold text-gray-700 dark:text-gray-200"
-                        data-value="{{ $total_amount_cancelled }}" data-is-price="true">
-                        0
-                    </p>
-                </div>
-            </div>
         </div>
 
         <div class="w-full overflow-hidden rounded-lg shadow-xs">
             <div class=" overflow-x-auto bg-white ">
-                <div class="mb-5 mt-3 flex justify-start space-x-2 my-3 mx-3 py-2">
-                    <button type="button" onclick="window.location.href='{{ route('dashboard.transaction.create') }}'"
-                        title="Create"
-                        class="text-gray-900 shadow-sm bg-white hover:bg-green-100 border border-green-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 mr-2 mb-2">
-                        <div class="flex items-center">
-                            <img src="{{ asset('icon/create.png') }}" alt="Create" width="25" class="mr-2">
-                            <p>Create Transaction</p>
-                        </div>
-                    </button>
 
-                    <button type="button"
-                        onclick="window.location.href='{{ route('dashboard.report.exportAllTransactions') }}'"
-                        title="Export All Transactions"
-                        class="text-gray-900 shadow-sm bg-white hover:bg-blue-100 border border-blue-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 mr-2 mb-2">
-                        <div class="flex items-center">
-                            <img src="{{ asset('icon/download.png') }}" alt="Export" width="25" class="mr-2">
-                            <p>Export All Transactions</p>
-                        </div>
-                    </button>
-                </div>
                 <table id="crudTable" class="w-full table-auto row-border whitespace-no-wrap mt-2 pt-2">
                     <thead>
                         <tr class="text-xs font-semibold tracking-wide text-left text-gray-700 uppercase border-b">

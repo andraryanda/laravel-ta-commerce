@@ -10,6 +10,7 @@ use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Midtrans\SnapPreferences;
 use App\Models\TransactionItem;
+use App\Http\Middleware\IsAdmin;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -297,9 +298,27 @@ class MidtransWebhookController extends Controller
         // Send the email
         Mail::to('andraryandra38@gmail.com')->send(new TransactionSuccessNotification($transaction, $user));
 
+        if ($transaction) {
+            // Mengambil nilai id dan users_id dari model Transaction
+            $transactionId = $transaction->id;
+            $userId = $transaction->users_id;
 
-        // return redirect()->route('dashboard.transaction.indexSuccess');
-        return redirect()->route('dashboard.midtrans.show', encrypt($transaction->id));
+            // Logika pengalihan pengguna berdasarkan role dan nilai order_id
+            if ($user->roles == 'USER' && $transaction->id == $request->order_id && $transaction->users_id == $user->id) {
+                // Jika pengguna bukan admin dan order_id == request->order_id dan users_id == id pengguna
+                return redirect()->route('dashboard.midtrans.showCustomer', encrypt($transactionId));
+            } else {
+                // Jika pengguna tidak memiliki peran admin atau kondisi lainnya ADMIN
+                return redirect()->route('dashboard.midtrans.show', encrypt($transactionId));
+            }
+        } else {
+            // Logika jika data transaksi tidak ditemukan
+            // Misalnya menampilkan pesan error atau mengarahkan pengguna ke halaman lain
+            // ...
+            return redirect()->route('landingPage.index')->withError('Transaksi Problem');
+        }
+
+        // return redirect()->route('dashboard.midtrans.show', encrypt($transaction->id));
     }
 
 
@@ -350,6 +369,11 @@ class MidtransWebhookController extends Controller
                 abort(404);
             }
 
+            // Verifikasi users_id sesuai dengan id pengguna yang sedang masuk
+            if ($transaction->users_id != auth()->user()->id) {
+                return redirect()->route('dashboard.index')->with('error', 'Anda tidak memiliki akses ke transaksi ini');
+            }
+
             if (request()->ajax()) {
                 $query = TransactionItem::with(['product'])->where('transactions_id', $transaction->id);
 
@@ -363,6 +387,38 @@ class MidtransWebhookController extends Controller
             return view('pages.midtrans.index', compact('transaction'));
         } catch (DecryptException $e) {
             return redirect()->route('dashboard.index')->with('error', 'Terjadi kesalahan dalam menampilkan transaksi');
+        }
+    }
+
+
+    public function showCustomer($encryptedId)
+    {
+        try {
+            $id = Crypt::decrypt($encryptedId); // Mendekripsi ID transaksi
+            $transaction = Transaction::find($id);
+            if (!$transaction) {
+                // Lakukan penanganan jika transaksi tidak ditemukan
+                abort(404);
+            }
+
+            // Verifikasi users_id sesuai dengan id pengguna yang sedang masuk
+            if ($transaction->users_id != auth()->user()->id) {
+                return redirect()->route('landingPage.index')->withError('Anda tidak memiliki akses ke transaksi ini');
+            }
+
+            if (request()->ajax()) {
+                $query = TransactionItem::with(['product'])->where('transactions_id', $transaction->id);
+
+                return DataTables::of($query)
+                    ->editColumn('product.price', function ($item) {
+                        return number_format($item->product->price);
+                    })
+                    ->make();
+            }
+
+            return view('pages.midtrans.indexCustomer', compact('transaction'));
+        } catch (DecryptException $e) {
+            return redirect()->route('dashboard.indexDashboardCustomer')->withError('Terjadi kesalahan dalam menampilkan transaksi');
         }
     }
 }
