@@ -1,22 +1,21 @@
 <?php
 
-namespace App\Http\Controllers\LandingPage;
+namespace App\Http\Controllers\Search;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Models\ProductGallery;
 use App\Http\Controllers\Controller;
 
-class PricingController extends Controller
+class PricingLandingPageSearchController extends Controller
 {
-    public function index()
+    public function searchProductLandingPageCustomer(Request $request)
     {
-        $products = Product::paginate(4);
+        $query = $request->get('q');
+        $products = Product::where('name', 'like', '%' . $query . '%')->paginate(8);
         foreach ($products as $product) {
-            // Menambahkan data ProductGallery ke setiap produk
             $product->productGallery = ProductGallery::where('products_id', $product->id)->get();
         }
-
         return view('landing_page.pages.pricing', compact('products'));
     }
 }

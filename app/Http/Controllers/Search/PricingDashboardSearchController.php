@@ -1,22 +1,21 @@
 <?php
 
-namespace App\Http\Controllers\Customer;
+namespace App\Http\Controllers\Search;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Models\ProductGallery;
 use App\Http\Controllers\Controller;
 
-class PricingCustomerController extends Controller
+class PricingDashboardSearchController extends Controller
 {
-    public function index()
+    public function searchProductDashboardCustomer(Request $request)
     {
-        $products = Product::paginate(4);
+        $query = $request->get('q');
+        $products = Product::where('name', 'like', '%' . $query . '%')->paginate(8);
         foreach ($products as $product) {
-            // Menambahkan data ProductGallery ke setiap produk
             $product->productGallery = ProductGallery::where('products_id', $product->id)->get();
         }
-
         return view('pages.customer.pricing.index', compact('products'));
     }
 }

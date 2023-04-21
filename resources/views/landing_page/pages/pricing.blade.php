@@ -6,8 +6,23 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="breadcrumb__option">
-                        <a href="./index.html"><span class="fa fa-home"></span> Home</a>
-                        <span>Domain</span>
+                        <a href="{{ route('landingPage.index') }}"><span class="fa fa-home"></span> Home</a>
+                        @php
+                            $segments = Request::segments();
+                            $url = '';
+                        @endphp
+                        @foreach ($segments as $segment)
+                            @php
+                                $url .= '/' . $segment;
+                                $name = str_replace('-', ' ', $segment);
+                                $name = ucwords($name);
+                            @endphp
+                            @if ($loop->last)
+                                <span>{{ $name }}</span>
+                            @else
+                                <a href="">{{ $name }}</a>
+                            @endif
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -15,275 +30,150 @@
     </div>
     <!-- Breadcrumb End -->
 
+
+    <!-- Breadcrumb End -->
     <!-- Pricing Section Begin -->
     <section class="pricing-section spad">
         <div class="container">
             <div class="row">
                 <div class="col-lg-7 col-md-7">
                     <div class="section-title normal-title">
-                        <h3>Choose your plan</h3>
-                    </div>
-                </div>
-                <div class="col-lg-5 col-md-5">
-                    <div class="pricing__swipe-btn">
-                        <label for="month" class="active">Monthly
-                            <input type="radio" id="month">
-                        </label>
-                        <label for="yearly">Yearly
-                            <input type="radio" id="yearly">
-                        </label>
+                        @if (request()->has('q'))
+                            <h3>Hasil pencarian untuk "{{ request('q') }}"</h3>
+                        @else
+                            <h3>Choose your product</h3>
+                        @endif
                     </div>
                 </div>
             </div>
-            <div class="row monthly__plans active">
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="pricing__item">
-                        <h4>Started</h4>
-                        <h3>$15.90 <span>/ month</span></h3>
-                        <ul>
-                            <li>2,5 GB web space</li>
-                            <li>Free site buiding tools</li>
-                            <li>Free domain registar</li>
-                            <li>24/7 Support</li>
-                            <li>Free marketing tool</li>
-                            <li>99,9% Services uptime</li>
-                            <li>30 day money back</li>
-                        </ul>
-                        <a href="#" class="primary-btn">Choose plan</a>
-                    </div>
+
+            {{-- Back Begin --}}
+            @if (request()->has('q'))
+                <div class="my-3">
+                    <a href="{{ route('landingPage.pricing') }}" class="btn btn-purple my-1.5 mr-2 text-white rounded-pill">
+                        <div class="d-flex align-items-center">
+                            <img src="{{ asset('icon/left.png') }}" class="mr-2 bg-white rounded-circle" alt="Back"
+                                width="25">
+                            <p class="m-0">Back</p>
+                        </div>
+                    </a>
                 </div>
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="pricing__item">
-                        <h4>Business</h4>
-                        <h3>$25.90 <span>/ month</span></h3>
-                        <ul>
-                            <li>90 GB web space</li>
-                            <li>Free site buiding tools</li>
-                            <li>Free domain registar</li>
-                            <li>24/7 Support</li>
-                            <li>Free marketing tool</li>
-                            <li>99,9% Services uptime</li>
-                            <li>30 day money back</li>
-                        </ul>
-                        <a href="#" class="primary-btn">Choose plan</a>
+            @endif
+
+            {{-- Back end --}}
+            {{-- Search Begin --}}
+            <div class="d-flex justify-content-center mb-5 shadow">
+                <form action="{{ route('dashboard.pricingCustomer.searchProductLandingPageCustomer') }}" method="GET"
+                    class="w-100 max-w-lg">
+                    <div class="input-group">
+                        <input type="search" name="q"
+                            class="form-control py-2 px-3 text-sm text-gray-900 bg-white rounded-md focus:outline-none focus:bg-white focus:text-gray-900"
+                            placeholder="Search..." autocomplete="off">
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-primary px-4 py-2.5">
+                                <span class="fa fa-search"></span>
+                            </button>
+                        </div>
                     </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="pricing__item">
-                        <h4>Premium</h4>
-                        <h3>$35.90 <span>/ month</span></h3>
-                        <ul>
-                            <li>150 GB web space</li>
-                            <li>Free site buiding tools</li>
-                            <li>Free domain registar</li>
-                            <li>24/7 Support</li>
-                            <li>Free marketing tool</li>
-                            <li>99,9% Services uptime</li>
-                            <li>30 day money back</li>
-                        </ul>
-                        <a href="#" class="primary-btn">Choose plan</a>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="pricing__item">
-                        <h4>Dedicated</h4>
-                        <h3>$45.90 <span>/ month</span></h3>
-                        <ul>
-                            <li>Unlimited web space</li>
-                            <li>Free site buiding tools</li>
-                            <li>Free domain registar</li>
-                            <li>24/7 Support</li>
-                            <li>Free marketing tool</li>
-                            <li>99,9% Services uptime</li>
-                            <li>30 day money back</li>
-                        </ul>
-                        <a href="#" class="primary-btn">Choose plan</a>
-                    </div>
-                </div>
+                </form>
             </div>
-            <div class="row yearly__plans">
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="pricing__item">
-                        <h4>Started</h4>
-                        <h3>$150 <span>/ month</span></h3>
-                        <ul>
-                            <li>2,5 GB web space</li>
-                            <li>Free site buiding tools</li>
-                            <li>Free domain registar</li>
-                            <li>24/7 Support</li>
-                            <li>Free marketing tool</li>
-                            <li>99,9% Services uptime</li>
-                            <li>30 day money back</li>
-                        </ul>
-                        <a href="#" class="primary-btn">Choose plan</a>
-                    </div>
+
+            {{-- Search End --}}
+            <div class="container-fluid">
+                <div class="row justify-content-center d-flex">
+                    @forelse ($products as $product)
+                        <div class="col-lg-3 col-md-6 col-sm-12 d-flex justify-content-center">
+                            <div class="card mb-3" width="300">
+                                <img src="{{ $product->productGallery->first()->url ?? 'Not Found!' }}" class="card-img-top"
+                                    alt="{{ $product->name }}">
+                                <div class="card-body">
+                                    <h5 class="card-title font-weight-bold">{{ $product->name }}</h5>
+                                </div>
+                                <div class="card-footer d-flex justify-content-between align-items-center border-top">
+                                    <div class="price align-self-center">
+                                        <p class="font-weight-bold m-0" style="font-size: 16px;">Rp
+                                            {{ number_format($product->price, 0, ',', '.') }}
+                                        </p>
+                                    </div>
+                                    <button
+                                        onclick="window.location.href='{{ route('landingPage.checkout.shipping', encrypt($product->id)) }}'"
+                                        class="btn btn-primary rounded-pill font-weight-bold px-3 py-2"
+                                        style="font-size: 13px;">
+                                        {{ __('Buy') }}
+                                        <span class="fa fa-shopping-cart ml-2" style="font-size: 1.2em;"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="d-flex justify-content-center">
+                            <div class="alert alert-danger" role="alert">
+                                <strong class="font-weight-bold">No products available.</strong>
+                                <span>Please try a different search term.</span>
+                            </div>
+                        </div>
+                    @endforelse
                 </div>
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="pricing__item">
-                        <h4>Business</h4>
-                        <h3>$250 <span>/ month</span></h3>
-                        <ul>
-                            <li>90 GB web space</li>
-                            <li>Free site buiding tools</li>
-                            <li>Free domain registar</li>
-                            <li>24/7 Support</li>
-                            <li>Free marketing tool</li>
-                            <li>99,9% Services uptime</li>
-                            <li>30 day money back</li>
+                <div class="d-flex justify-content-center my-3">
+                    {{-- {{ $products->links('pagination::bootstrap-4') }} --}}
+                    @if ($products->lastPage() > 1)
+                        <ul class="pagination ml-3 mb-0">
+                            <li class="page-item mx-2 {{ $products->currentPage() == 1 ? ' disabled' : '' }}">
+                                <a class="page-link rounded-pill" href="{{ $products->url(1) }}">First</a>
+                            </li>
+                            @for ($i = 1; $i <= $products->lastPage(); $i++)
+                                <li class="page-item mx-2 {{ $products->currentPage() == $i ? ' active' : '' }}">
+                                    <a class="page-link rounded-pill"
+                                        href="{{ $products->url($i) }}">{{ $i }}</a>
+                                </li>
+                            @endfor
+                            <li
+                                class="page-item mx-2 {{ $products->currentPage() == $products->lastPage() ? ' disabled' : '' }}">
+                                <a class="page-link rounded-pill"
+                                    href="{{ $products->url($products->lastPage()) }}">Last</a>
+                            </li>
                         </ul>
-                        <a href="#" class="primary-btn">Choose plan</a>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="pricing__item">
-                        <h4>Premium</h4>
-                        <h3>$350 <span>/ month</span></h3>
-                        <ul>
-                            <li>150 GB web space</li>
-                            <li>Free site buiding tools</li>
-                            <li>Free domain registar</li>
-                            <li>24/7 Support</li>
-                            <li>Free marketing tool</li>
-                            <li>99,9% Services uptime</li>
-                            <li>30 day money back</li>
-                        </ul>
-                        <a href="#" class="primary-btn">Choose plan</a>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="pricing__item">
-                        <h4>Dedicated</h4>
-                        <h3>$450 <span>/ month</span></h3>
-                        <ul>
-                            <li>Unlimited web space</li>
-                            <li>Free site buiding tools</li>
-                            <li>Free domain registar</li>
-                            <li>24/7 Support</li>
-                            <li>Free marketing tool</li>
-                            <li>99,9% Services uptime</li>
-                            <li>30 day money back</li>
-                        </ul>
-                        <a href="#" class="primary-btn">Choose plan</a>
-                    </div>
+                    @endif
                 </div>
             </div>
         </div>
     </section>
     <!-- Pricing Section End -->
 
-    <!-- Choose Plan Section Begin -->
-    <section class="choose-plan-section pricing-page spad">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-6">
-                    <img src="{{ asset('landing_page/img/choose-plan.png') }}" alt="">
-                </div>
-                <div class="col-lg-6">
-                    <div class="plan__text">
-                        <h3>up to 70% discount with free domain name registration included!</h3>
-                        <ul>
-                            <li><span class="fa fa-check"></span> FREE Domain Name</li>
-                            <li><span class="fa fa-check"></span> FREE Email Address</li>
-                            <li><span class="fa fa-check"></span> Plently of disk space</li>
-                            <li><span class="fa fa-check"></span> FREE Website Bullder</li>
-                            <li><span class="fa fa-check"></span> FREE Marketing Tools</li>
-                            <li><span class="fa fa-check"></span> 1-Click WordPress Install</li>
-                        </ul>
-                        <a href="#" class="primary-btn">Get start now</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- Choose Plan Section End -->
+    @push('styles')
+        <style>
+            .card {
+                transition: transform 0.3s ease-in-out;
+            }
 
-    <!-- Question Section Begin -->
-    <section class="question-section spad">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="section-title">
-                        <h3>Have a questions?</h3>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="question__accordin">
-                        <div class="accordion" id="accordionExample">
-                            <div class="card">
-                                <div class="card-heading active">
-                                    <a class="active" data-toggle="collapse" data-target="#collapseOne">
-                                        How do I cancel and delete my account?
-                                    </a>
-                                </div>
-                                <div id="collapseOne" class="collapse show" data-parent="#accordionExample">
-                                    <div class="card-body">
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                                            tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse
-                                            ultrices gravida. Risus commodo viverra maecenas accumsan lacus vel
-                                            facilisis. </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="card-heading">
-                                    <a data-toggle="collapse" data-target="#collapseTwo">
-                                        Can I get my website listed in Google?
-                                    </a>
-                                </div>
-                                <div id="collapseTwo" class="collapse" data-parent="#accordionExample">
-                                    <div class="card-body">
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                                            tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse
-                                            ultrices gravida. Risus commodo viverra maecenas accumsan lacus vel
-                                            facilisis. </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="card-heading">
-                                    <a data-toggle="collapse" data-target="#collapseThree">
-                                        Can I run a business?
-                                    </a>
-                                </div>
-                                <div id="collapseThree" class="collapse" data-parent="#accordionExample">
-                                    <div class="card-body">
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                                            tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse
-                                            ultrices gravida. Risus commodo viverra maecenas accumsan lacus vel
-                                            facilisis. </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="card-heading">
-                                    <a data-toggle="collapse" data-target="#collapseFour">
-                                        Does ArkaHost offer phone support?
-                                    </a>
-                                </div>
-                                <div id="collapseFour" class="collapse" data-parent="#accordionExample">
-                                    <div class="card-body">
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                                            tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse
-                                            ultrices gravida. Risus commodo viverra maecenas accumsan lacus vel
-                                            facilisis. </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <form action="#" class="question-form">
-                        <input type="text" placeholder="Name">
-                        <input type="text" placeholder="Email">
-                        <textarea placeholder="Question"></textarea>
-                        <button type="submit" class="site-btn">Send question</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- Question Section End -->
+            .card:hover {
+                transform: scale(1.05);
+            }
+        </style>
+        <style>
+            .btn-purple {
+                background-color: #7f00ff;
+                color: #fff;
+                border-color: #7f00ff;
+            }
+
+            .btn-purple:hover {
+                background-color: #6400e4;
+                color: #fff;
+                border-color: #6400e4;
+            }
+
+            .btn-purple:focus,
+            .btn-purple.focus {
+                box-shadow: 0 0 0 0.2rem rgba(127, 0, 255, 0.5);
+            }
+
+            .btn-purple.disabled,
+            .btn-purple:disabled {
+                background-color: #7f00ff;
+                color: #fff;
+                border-color: #7f00ff;
+            }
+        </style>
+    @endpush
 @endsection

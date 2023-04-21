@@ -21,6 +21,7 @@
 
 
                 <div class="bg-white my-3 p-2 d-flex flex-column" style="border-radius:14px">
+                    {{-- Open Form --}}
                     <form action="{{ route('landingPage.checkout') }}" method="post">
                         @csrf
                         <!-- Form input untuk product_id -->
@@ -220,8 +221,6 @@
                                         <img src="{{ asset('metode-pembayaran/Screenshot_6.png') }}"
                                             alt="metode-pembayaran-6" height="100%">
                                     </div>
-
-
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-danger shadow-lg"
@@ -237,20 +236,23 @@
                             Klik Disini Sekarang Metode pembayaran Otomatis
                         </div>
                     </div>
-                    <button type="submit" class=" btn mt-4 btn-primary btn-block rounded-pill">
+                    <button type="submit" name="bayar_sekarang" class=" btn mt-4 btn-primary btn-block rounded-pill">
                         <div class="d-flex justify-content-center align-items-center">
                             <img src="{{ asset('icon/credit-card.png') }}" alt="Bayar" width="30"
                                 class="mr-2">
                             <p class="text-white mb-0 font-weight-bold">Bayar sekarang!</p>
                         </div>
                     </button>
-                    </form>
-                    <button type="button" class="btn btn-success my-2 py-2 rounded-pill">
+                    {{-- </form> --}}
+                    {{-- Penutup Form --}}
+                    <button type="submit" name="bayar_manual" {{-- onclick="window.location.href='{{ route('dashboard.transaction.sendMessage2') }}'" --}}
+                        class="btn btn-success my-2 py-2 rounded-pill">
                         <div class="d-flex justify-content-center align-items-center">
                             <img src="{{ asset('icon/whatsapp.png') }}" alt="whatsapp" width="30" class="mr-2">
-                            <p class="text-white mb-0 font-weight-bold">Hubungi Admin Whatsapp</p>
+                            <p class="text-white mb-0 font-weight-bold">Bayar Manual & Hubungi Admin Whatsapp</p>
                         </div>
                     </button>
+                    </form>
 
                 </div>
                 <div class="bg-white mt-4 p-3 d-flex flex-column" style="border-radius:14px">

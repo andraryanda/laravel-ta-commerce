@@ -4,8 +4,6 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ChartController;
-use App\Http\Controllers\Customer\PricingCustomerController;
-use App\Http\Controllers\Customer\TransactionCustomerController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\ProductController;
@@ -13,6 +11,7 @@ use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserChartController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\SearchGlobalController;
 use App\Http\Controllers\MyTransactionController;
 use App\Http\Controllers\ProductGalleryController;
 use App\Http\Controllers\ProductCategoryController;
@@ -21,9 +20,12 @@ use App\Http\Controllers\LandingPage\AboutController;
 use App\Http\Controllers\LandingPage\ContactController;
 use App\Http\Controllers\LandingPage\HostingController;
 use App\Http\Controllers\LandingPage\PricingController;
+use App\Http\Controllers\Customer\PricingCustomerController;
 use App\Http\Controllers\LandingPage\HalamanUtamaController;
 use App\Http\Controllers\Midtrans\MidtransWebhookController;
-use App\Http\Controllers\SearchGlobalController;
+use App\Http\Controllers\Customer\TransactionCustomerController;
+use App\Http\Controllers\Search\PricingDashboardSearchController;
+use App\Http\Controllers\Search\PricingLandingPageSearchController;
 
 /*
 |--------------------------------------------------------------------------
@@ -71,6 +73,8 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
         Route::get('transactionCustomerMidtrans/{transaction}', [MidtransWebhookController::class, 'showCustomer'])->name('midtrans.showCustomer');
 
         Route::get('exportPDF-{transaction}', [ReportController::class, 'exportPDF'])->name('report.exportPDF');
+        Route::get('sendMessageCustomerTransaction-{transaction}', [HalamanUtamaController::class, 'sendMessageCustomerTransaction'])->name('transaction.sendMessageCustomerTransaction');
+        Route::get('sendMessageCustomer', [HalamanUtamaController::class, 'sendMessage2'])->name('transaction.sendMessage2');
 
 
         Route::middleware(['customer'])->group(function () {
@@ -78,8 +82,10 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
                 'index', 'show'
             ]);
             Route::resource('pricingCustomer', PricingCustomerController::class)->only([
-                'index'
+                'index', 'searchProductCustomer'
             ]);
+            Route::get('/searchProductDashboardCustomer', [PricingDashboardSearchController::class, 'searchProductDashboardCustomer'])->name('pricingCustomer.searchProductDashboardCustomer');
+            Route::get('/searchProductLandingPageCustomer', [PricingLandingPageSearchController::class, 'searchProductLandingPageCustomer'])->name('pricingCustomer.searchProductLandingPageCustomer');
         });
 
         Route::middleware(['admin'])->group(function () {

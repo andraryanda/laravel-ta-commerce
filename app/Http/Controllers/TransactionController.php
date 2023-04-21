@@ -1041,6 +1041,12 @@ class TransactionController extends Controller
 
         $message = "Halo " . '*' . $transaction->user->name . '*' . ", terima kasih telah berbelanja di toko *Al's Store* kami. Berikut adalah detail pesanan Anda:\n\n";
         $message .= "-----------------------------------\n";
+        $message .= "*Detail User:*\n";
+        $message .= "*Nama       : "  . $transaction->user->name . '*' . "\n";
+        $message .= "*Email        : "  . $transaction->user->email . '*' . "\n";
+        $message .= "*Phone      : "  . $transaction->user->phone . '*' . "\n";
+        $message .= "*Alamat     : "  . $transaction->address . '*' . "\n\n";
+
         $message .= "*Pesanan Transaksi:*\n";
         foreach ($items as $item) {
             $message .= "*Nama Produk       : "  . $item->name . '*' . "\n";
@@ -1140,8 +1146,11 @@ class TransactionController extends Controller
         $user = Auth::user();
 
         // Send the email
-        Mail::to('andraryandra38@gmail.com')->send(new TransactionNotification($transaction, $user));
-
+        try {
+            Mail::to('andraryandra38@gmail.com')->send(new TransactionNotification($transaction, $user));
+        } catch (\Exception $e) {
+            // Tidak dapat mengirim email, lanjutkan eksekusi kode ke depan
+        }
         return redirect()->route('dashboard.transaction.indexPending')->withSuccess('Transaksi berhasil dibuat.');
     }
 

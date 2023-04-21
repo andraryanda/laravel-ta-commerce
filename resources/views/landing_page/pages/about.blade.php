@@ -7,7 +7,22 @@
                 <div class="col-lg-12">
                     <div class="breadcrumb__option">
                         <a href="{{ route('landingPage.index') }}"><span class="fa fa-home"></span> Home</a>
-                        <span>About</span>
+                        @php
+                            $segments = Request::segments();
+                            $url = '';
+                        @endphp
+                        @foreach ($segments as $segment)
+                            @php
+                                $url .= '/' . $segment;
+                                $name = str_replace('-', ' ', $segment);
+                                $name = ucwords($name);
+                            @endphp
+                            @if ($loop->last)
+                                <span>{{ $name }}</span>
+                            @else
+                                <a href="">{{ $name }}</a>
+                            @endif
+                        @endforeach
                     </div>
                 </div>
             </div>

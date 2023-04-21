@@ -148,19 +148,9 @@
             <div class="row">
                 <div class="col-lg-7 col-md-7">
                     <div class="section-title normal-title">
-                        <h3>Choose your plan</h3>
+                        <h3>Choose your product</h3>
                     </div>
                 </div>
-                {{-- <div class="col-lg-5 col-md-5">
-                    <div class="pricing__swipe-btn">
-                        <label for="month" class="active">Monthly
-                            <input type="radio" id="month">
-                        </label>
-                        <label for="yearly">Yearly
-                            <input type="radio" id="yearly">
-                        </label>
-                    </div>
-                </div> --}}
             </div>
             <div class="container-fluid">
                 <div class="row justify-content-center">
@@ -190,6 +180,17 @@
                             <p>No products available.</p>
                         </div>
                     @endforelse
+                </div>
+                <div class="row justify-content-center mt-4">
+                    @if ($products->hasMorePages())
+                        <div class="col-12 text-center">
+                            <a class="btn btn-primary rounded-pill font-weight-bold px-4 py-2"
+                                href="{{ route('landingPage.pricing') }}">
+                                {{ __('More Products') }}
+                            </a>
+                            {{-- <a href="{{ $products->nextPageUrl() }}" class="btn btn-primary">{{ __('More Products') }}</a> --}}
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
