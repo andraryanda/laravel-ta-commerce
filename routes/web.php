@@ -48,6 +48,8 @@ Route::get('about', [AboutController::class, 'index'])->name('landingPage.about'
 Route::get('hosting', [HostingController::class, 'index'])->name('landingPage.hosting');
 Route::get('contact', [ContactController::class, 'index'])->name('landingPage.contact');
 Route::get('pages/pricing', [PricingController::class, 'index'])->name('landingPage.pricing');
+Route::get('/searchProductLandingPageCustomer', [PricingLandingPageSearchController::class, 'searchProductLandingPageCustomer'])->name('landingPage.pricingCustomer.searchProductLandingPageCustomer');
+
 
 Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::get('dashboard', [DashboardController::class, 'statusDashboard'])->name('dashboard.index')->middleware('admin');
@@ -74,7 +76,8 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
 
         Route::get('exportPDF-{transaction}', [ReportController::class, 'exportPDF'])->name('report.exportPDF');
         Route::get('sendMessageCustomerTransaction-{transaction}', [HalamanUtamaController::class, 'sendMessageCustomerTransaction'])->name('transaction.sendMessageCustomerTransaction');
-        Route::get('sendMessageCustomer', [HalamanUtamaController::class, 'sendMessage2'])->name('transaction.sendMessage2');
+        Route::get('sendMessageCustomerDashboardTransaction-{transaction}', [TransactionCustomerController::class, 'sendMessageCustomerDashboardTransaction'])->name('transaction.sendMessageCustomerDashboardTransaction');
+        // Route::get('sendMessageCustomer', [HalamanUtamaController::class, 'sendMessage2'])->name('transaction.sendMessage2');
 
 
         Route::middleware(['customer'])->group(function () {
@@ -85,7 +88,6 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
                 'index', 'searchProductCustomer'
             ]);
             Route::get('/searchProductDashboardCustomer', [PricingDashboardSearchController::class, 'searchProductDashboardCustomer'])->name('pricingCustomer.searchProductDashboardCustomer');
-            Route::get('/searchProductLandingPageCustomer', [PricingLandingPageSearchController::class, 'searchProductLandingPageCustomer'])->name('pricingCustomer.searchProductLandingPageCustomer');
         });
 
         Route::middleware(['admin'])->group(function () {

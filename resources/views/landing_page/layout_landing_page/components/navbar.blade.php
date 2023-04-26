@@ -183,7 +183,18 @@
                  <div class="col-lg-6 col-md-6">
                      <div class="header__info-right">
                          <ul>
-                             <li><a href="#"><span class="fa fa-money"></span> Keranjang Shopping</a></li>
+                             <li>
+                                 <a href="{{ route('dashboard.transactionCustomer.index') }}">
+                                     <span class="fa fa-shopping-cart ml-2" style="font-size: 1.2em;"></span>
+                                     {{ __('Keranjang Shopping') }}
+                                     @if (Auth::user())
+                                         <span
+                                             class="absolute -top-2 left-4 rounded-full bg-danger p-0.5 px-1 ml-2 text-sm text-red-50 font-weight-bold">
+                                             {{ $total_pending_count ?? '' }}
+                                         </span>
+                                     @endif
+                                 </a>
+                             </li>
                              @if (Route::has('login'))
                                  @auth
                                      <li>

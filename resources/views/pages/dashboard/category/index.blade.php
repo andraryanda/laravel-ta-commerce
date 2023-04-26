@@ -73,11 +73,8 @@
                                 }
                             });
                         },
-                        // responsive: true,
-                        // searching: true,
-                        // ordering: true,
                         processing: true,
-                        // serverSide: true,
+                        serverSide: true,
                         ajax: {
                             url: '{!! url()->current() !!}',
                         },
@@ -125,6 +122,7 @@
                                 searchable: false,
                                 width: '25%',
                             }
+
                         ],
                         pagingType: 'full_numbers',
                         // order: [

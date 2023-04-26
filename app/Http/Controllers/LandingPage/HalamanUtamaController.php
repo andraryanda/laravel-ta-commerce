@@ -27,6 +27,16 @@ class HalamanUtamaController extends Controller
         $new_transaction = Transaction::count();
         $total_product = Product::count();
         $total_amount_success = Transaction::where('status', '=', 'SUCCESS')->sum('total_price');
+        if (Auth::check()) {
+            $user = Auth::user();
+            if ($user->roles == "ADMIN") {
+                $total_pending_count = Transaction::where('status', '=', 'PENDING')->count();
+            } else {
+                $total_pending_count = Transaction::where('status', '=', 'PENDING')->where('users_id', '=', $user->id)->count();
+            }
+        } else {
+            $total_pending_count = 0;
+        }
 
         $products = Product::paginate(4);
         foreach ($products as $product) {
@@ -40,6 +50,7 @@ class HalamanUtamaController extends Controller
             'users_customer_count',
             'new_transaction',
             'total_amount_success',
+            'total_pending_count',
         ));
     }
 
@@ -69,7 +80,7 @@ class HalamanUtamaController extends Controller
             'status' => $request->status,
         ]);
 
-        $productModel = Product::findOrFail($request->products_id); // Mencari produk berdasarkan product_id dari form input
+        $productModel = Product::find($request->products_id); // Mencari produk berdasarkan product_id dari form input
 
         if ($productModel) {
             $products_id = $productModel->id;
@@ -165,7 +176,21 @@ class HalamanUtamaController extends Controller
     {
         $id = decrypt($encryptedId); // Mendekripsi ID produk
         $product = Product::with('galleries')->with('category')->findOrFail($id);
+        if (Auth::check()) {
+            $user = Auth::user();
+            if ($user->roles == "ADMIN") {
+                $total_pending_count = Transaction::where('status', '=', 'PENDING')->count();
+            } else {
+                $total_pending_count = Transaction::where('status', '=', 'PENDING')->where('users_id', '=', $user->id)->count();
+            }
+        } else {
+            $total_pending_count = 0;
+        }
 
-        return view('landing_page.pages.checkout.checkout-shipping', compact('product'));
+
+        return view('landing_page.pages.checkout.checkout-shipping', compact(
+            'product',
+            'total_pending_count',
+        ));
     }
 }

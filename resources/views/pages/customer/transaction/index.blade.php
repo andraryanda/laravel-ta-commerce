@@ -80,12 +80,7 @@
                                     return meta.row + 1;
                                 }
                             },
-                            {
-                                data: 'id',
-                                name: 'id',
-                                // width: '25%',
-                                className: ' dt-body-start',
-                            },
+
                             {
                                 data: 'user.name',
                                 name: 'user.name',
@@ -229,6 +224,8 @@
             </script>
         @endpush
 
+
+
         <div class="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4">
             <!-- Card -->
             <div
@@ -250,6 +247,50 @@
                     </p>
                 </div>
             </div>
+            <!-- Card -->
+            <div
+                class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800 hover:bg-blue-100 transition duration-300 ease-in-out">
+                <div class="p-3 mr-4 text-green-500 bg-green-100 rounded-full dark:text-green-100 dark:bg-green-500">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path
+                            d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z">
+                        </path>
+                    </svg>
+                </div>
+                <div>
+                    <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+                        Total Transaksi Success
+                    </p>
+                    <p class="counter text-lg font-semibold text-gray-700 dark:text-gray-200"
+                        data-target="{{ $total_count_success }}">
+                        0
+                    </p>
+                </div>
+            </div>
+            <!-- Card -->
+            <div
+                class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800 hover:bg-blue-100 transition duration-300 ease-in-out">
+                <div class="p-3 mr-4 text-yellow-500 bg-yellow-100 rounded-full dark:text-yellow-100 dark:bg-yellow-500">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path
+                            d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z">
+                        </path>
+                    </svg>
+                </div>
+                <div>
+                    <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+                        Total Transaksi Pending
+                    </p>
+                    <p class="counter text-lg font-semibold text-gray-700 dark:text-gray-200"
+                        data-target="{{ $total_count_pending }}">
+                        0
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4">
             <!-- Card -->
             <div
                 class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800 hover:bg-green-100 transition duration-300 ease-in-out">
@@ -299,7 +340,6 @@
                     <thead>
                         <tr class="text-xs font-semibold tracking-wide text-left text-gray-700 uppercase border-b">
                             <th>No</th>
-                            <th>ID</th>
                             <th>Nama</th>
                             <th>Total Harga</th>
                             <th>Status</th>
@@ -314,7 +354,6 @@
                         <tr
                             class="text-xs font-semibold tracking-wide text-left text-gray-600 uppercase border-b dark:border-gray-800 bg-gray-50 dark:text-gray-800 dark:bg-gray-400">
                             <th class="no-search"></th>
-                            <th>ID</th>
                             <th>Nama</th>
                             <th>Total Harga</th>
                             <th>Status</th>

@@ -63,7 +63,7 @@
             {{-- Back end --}}
             {{-- Search Begin --}}
             <div class="d-flex justify-content-center mb-5 shadow">
-                <form action="{{ route('dashboard.pricingCustomer.searchProductLandingPageCustomer') }}" method="GET"
+                <form action="{{ route('landingPage.pricingCustomer.searchProductLandingPageCustomer') }}" method="GET"
                     class="w-100 max-w-lg">
                     <div class="input-group">
                         <input type="search" name="q"
@@ -79,9 +79,10 @@
             </div>
 
             {{-- Search End --}}
+
             <div class="container-fluid">
                 <div class="row justify-content-center d-flex">
-                    @forelse ($products as $product)
+                    @forelse ($activeProducts as $product)
                         <div class="col-lg-3 col-md-6 col-sm-12 d-flex justify-content-center">
                             <div class="card mb-3" width="300">
                                 <img src="{{ $product->productGallery->first()->url ?? 'Not Found!' }}" class="card-img-top"
@@ -115,31 +116,32 @@
                     @endforelse
                 </div>
                 <div class="d-flex justify-content-center my-3">
-                    {{-- {{ $products->links('pagination::bootstrap-4') }} --}}
-                    @if ($products->lastPage() > 1)
-                        <ul class="pagination ml-3 mb-0">
-                            <li class="page-item mx-2 {{ $products->currentPage() == 1 ? ' disabled' : '' }}">
-                                <a class="page-link rounded-pill" href="{{ $products->url(1) }}">First</a>
-                            </li>
-                            @for ($i = 1; $i <= $products->lastPage(); $i++)
-                                <li class="page-item mx-2 {{ $products->currentPage() == $i ? ' active' : '' }}">
-                                    <a class="page-link rounded-pill"
-                                        href="{{ $products->url($i) }}">{{ $i }}</a>
-                                </li>
-                            @endfor
-                            <li
-                                class="page-item mx-2 {{ $products->currentPage() == $products->lastPage() ? ' disabled' : '' }}">
-                                <a class="page-link rounded-pill"
-                                    href="{{ $products->url($products->lastPage()) }}">Last</a>
-                            </li>
-                        </ul>
-                    @endif
+                    {{ $activeProducts->links('pagination::bootstrap-4') }}
                 </div>
             </div>
         </div>
     </section>
     <!-- Pricing Section End -->
 
+
+    {{-- @if ($paginatedProducts->lastPage() > 1)
+                        <ul class="pagination ml-3 mb-0">
+                            <li class="page-item mx-2 {{ $paginatedProducts->currentPage() == 1 ? ' disabled' : '' }}">
+                                <a class="page-link rounded-pill" href="{{ $paginatedProducts->url(1) }}">First</a>
+                            </li>
+                            @for ($i = 1; $i <= $paginatedProducts->lastPage(); $i++)
+                                <li class="page-item mx-2 {{ $paginatedProducts->currentPage() == $i ? ' active' : '' }}">
+                                    <a class="page-link rounded-pill"
+                                        href="{{ $paginatedProducts->url($i) }}">{{ $i }}</a>
+                                </li>
+                            @endfor
+                            <li
+                                class="page-item mx-2 {{ $paginatedProducts->currentPage() == $paginatedProducts->lastPage() ? ' disabled' : '' }}">
+                                <a class="page-link rounded-pill"
+                                    href="{{ $paginatedProducts->url($paginatedProducts->lastPage()) }}">Last</a>
+                            </li>
+                        </ul>
+                    @endif --}}
     @push('styles')
         <style>
             .card {

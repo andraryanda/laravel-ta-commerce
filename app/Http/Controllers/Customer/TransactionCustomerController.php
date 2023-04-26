@@ -23,6 +23,8 @@ class TransactionCustomerController extends Controller
     public function index()
     {
         $new_transaction = Transaction::where('users_id', Auth::user()->id)->count();
+        $total_count_success = Transaction::where('status', 'SUCCESS')->where('users_id', Auth::user()->id)->count();
+        $total_count_pending = Transaction::where('status', 'PENDING')->where('users_id', Auth::user()->id)->count();
         $total_amount_success = Transaction::where('status', 'SUCCESS')->where('users_id', Auth::user()->id)->sum('total_price');
         $total_amount_pending = Transaction::where('status', 'PENDING')->where('users_id', Auth::user()->id)->sum('total_price');
         $sendMessage = Transaction::where('users_id', Auth::id())->get();
@@ -124,10 +126,15 @@ class TransactionCustomerController extends Controller
                                 <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/printer.png') . '" alt="printer" loading="lazy" width="20" />
                                 <p class="mt-1 text-xs">Kwitansi</p>
                             </a>
+                            <a href="' . route('dashboard.transaction.sendMessageCustomerDashboardTransaction', $item->id) . '" target="_blank" title="Bayar"
+                                class="flex flex-col shadow-sm items-center justify-center w-20 h-12 border border-green-500 bg-green-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-green-500 focus:outline-none focus:shadow-outline">
+                                <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/whatsapp.png') . '" alt="Bayar" loading="lazy" width="20" />
+                                <p class="mt-1 text-xs">Bayar Manual</p>
+                            </a>
                             <a href="' . route('dashboard.payment', $item->id) . '" target="_blank" title="Bayar"
                                 class="flex flex-col shadow-sm items-center justify-center w-20 h-12 border border-purple-500 bg-purple-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-purple-500 focus:outline-none focus:shadow-outline">
                                 <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/credit-card.png') . '" alt="Bayar" loading="lazy" width="20" />
-                                <p class="mt-1 text-xs">Bayar</p>
+                                <p class="mt-1 text-xs">Bayar Otomatis</p>
                             </a>
                             <a href="' . route('dashboard.transactionCustomer.show', $encryptedId) . '" title="Show"
                                 class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-blue-500 bg-blue-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-blue-500 focus:outline-none focus:shadow-outline">
@@ -146,11 +153,13 @@ class TransactionCustomerController extends Controller
             'new_transaction',
             'total_amount_success',
             'total_amount_pending',
+            'total_count_success',
+            'total_count_pending',
             'sendMessage',
         ));
     }
 
-    public function sendMessageCustomerTransaction(Transaction $transaction)
+    public function sendMessageCustomerDashboardTransaction(Transaction $transaction)
     {
         $phone_number = '+62' . substr_replace($transaction->user->phone, '', 0, 1);
 
@@ -171,9 +180,9 @@ class TransactionCustomerController extends Controller
         $message .= "-----------------------------------\n";
         $message .= "*Detail User:*\n";
         $message .= "*Nama       : "  . $transaction->user->name . '*' . "\n";
-        $message .= "*Email       : "  . $transaction->user->email . '*' . "\n";
-        $message .= "*Phone       : "  . $transaction->user->phone . '*' . "\n";
-        $message .= "*Alamat       : "  . $transaction->address . '*' . "\n\n";
+        $message .= "*Email        : "  . $transaction->user->email . '*' . "\n";
+        $message .= "*Phone      : "  . $transaction->user->phone . '*' . "\n";
+        $message .= "*Alamat     : "  . $transaction->address . '*' . "\n\n";
 
         $message .= "*Pesanan Transaksi:*\n";
         foreach ($items as $item) {
