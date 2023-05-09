@@ -60,13 +60,13 @@
                                 if (index == 0) {
                                     $(element).css('width', '2%'); // Set width for id column
                                 } else if (index == 1) {
-                                    $(element).css('width', '8.5%'); // Set width for id column
+                                    $(element).css('width', '7%'); // Set width for id column
                                 } else if (index == 2) {
-                                    $(element).css('width', '10%'); // Set width for id column
+                                    $(element).css('width', '7%'); // Set width for id column
                                 } else if (index == 3) {
-                                    $(element).css('width', '12%'); // Set width for id column
+                                    $(element).css('width', '10%'); // Set width for id column
                                 } else if (index == 4) {
-                                    $(element).css('width', '10.5%'); // Set width for id column
+                                    $(element).css('width', '8%'); // Set width for id column
                                 } else if (index == 5) {
                                     $(element).css('width', '10%'); // Set width for id column
                                 } else {
@@ -75,6 +75,8 @@
                             });
                         },
                         processing: true,
+                        serverSide: true,
+                        responsive: false,
                         ajax: {
                             url: '{!! url()->current() !!}',
                         },
@@ -93,6 +95,7 @@
                                 data: 'id',
                                 name: 'id',
                                 // width: '25%',
+                                searchable: true,
                                 className: ' dt-body-start',
                             },
                             {
@@ -100,13 +103,27 @@
                                 name: 'user.name',
                                 title: 'Nama',
                                 className: 'dt-body-start',
-
+                                searchable: true,
+                                type: 'text',
+                                render: function(data, type, full, meta) {
+                                    return '<div class="flex items-center"><div class="w-10 h-10 flex-shrink-0 mr-3">' +
+                                        (full.user.profile_photo_url ?
+                                            '<img class="object-cover rounded-full w-full h-full" src="' +
+                                            full.user.profile_photo_url + '" alt="' + full.user.name +
+                                            '">' :
+                                            '<span class="inline-block w-full h-full rounded-full overflow-hidden bg-gray-100"><svg class="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24"><path d="M12 14.75c2.67 0 8 1.34 8 4v1.25H4v-1.25c0-2.66 5.33-4 8-4zm0-9.5c-2.22 0-4 1.78-4 4s1.78 4 4 4 4-1.78 4-4-1.78-4-4-4zm0 6c-1.11 0-2-.89-2-2s.89-2 2-2 2 .89 2 2-.89 2-2 2z"/></svg></span>'
+                                        ) +
+                                        '</div><div><p class="text-sm font-medium text-gray-900">' + full
+                                        .user.name + '</p><p class="text-sm text-gray-500">@' + full.user
+                                        .username + '</p></div></div>';
+                                },
                             },
                             {
                                 data: 'total_price',
                                 name: 'total_price',
                                 title: 'Total Pembayaran',
                                 className: 'dt-body-start',
+                                searchable: true,
                                 render: $.fn.dataTable.render.number(',', '.', 2, 'Rp '),
                             },
                             {
@@ -114,17 +131,36 @@
                                 name: 'status',
                                 title: 'Status',
                                 className: 'dt-body-start',
+                                searchable: true,
+                                render: function(data, type, row) {
+                                    if (data == 'SUCCESS') {
+                                        return '<span class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">' +
+                                            data + '</span>';
+                                    } else if (data == 'PENDING') {
+                                        return '<span class="px-2 py-1 font-semibold leading-tight text-yellow-700 bg-yellow-100 rounded-full dark:bg-yellow-700 dark:text-yellow-100">' +
+                                            data + '</span>';
+                                    } else if (data == 'CANCELLED') {
+                                        return '<span class="px-2 py-1 font-semibold leading-tight text-red-700 bg-red-100 rounded-full dark:bg-red-700 dark:text-red-100">' +
+                                            data + '</span>';
+                                    } else {
+                                        return '<span class="px-2 py-1 font-semibold leading-tight text-gray-700 bg-gray-100 rounded-full dark:bg-gray-700 dark:text-gray-100">' +
+                                            data + '</span>';
+                                    }
+                                }
                             },
+
                             {
                                 data: 'payment',
                                 name: 'payment',
                                 className: 'dt-body-start',
+                                searchable: true,
                             },
                             {
                                 data: 'created_at',
                                 name: 'created_at',
                                 title: 'Tanggal Transaksi',
                                 className: 'dt-body-start',
+                                searchable: true,
                                 render: function(data) {
                                     var date = new Date(data);
                                     return date.toLocaleString('id-ID', {
@@ -148,10 +184,10 @@
                             },
                         ],
                         pagingType: 'full_numbers',
-                        order: [
-                            // [1, 'desc'], // Kolom indeks 1 diurutkan secara descending
-                            // [0, 'asc'] // Kolom indeks 0 (DT_RowIndex) diurutkan secara ascending
-                        ],
+                        // order: [
+                        //     // [1, 'desc'], // Kolom indeks 1 diurutkan secara descending
+                        //     // [0, 'asc'] // Kolom indeks 0 (DT_RowIndex) diurutkan secara ascending
+                        // ],
                         language: {
                             searchPlaceholder: "Search Data Transaction",
                             decimal: ',',

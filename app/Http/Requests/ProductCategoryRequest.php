@@ -28,4 +28,12 @@ class ProductCategoryRequest extends FormRequest
             'name' => 'required|max:255'
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'name.required' => 'Kolom nama harus diisi',
+            'name.max' => 'Panjang nama maksimal 255 karakter'
+        ];
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use view;
+use Exception;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Str;
 use App\Models\ProductCategory;
@@ -14,6 +15,7 @@ use App\Imports\ProductCategoryImport;
 use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\ProductCategoryRequest;
 use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Support\Facades\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ProductCategoryController extends Controller
@@ -97,16 +99,23 @@ class ProductCategoryController extends Controller
      */
     public function store(ProductCategoryRequest $request)
     {
-        $data = $request->all();
+        try {
+            $data = $request->all();
 
-        // ProductCategory::create($data);
-        ProductCategory::create([
-            // 'id_category_uuid' => Uuid::uuid4()->getHex(),
-            'name' => $data['name'],
-        ]);
+            $productCategory = ProductCategory::create([
+                'name' => $data['name'],
+            ]);
 
-        return redirect()->route('dashboard.category.index');
+            if (!$productCategory) {
+                throw new \Exception('Gagal menambahkan kategori produk');
+            }
+
+            return redirect()->route('dashboard.category.index')->withSuccess('Berhasil menambahkan kategori produk');
+        } catch (\Exception $e) {
+            return redirect()->back()->withError($e->getMessage());
+        }
     }
+
 
     /**
      * Display the specified resource.
@@ -128,17 +137,18 @@ class ProductCategoryController extends Controller
 
     public function edit($encryptedId)
     {
-        $id = Crypt::decrypt($encryptedId);
-        $category = ProductCategory::find($id);
+        try {
+            $id = Crypt::decrypt($encryptedId);
+            $category = ProductCategory::findOrFail($id);
 
-        if (!$category) {
-            // Lakukan penanganan jika kategori tidak ditemukan
-            abort(404);
+            return view('pages.dashboard.category.edit', [
+                'item' => $category
+            ]);
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            return redirect()->back()->withError('Terjadi kesalahan dalam mendekripsi ID kategori.');
+        } catch (\Exception $e) {
+            return abort(500);
         }
-
-        return view('pages.dashboard.category.edit', [
-            'item' => $category
-        ]);
     }
 
 
@@ -152,12 +162,16 @@ class ProductCategoryController extends Controller
      */
     public function update(ProductCategoryRequest $request, ProductCategory $category)
     {
-        $data = $request->all();
+        try {
+            $data = $request->all();
 
-        $category->update($data);
+            $category->update($data);
 
-        return redirect()->route('dashboard.category.index')
-            ->withSuccess('Category berhasil diupdate!');
+            return redirect()->route('dashboard.category.index')
+                ->withSuccess('Category berhasil diupdate!');
+        } catch (\Throwable $th) {
+            return redirect()->back()->withError('Category gagal diupdate!');
+        }
     }
 
     /**

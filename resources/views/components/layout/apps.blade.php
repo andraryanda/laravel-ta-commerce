@@ -219,6 +219,7 @@
                     @yield('categoryProduct')
                     @yield('product')
                     @yield('transaction')
+                    @yield('pembayaran_bulan_wifi')
                     @yield('report')
                     @yield('chart')
                     @yield('notification')
@@ -273,6 +274,16 @@
         }
     };
 
+    let icon4 = document.getElementById("icon4");
+    let menu4 = document.getElementById("menu4");
+
+    const showMenu4 = (flag) => {
+        if (flag) {
+            icon4.classList.toggle("rotate-180");
+            menu4.classList.toggle("hidden");
+        }
+    };
+
     // Mobile
     let icon11 = document.getElementById("icon11");
     let menu11 = document.getElementById("menu11");
@@ -291,6 +302,26 @@
         if (flag) {
             icon12.classList.toggle("rotate-180");
             menu12.classList.toggle("hidden");
+        }
+    };
+
+    let icon13 = document.getElementById("icon13");
+    let menu13 = document.getElementById("menu13");
+
+    const showMenu13 = (flag) => {
+        if (flag) {
+            icon13.classList.toggle("rotate-180");
+            menu13.classList.toggle("hidden");
+        }
+    };
+
+    let icon14 = document.getElementById("icon14");
+    let menu14 = document.getElementById("menu14");
+
+    const showMenu14 = (flag) => {
+        if (flag) {
+            icon14.classList.toggle("rotate-180");
+            menu14.classList.toggle("hidden");
         }
     };
 
@@ -317,7 +348,10 @@
             showMenu2(false);
         }
         if (!event.target.closest("#menu3") && !event.target.closest("#icon3")) {
-            showMenu2(false);
+            showMenu3(false);
+        }
+        if (!event.target.closest("#menu4") && !event.target.closest("#icon4")) {
+            showMenu4(false);
         }
         // Mobile
         if (!event.target.closest("#menu11") && !event.target.closest("#icon11")) {
@@ -326,7 +360,12 @@
         if (!event.target.closest("#menu12") && !event.target.closest("#icon12")) {
             showMenu12(false);
         }
-
+        if (!event.target.closest("#menu13") && !event.target.closest("#icon13")) {
+            showMenu13(false);
+        }
+        if (!event.target.closest("#menu14") && !event.target.closest("#icon14")) {
+            showMenu14(false);
+        }
         // Uncomment the following code if you have other menus to close
         /*
         if (!event.target.closest("#menu3") && !event.target.closest("#icon3")) {
@@ -336,167 +375,6 @@
     });
 </script>
 
-
-
-<script type="text/javascript">
-    $(document).ready(function() {
-        $('#master').on('click', function(e) {
-            if ($(this).is(':checked', true)) {
-                $('.sub_chk').prop('checked', true)
-            } else {
-                $('.sub_chk').prop('checked', false)
-            }
-        });
-        $('.delete_all').on('click', function(e) {
-            var allVals = [];
-            $('.sub_chk:checked').each(function() {
-                allVals.push($(this).attr('data-id'));
-            });
-            if (allVals.length <= 0) {
-                // alert("Please select row.");
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Something went wrong!',
-                    footer: '<b class="fs-4 alert alert-danger">Silahkan pilih data yang akan dihapus</b>'
-                });
-            } else {
-                // var check = confirm("Are you sure you want to delete this row?");
-                var check = Swal.fire({
-                    title: 'Apakah File Data ingin di <b>Hapus</b> ?',
-                    text: "Jika Tidak, Klik Cancel",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, delete it!'
-                }).then((result) => {
-                    // if (check == true) {
-                    if (result['isConfirmed']) {
-                        var join_selected_values = allVals.join(",");
-                        $.ajax({
-                            url: $(this).data('url'),
-                            type: 'DELETE',
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
-                                    'content')
-                            },
-                            data: 'ids=' + join_selected_values,
-                            success: function(data) {
-                                console.log(data);
-                                if (data['success']) {
-                                    $(".sub_chk:checked").each(function() {
-                                        $(this).parents("tr").remove();
-                                    });
-                                    // alert(data['success']);
-                                    // Swal.fire('success','Delete data success!');
-                                    // location.reload();
-                                    Swal.fire(
-                                            'Success!',
-                                            'Delete Data Successfully!',
-                                            'success'
-                                        )
-                                        .then((result) => {
-                                            if (result['isConfirmed']) {
-                                                let timerInterval
-                                                Swal.fire({
-                                                    title: 'Auto close alert!',
-                                                    html: 'I will close in <b></b> milliseconds.',
-                                                    timer: 500,
-                                                    timerProgressBar: true,
-                                                    didOpen: () => {
-                                                        Swal.showLoading()
-                                                        const b =
-                                                            Swal
-                                                            .getHtmlContainer()
-                                                            .querySelector(
-                                                                'b')
-                                                        timerInterval
-                                                            =
-                                                            setInterval(
-                                                                () => {
-                                                                    b.textContent =
-                                                                        Swal
-                                                                        .getTimerLeft()
-                                                                },
-                                                                100)
-                                                    },
-                                                    willClose: () => {
-                                                        clearInterval
-                                                            (
-                                                                timerInterval
-                                                            )
-                                                    }
-                                                }).then((result) => {
-                                                    if (
-                                                        /* Read more about handling dismissals below */
-                                                        result
-                                                        .dismiss ===
-                                                        Swal
-                                                        .DismissReason
-                                                        .timer
-                                                    ) {
-                                                        console.log(
-                                                            'I was closed by the timer'
-                                                        )
-                                                        location
-                                                            .reload();
-                                                    }
-                                                });
-                                            }
-                                        });
-                                } else if (data['success']) {
-                                    alert(data['error']);
-                                } else {
-                                    alert('Whoops Something went wrong!!');
-                                }
-                            },
-                            error: function(data) {
-                                alert(data.responseText);
-                            }
-                        });
-                        $.each(allVals, function(index, value) {
-                            $('table tr').filter("[data-row-id='" + value + "']")
-                                .remove();
-                        });
-                    }
-                });
-            }
-        });
-        // });
-        $('[data-toggle=confirmation]').confirmation({
-            rootSelector: '[data-toggle=confirmation]',
-            onConfirm: function(event, element) {
-                element.trigger('confirm');
-            }
-        });
-        $(document).on('confirm', function(e) {
-            var ele = e.target;
-            e.preventDefault();
-            $.ajax({
-                url: ele.href,
-                type: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(data) {
-                    if (data['success']) {
-                        $("#" + data['tr']).slideUp("slow");
-                        alert(data['success']);
-                    } else if (data['error']) {
-                        alert(data['error']);
-                    } else {
-                        alert('Whoops Something went wrong!!');
-                    }
-                },
-                error: function(data) {
-                    alert(data.responseText);
-                }
-            });
-            return false;
-        });
-    });
-</script>
 
 
 </html>

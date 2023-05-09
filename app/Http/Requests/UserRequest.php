@@ -41,7 +41,26 @@ class UserRequest extends FormRequest
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255',
             'username' => 'required|string|max:255',
-            'roles' => 'required|string|max:255|in:USER,ADMIN'
+            // 'roles' => 'required|string|in:USER,ADMIN'
+            'roles' => ['required', 'string', function ($attribute, $value, $fail) {
+                $roles = ['USER', 'ADMIN'];
+                if (!in_array(decrypt($value), $roles)) {
+                    return $fail('The ' . $attribute . ' field is invalid.');
+                }
+            }],
+
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'name.required' => 'Kolom Nama tidak boleh kosong.',
+            'email.required' => 'Kolom Email tidak boleh kosong.',
+            'email.email' => 'Harap masukkan alamat email yang valid.',
+            'username.required' => 'Kolom Username tidak boleh kosong.',
+            'roles.required' => 'Harap pilih peran pengguna.',
+            'roles.in' => 'Harap pilih peran pengguna yang valid.',
         ];
     }
 }

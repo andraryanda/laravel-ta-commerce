@@ -10,14 +10,22 @@
                 <div class="bg-white p-2 d-flex flex-column" style="border-radius:14px">
                     <div class="text-center mt-4">
                         <h5 class="font-weight-bold">Harga Produk:</h5>
-                        @foreach ($product->galleries as $item)
-                            <img class="img-fluid my-3 rounded" src="{{ $item->url }}" width="300" />
-                        @endforeach
+                        <div class="slick-slider">
+                            @foreach ($product->galleries as $item)
+                                <div>
+                                    <img class="img-fluid my-3 rounded d-flex justify-content-center mx-auto"
+                                        src="{{ $item->url }}" width="300" />
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
                     <h5 class="font-weight-bold text-center">{{ $product->name }}</h5>
                     <p class="text-center font-italic text-secondary">{{ $product->category->name }}</p>
                     <h4 class="green mb-3 text-center">{{ 'Rp ' . number_format($product->price, 0, ',', '.') }}</h4>
                 </div>
+
+
+
 
 
                 <div class="bg-white my-3 p-2 d-flex flex-column" style="border-radius:14px">
@@ -282,6 +290,8 @@
     </div>
 
     @push('styles')
+        <link rel="stylesheet" href="{{ asset('slick/slick.css') }}">
+        <link rel="stylesheet" href="{{ asset('slick/slick-theme.css') }}">
         <style>
             body {
                 background-color: #F6F8FD
@@ -302,9 +312,32 @@
                 }
             }
         </style>
+        <style>
+            .slick-dots li button:before {
+                font-size: 12px;
+                color: #2b67ff;
+            }
+        </style>
     @endpush
 
     @push('javascript')
+        <script src="{{ asset('slick/slick.js') }}"></script>
+
+        <script>
+            $(document).ready(function() {
+                $('.slick-slider').slick({
+                    dots: true,
+                    infinite: true,
+                    speed: 300,
+                    slidesToShow: 1,
+                    adaptiveHeight: true,
+                    slidesToScroll: 1,
+                    autoplay: true,
+                    autoplaySpeed: 2000,
+                });
+            });
+        </script>
+
         <script>
             var products = [];
 

@@ -54,7 +54,7 @@ class ProductController extends Controller
                 ->editColumn('price', function ($item) {
                     return number_format($item->price);
                 })
-                ->addColumn('status_product', function ($item) {
+                ->editColumn('status_product', function ($item) {
                     if ($item->status_product == 'ACTIVE') {
                         return '<span class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full">Active</span>';
                     } elseif ($item->status_product == '') {
@@ -124,7 +124,6 @@ class ProductController extends Controller
     // }
 
 
-
     /**
      * Show the form for creating a new resource.
      *
@@ -132,8 +131,20 @@ class ProductController extends Controller
      */
     public function create()
     {
-        $categories = ProductCategory::all();
-        return view('pages.dashboard.product.create', compact('categories'));
+        try {
+            $status_product = [
+                ['label' => 'Tersedia', 'value' => 'ACTIVE'],
+                ['label' => 'Tidak Tersedia', 'value' => 'INACTIVE'],
+            ];
+
+            $categories = ProductCategory::all();
+            return view('pages.dashboard.product.create', [
+                'status_product' => $status_product,
+                'categories' => $categories
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->withError('Terjadi kesalahan: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -146,13 +157,14 @@ class ProductController extends Controller
     {
         $data = $request->all();
 
-        $product = Product::create($data);
+        try {
+            Product::create($data);
 
-        if (!$product) {
-            return redirect()->back()->withError('Gagal menambahkan produk');
-        } else {
             return redirect()->route('dashboard.product.index')->withSuccess('Berhasil menambahkan produk');
+        } catch (\Exception $e) {
+            return redirect()->back()->withError('Gagal menambahkan produk: ' . $e->getMessage());
         }
+
         // return redirect()->route('dashboard.product.index');
     }
 
@@ -175,21 +187,27 @@ class ProductController extends Controller
      */
     public function edit($encryptedId)
     {
-        $id = Crypt::decrypt($encryptedId); // Mendekripsi ID produk
-        $product = Product::find($id);
+        try {
+            $id = Crypt::decrypt($encryptedId); // Mendekripsi ID produk
+            $product = Product::findOrFail($id);
 
-        if (!$product) {
-            // Lakukan penanganan jika produk tidak ditemukan
-            abort(404);
+            $categories = ProductCategory::all();
+
+            $status_product = [
+                ['label' => 'Tersedia', 'value' => 'ACTIVE'],
+                ['label' => 'Tidak Tersedia', 'value' => 'INACTIVE'],
+            ];
+
+
+            return view('pages.dashboard.product.edit', [
+                'item' => $product,
+                'categories' => $categories,
+                'encryptedId' => $encryptedId, // Menyertakan ID yang telah dienkripsi ke dalam view
+                'status_product' => $status_product,
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->withError('Terjadi kesalahan: ' . $e->getMessage());
         }
-
-        $categories = ProductCategory::all();
-
-        return view('pages.dashboard.product.edit', [
-            'item' => $product,
-            'categories' => $categories,
-            'encryptedId' => $encryptedId // Menyertakan ID yang telah dienkripsi ke dalam view
-        ]);
     }
 
     /**
@@ -203,12 +221,12 @@ class ProductController extends Controller
     {
         $data = $request->all();
 
-        $product->update($data);
+        try {
+            $product->update($data);
 
-        if (!$product) {
-            return redirect()->route('dashboard.product.index')->withError('Product gagal diupdate!');
-        } else {
             return redirect()->route('dashboard.product.index')->withSuccess('Product berhasil diupdate!');
+        } catch (\Exception $e) {
+            return redirect()->route('dashboard.product.index')->withError('Product gagal diupdate!')->withErrors($e->getMessage());
         }
     }
 
@@ -220,20 +238,19 @@ class ProductController extends Controller
      */
     public function destroy($encryptedId)
     {
-        $id = Crypt::decrypt($encryptedId); // Mendekripsi ID produk
-        $product = Product::find($id);
+        try {
+            $id = Crypt::decrypt($encryptedId);
+            $product = Product::find($id);
 
-        if (!$product) {
-            // Lakukan penanganan jika produk tidak ditemukan
-            abort(404);
-        }
+            if (!$product) {
+                abort(404);
+            }
 
-        $product->delete();
+            $product->delete();
 
-        if (!$product) {
-            return redirect()->route('dashboard.product.index')->withError('Product gagal dihapus!');
-        } else {
             return redirect()->route('dashboard.product.index')->withSuccess('Product berhasil dihapus!');
+        } catch (\Exception $e) {
+            return redirect()->route('dashboard.product.index')->withError('Product gagal dihapus!');
         }
     }
 }

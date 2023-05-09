@@ -26,6 +26,8 @@ use App\Http\Controllers\Midtrans\MidtransWebhookController;
 use App\Http\Controllers\Customer\TransactionCustomerController;
 use App\Http\Controllers\Search\PricingDashboardSearchController;
 use App\Http\Controllers\Search\PricingLandingPageSearchController;
+use App\Http\Controllers\TransactionWifiController;
+use App\Models\ProductGallery;
 
 /*
 |--------------------------------------------------------------------------
@@ -98,6 +100,9 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
                 'index', 'create', 'store', 'destroy'
             ]);
 
+
+            Route::post('gallery/import', [ProductGalleryController::class, 'importProductGallery'])->name('gallery.importProductGallery');
+
             Route::post('importCategory', [ProductCategoryController::class, 'importCategory'])->name('category.importCategory');
             Route::resource('transaction', TransactionController::class)->only([
                 'index', 'show', 'create', 'store', 'edit', 'update'
@@ -107,6 +112,11 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
             Route::get('transactionPending', [TransactionController::class, 'indexPending'])->name('transaction.indexPending');
             Route::get('transactionSuccess', [TransactionController::class, 'indexSuccess'])->name('transaction.indexSuccess');
             Route::get('transactionCancelled', [TransactionController::class, 'indexCancelled'])->name('transaction.indexCancelled');
+
+            Route::resource('pembayaran/wifi/bulan', TransactionWifiController::class)->only([
+                'index',
+            ]);
+
             // Route::resource('transaction/pending', TransactionController::class)->only([
             //     'indexPending', 'show', 'edit', 'update'
             // ]);

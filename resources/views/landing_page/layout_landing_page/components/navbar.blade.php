@@ -115,7 +115,7 @@
                      href="{{ route('landingPage.about') }}">About</a></li>
              <li class="{{ Request::routeIs('landingPage.hosting') ? 'active' : '' }}"><a
                      href="{{ route('landingPage.hosting') }}">Hosting</a></li>
-             <li><a href="#">Pages</a>
+             <li class="{{ Request::routeIs('landingPage.pricing') ? 'active' : '' }}"><a href="#">Pages</a>
                  <ul class="dropdown">
                      <li class="{{ Request::routeIs('landingPage.pricing') ? 'bg-primary col-md-12' : '' }}">
                          <a href="{{ route('landingPage.pricing') }}"
@@ -132,13 +132,34 @@
      <div id="mobile-menu-wrap"></div>
      <div class="offcanvas__auth">
          <ul>
-             <li><a href="#"><span class="fa fa-money"></span> Keranjang Shopping</a></li>
+             <li>
+                 <a href="{{ route('dashboard.transactionCustomer.index') }}">
+                     <span class="fa fa-shopping-cart ml-2" style="font-size: 1.2em;"></span>
+                     {{ __('Keranjang Shopping') }}
+                     @if (Auth::user())
+                         <span
+                             class="absolute -top-2 left-4 rounded-full bg-danger p-0.5 px-1 ml-2 text-sm text-red-50 font-weight-bold">
+                             {{ $total_pending_count ?? '' }}
+                         </span>
+                     @endif
+                 </a>
+             </li>
              @if (Route::has('login'))
                  @auth
                      <li>
-                         <a href="{{ url('/dashboard') }}"><span class="fa fa-home"></span>
-                             {{ __('Dashboard') }}
-                         </a>
+                         @if (Auth::user()->roles == 'ADMIN')
+                             <a href="{{ url('/dashboard') }}" class="btn btn-primary btn-action rounded-pill"><span
+                                     class="fa fa-home"></span>
+                                 {{ __('Dashboard') }}
+                             </a>
+                         @elseif (Auth::user()->roles == 'USER')
+                             <a href="{{ url('/dashboardCustomer') }}"
+                                 class="btn btn-primary btn-action rounded-pill"><span class="fa fa-home"></span>
+                                 {{ __('Dashboard') }}
+                             </a>
+                         @else
+                             <span class="btn btn-danger btn-action rounded-pill">Not Found</span>
+                         @endif
                      </li>
                  @else
                      <li>

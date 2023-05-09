@@ -16,9 +16,9 @@ class PricingController extends Controller
     public function index()
     {
         // Mengambil semua produk aktif
-        $activeProducts = Product::where('status_product', 'ACTIVE')->paginate(4);
+        $products = Product::where('status_product', 'ACTIVE')->paginate(4);
 
-        foreach ($activeProducts as $product) {
+        foreach ($products as $product) {
             $product->productGallery = ProductGallery::where('products_id', $product->id)->get();
         }
 
@@ -36,7 +36,7 @@ class PricingController extends Controller
         }
 
         return view('landing_page.pages.pricing', compact(
-            'activeProducts',
+            'products',
             'total_pending_count',
         ));
     }

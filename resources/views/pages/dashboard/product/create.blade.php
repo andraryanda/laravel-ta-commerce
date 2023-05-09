@@ -17,7 +17,6 @@
     </x-slot> --}}
 
     @section('product')
-
         <div class="py-3">
             <div
                 class="w-full p-6 mx-auto sm:px-6 lg:px-8 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
@@ -104,13 +103,32 @@
                             </div>
                         </div>
                         <div class="flex flex-wrap -mx-3 mb-6">
+                            <div class="w-full px-3">
+                                <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                                    for="grid-status-product">
+                                    Status Produk
+                                </label>
+                                <select name="status_product"
+                                    class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                    id="status_product" required>
+                                    <option value="" selected disabled>-- Pilih Status --</option>
+                                    @foreach ($status_product as $item)
+                                        <option value="{{ $item['value'] }}"
+                                            {{ $item['value'] == old('status_product', $item['value'] == $item['value']) ? '' : '' }}>
+                                            {{ $item['label'] }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap -mx-3 mb-6">
                             <div class="w-full px-3 text-right">
                                 <button type="submit"
                                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-right"
                                     onclick="disableButton(this);">
                                     <div class="flex items-center">
-                                        <img src="{{ asset('icon/save.png') }}" alt="save" class="mr-2" width="20"
-                                            height="20">
+                                        <img src="{{ asset('icon/save.png') }}" alt="save" class="mr-2"
+                                            width="20" height="20">
                                         <p id="buttonText">Simpan Product</p>
                                     </div>
                                 </button>
@@ -123,6 +141,11 @@
     @endsection
 
     @push('javascript')
+        <script>
+            $(document).ready(function() {
+                $('#status_product option[value=""]').css('display', 'none');
+            });
+        </script>
         {{-- <script>
             function disableButton(button) {
                 button.disabled = true;

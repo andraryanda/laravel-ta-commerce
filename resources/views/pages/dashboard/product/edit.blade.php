@@ -116,18 +116,16 @@
                                 </label>
                                 <select name="status_product"
                                     class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                    id="grid-status-product" required>
-                                    <option disabled>----</option>
-                                    @if ($item->status_product == null)
-                                        <option value="ACTIVE">Tersedia</option>
-                                        <option value="INACTIVE">Tidak Tersedia</option>
-                                    @else
-                                        <option value="ACTIVE" {{ $item->status_product == 'ACTIVE' ? 'selected' : '' }}>
-                                            Tersedia</option>
-                                        <option value="INACTIVE"
-                                            {{ $item->status_product == 'INACTIVE' ? 'selected' : '' }}>Tidak Tersedia
-                                        </option>
-                                    @endif
+                                    id="status_product" required>
+                                    <option value="" selected disabled>-- Pilih Status --</option>
+                                    @foreach ($status_product as $status)
+                                        @if ($status['value'])
+                                            <option value="{{ $status['value'] }}"
+                                                {{ $item->status_product == $status['value'] ? 'selected' : '' }}>
+                                                {{ $status['label'] }}
+                                            </option>
+                                        @endif
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -150,6 +148,11 @@
         </div>
 
         @push('javascript')
+            <script>
+                $(document).ready(function() {
+                    $('#status_product option[value=""]').css('display', 'none');
+                });
+            </script>
             <script>
                 function goBack() {
                     window.history.back();

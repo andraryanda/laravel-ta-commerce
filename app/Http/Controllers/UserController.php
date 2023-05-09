@@ -33,7 +33,7 @@ class UserController extends Controller
         $total_user_customer = User::where('roles', '=', 'USER')->count();
 
         if (request()->ajax()) {
-            $query = User::query();
+            $query = User::query()->orderByDesc('created_at');
             return DataTables::of($query)
 
                 ->addColumn('roles', function ($item) {
@@ -102,7 +102,7 @@ class UserController extends Controller
     public function indexUserCustomer()
     {
         if (request()->ajax()) {
-            $query = User::query()->where('roles', '=', 'USER');
+            $query = User::query()->where('roles', '=', 'USER')->orderByDesc('created_at');
 
             return DataTables::of($query)
                 ->addColumn('roles', function ($item) {
@@ -167,10 +167,10 @@ class UserController extends Controller
     public function indexUserAdmin()
     {
         if (request()->ajax()) {
-            $query = User::query()->where('roles', '=', 'ADMIN');
+            $query = User::query()->where('roles', '=', 'ADMIN')->orderByDesc('created_at');
 
             return DataTables::of($query)
-                ->addColumn('roles', function ($item) {
+                ->editColumn('roles', function ($item) {
                     if ($item->roles == 'USER') {
                         return '
                             <td class="px-4 py-3 text-xs">
@@ -297,17 +297,39 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view('pages.dashboard.user.create');
+        $roles = [
+            ['label' => 'USER', 'value' => 'USER'],
+            ['label' => 'ADMIN', 'value' => 'ADMIN'],
+        ];
+
+        return view('pages.dashboard.user.create', compact(
+            'roles',
+        ));
     }
+
+
 
     public function createUserAdmin()
     {
-        return view('pages.dashboard.user.createUserAdmin');
+        $roles = [
+            ['label' => 'ADMIN', 'value' => 'ADMIN'],
+            // tambahkan role lainnya sesuai kebutuhan
+        ];
+
+        return view('pages.dashboard.user.createUserAdmin', compact(
+            'roles',
+        ));
     }
 
     public function createUserCustomer()
     {
-        return view('pages.dashboard.user.createUserCustomer');
+        $roles = [
+            ['label' => 'USER', 'value' => 'USER'],
+            // tambahkan role lainnya sesuai kebutuhan
+        ];
+        return view('pages.dashboard.user.createUserCustomer', compact(
+            'roles',
+        ));
     }
 
     /**
@@ -318,26 +340,32 @@ class UserController extends Controller
      */
     public function store(UserRequest $request)
     {
-        $validatedData = $request->validated();
+        try {
+            $validatedData = $request->validated();
 
-        $user = new User();
-        $user->name = $validatedData['name'];
-        $user->email = $validatedData['email'];
-        $user->username = $validatedData['username'];
-        $user->password = Hash::make('password');
-        $user->roles = $validatedData['roles'];
+            $user = new User();
+            $user->name = $validatedData['name'];
+            $user->email = $validatedData['email'];
+            $user->username = $validatedData['username'];
+            $user->password = Hash::make('password');
+            $user->roles = decrypt($validatedData['roles']);
+            $user->save();
 
-        $user->save();
-
-        // return redirect()->route('dashboard.user.index')->withSuccess('User berhasil ditambahkan!');
-        if ($user->roles == 'ADMIN') {
-            return redirect()->route('dashboard.user.indexUserAdmin')->withSuccess('User berhasil ditambahkan!');
-        } elseif ($user->roles == 'USER') {
-            return redirect()->route('dashboard.user.indexUserCustomer')->withSuccess('User berhasil ditambahkan!');
-        } else {
-            return redirect()->route('dashboard.index')->withSuccess('User berhasil ditambahkan!');
+            if ($user->roles == 'ADMIN') {
+                return redirect()->route('dashboard.user.indexUserAdmin')->withSuccess('User berhasil ditambahkan!');
+            } elseif ($user->roles == 'USER') {
+                return redirect()->route('dashboard.user.indexUserCustomer')->withSuccess('User berhasil ditambahkan!');
+            } else {
+                return redirect()->route('dashboard.index')->withSuccess('User berhasil ditambahkan!');
+            }
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            return redirect()->back()->withInput()->withError(['roles' => 'Terjadi kesalahan saat mengirim data.']);
+        } catch (\Exception $e) {
+            return redirect()->back()->withError(['message' => 'Terjadi kesalahan saat menyimpan data.']);
         }
     }
+
+
 
     /**
      * Display the specified resource.
@@ -386,12 +414,15 @@ class UserController extends Controller
      */
     public function update(UserRequest $request, User $user)
     {
-        $data = $request->all();
-
-        $user->update($data);
-
-        return redirect()->route('dashboard.user.index')->withSuccess('User berhasil diubah!');
+        try {
+            $data = $request->all();
+            $user->update($data);
+            return redirect()->route('dashboard.user.index')->withSuccess('User berhasil diubah!');
+        } catch (\Exception $e) {
+            return redirect()->back()->withError(['msg' => $e->getMessage()]);
+        }
     }
+
 
     /**
      * Remove the specified resource from storage.

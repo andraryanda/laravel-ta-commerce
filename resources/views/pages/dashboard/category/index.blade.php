@@ -61,7 +61,7 @@
                             // Set width for search tfoot
                             $('tfoot tr').children().each(function(index, element) {
                                 if (index == 0) {
-                                    $(element).css('width', '5%'); // Set width for id column
+                                    $(element).css('width', '2%'); // Set width for id column
                                 } else if (index == 1) {
                                     $(element).css('width', '12%'); // Set width for id column
                                 } else if (index == 2) {
@@ -74,7 +74,8 @@
                             });
                         },
                         processing: true,
-                        serverSide: true,
+                        // serverSide: true,
+                        // responsive: true,
                         ajax: {
                             url: '{!! url()->current() !!}',
                         },
@@ -94,12 +95,11 @@
                                 data: 'name',
                                 name: 'name',
                                 className: 'dt-body-start',
-                                // width: '%',
-
                             },
                             {
                                 data: 'created_at',
                                 name: 'created_at',
+                                searchable: true,
                                 className: 'dt-body-start',
                                 render: function(data) {
                                     var date = new Date(data);
@@ -125,10 +125,6 @@
 
                         ],
                         pagingType: 'full_numbers',
-                        // order: [
-                        //     [1, 'desc'], // Kolom indeks 1 diurutkan secara descending
-                        //     // [0, 'asc'] // Kolom indeks 0 (DT_RowIndex) diurutkan secara ascending
-                        // ],
                         language: {
                             searchPlaceholder: "Search Data Category",
                             decimal: ',',
@@ -147,6 +143,8 @@
                     });
                 });
             </script>
+
+
         </x-slot>
 
         <div class="w-full overflow-hidden rounded-lg shadow-xs">

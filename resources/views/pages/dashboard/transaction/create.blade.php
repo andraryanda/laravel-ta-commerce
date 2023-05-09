@@ -67,7 +67,7 @@
                                                     class="absolute z-10 hidden w-full py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md">
                                                     <input type="text" id="searchInput"
                                                         class="w-full p-2 border-b border-gray-300 rounded-t-md focus:outline-none"
-                                                        placeholder="Cari pengguna...">
+                                                        placeholder="Cari pengguna..." required>
                                                     <ul id="optionsList" class="max-h-32 overflow-y-auto">
                                                         @foreach ($users as $user)
                                                             <li data-value="{{ $user->id }}"
@@ -122,6 +122,7 @@
                             <div class="mb-4">
                                 <label for="status" class="block mb-2 text-sm font-medium text-gray-700">Status</label>
                                 <select name="status" id="status" class="w-full p-2 border border-gray-300 rounded-md">
+                                    <option value="" selected disabled>-- Pilih Status --</option>
                                     <option value="PENDING">PENDING</option>
                                     <option value="SUCCESS">SUCCESS</option>
                                     <option value="CANCELLED">CANCELLED</option>
@@ -154,6 +155,11 @@
 
 
             @push('javascript')
+                <script>
+                    $(document).ready(function() {
+                        $('#status option[value=""]').css('display', 'none');
+                    });
+                </script>
                 <script>
                     function goBack() {
                         window.history.back();

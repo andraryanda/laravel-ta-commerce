@@ -91,12 +91,12 @@
                                     return meta.row + 1;
                                 }
                             },
-                            {
-                                data: 'id',
-                                name: 'id',
-                                width: '15%',
-                                className: 'dt-body-start',
-                            },
+                            // {
+                            //     data: 'id',
+                            //     name: 'id',
+                            //     width: '15%',
+                            //     className: 'dt-body-start',
+                            // },
                             {
                                 data: 'name',
                                 name: 'name',
@@ -144,10 +144,10 @@
                             }
                         ],
                         pagingType: 'full_numbers',
-                        order: [
-                            [1, 'desc'], // Kolom indeks 1 diurutkan secara descending
-                            // [0, 'asc'] // Kolom indeks 0 (DT_RowIndex) diurutkan secara ascending
-                        ],
+                        // order: [
+                        //     [1, 'desc'], // Kolom indeks 1 diurutkan secara descending
+                        //     // [0, 'asc'] // Kolom indeks 0 (DT_RowIndex) diurutkan secara ascending
+                        // ],
                         language: {
                             searchPlaceholder: "Search Data Users",
                             decimal: ',',
@@ -360,7 +360,7 @@
                         <tr
                             class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
                             <th>No</th>
-                            <th>ID</th>
+                            {{-- <th>ID</th> --}}
                             <th>Nama</th>
                             <th>Email</th>
                             <th>Roles</th>
@@ -372,7 +372,7 @@
                     </tbody>
                     <tfoot>
                         <th class="no-search"></th>
-                        <th>ID</th>
+                        {{-- <th>ID</th> --}}
                         <th>Nama</th>
                         <th>Email</th>
                         <th>Roles</th>

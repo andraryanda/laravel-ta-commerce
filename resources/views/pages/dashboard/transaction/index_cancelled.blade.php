@@ -78,6 +78,7 @@
                             });
                         },
                         processing: true,
+                        serverSide: true,
                         ajax: {
                             url: '{!! url()->current() !!}',
                         },

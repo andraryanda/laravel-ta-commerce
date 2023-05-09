@@ -156,75 +156,10 @@ class TransactionController extends Controller
         $total_amount_cancelled = Transaction::where('status', '=', 'CANCELLED')->sum('total_price');
 
         if (request()->ajax()) {
-            $query = Transaction::with(['user'])->orderByDesc('created_at');
+            $query = Transaction::with(['user'])
+                ->orderBy('transactions.created_at', 'desc')
+                ->get();
             return DataTables::of($query)
-                ->addColumn('user.name', function ($item) {
-                    return '
-                    <td class="px-4 py-3">
-                        <div class="flex items-center text-sm">
-                            <!-- Avatar with inset shadow -->
-                            <div class="relative hidden w-8 h-8 mr-3 rounded-full md:block">
-                                ' . (Jetstream::managesProfilePhotos() ?
-                        (Auth::user()->profile_photo_url ? '
-                                        <img class="object-cover w-full h-full rounded-full"
-                                            src="' . Auth::user()->profile_photo_url . '"
-                                            alt="' . $item->user->name . '" loading="lazy" />' : '
-                                        <img class="object-cover w-full h-full rounded-full"
-                                            src="' . asset('img/default-avatar.jpg') . '"
-                                            alt="' . $item->user->name . '" loading="lazy" />'
-                        ) : '
-                                    <span class="inline-block h-8 w-8 rounded-full overflow-hidden bg-gray-100">
-                                        <svg class="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
-                                            <path
-                                                d="M12 14.75c2.67 0 8 1.34 8 4v1.25H4v-1.25c0-2.66 5.33-4 8-4zm0-9.5c-2.22 0-4 1.78-4 4s1.78 4 4 4 4-1.78 4-4-1.78-4-4-4zm0 6c-1.11 0-2-.89-2-2s.89-2 2-2 2 .89 2 2-.89 2-2 2z" />
-                                        </svg>
-                                    </span>
-                                ') . '
-                                <div class="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></div>
-                            </div>
-                            <div>
-                                <p class="font-semibold">' . $item->user->name . '</p>
-                                <p class="text-xs text-gray-600 dark:text-gray-400">@' . $item->user->username . '</p>
-                            </div>
-                        </div>
-                    </td>
-                ';
-                })
-
-                ->addColumn('status', function ($item) {
-                    if ($item->status == 'SUCCESS') {
-                        return '
-                        <td class="px-4 py-3 text-xs">
-                            <span class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
-                                ' . $item->status . '
-                            </span>
-                        </td>
-                    ';
-                    } elseif ($item->status == 'PENDING') {
-                        return '
-                        <td class="px-4 py-3 text-xs">
-                            <span class="px-2 py-1 font-semibold leading-tight text-yellow-700 bg-yellow-100 rounded-full dark:bg-yellow-700 dark:text-yellow-100">
-                                ' . $item->status . '
-                            </span>
-                        </td>
-                    ';
-                    } elseif ($item->status == 'CANCELLED') {
-                        return '
-                        <td class="px-4 py-3 text-xs">
-                            <span class="px-2 py-1 font-semibold leading-tight text-red-700 bg-red-100 rounded-full dark:bg-red-700 dark:text-red-100">
-                                ' . $item->status . '
-                            </span>
-                        </td>
-                    ';
-                    } else {
-                        return '
-                        <td class="px-4 py-3 text-xs">
-                            Not Found!
-                        </td>
-                    ';
-                    }
-                })
-
                 ->addColumn('action', function ($item) {
                     $encryptedId = Crypt::encrypt($item->id);
                     $status = $item->status;
@@ -285,10 +220,7 @@ class TransactionController extends Controller
                    ';
                     }
                 })
-                // ->editColumn('total_price', function ($item) {
-                //     return number_format($item->total_price).'.00';
-                // })
-                ->rawColumns(['user.name', 'status', 'action'])
+                ->rawColumns(['action'])
                 ->make();
         }
 
@@ -1101,58 +1033,57 @@ class TransactionController extends Controller
      */
     public function store(TransactionRequest $request)
     {
-        $request->validate([
-            'products_id' => 'required|exists:products,id', // Validasi product_id
-            // 'alamat' => 'required',
-            'total_price' => 'required',
-            'shipping_price' => 'required',
-            'status' => 'required|in:PENDING,SUCCESS,CANCELLED,FAILED,SHIPPING,SHIPPED',
-        ]);
+        // $request->validate([
+        //     'products_id' => 'required|exists:products,id',
+        //     'total_price' => 'required',
+        //     'shipping_price' => 'required',
+        //     'status' => 'required|in:PENDING,SUCCESS,CANCELLED,FAILED,SHIPPING,SHIPPED',
+        // ]);
 
-        // Mendapatkan nilai incre_id terakhir
         $lastTransaction = Transaction::orderBy('incre_id', 'desc')->first();
 
-        // Mengisi nilai incre_id baru pada transaksi yang akan dibuat
         $increId = $lastTransaction ? $lastTransaction->incre_id + 1 : 1;
 
         DB::beginTransaction();
-        $transaction = Transaction::create([
-            'id' => Transaction::generateTransactionId(),
-            'incre_id' => $increId, // Mengisi nilai incre_id
-            'users_id' => $request->users_id,
-            'address' => $request->address,
-            'total_price' => $request->total_price,
-            'shipping_price' => $request->shipping_price,
-            'status' => $request->status,
-        ]);
 
-        TransactionItem::create([
-            'id' => Transaction::generateTransactionId(),
-            'incre_id' => $increId, // Mengisi nilai incre_id
-            'users_id' => $transaction->users_id,
-            'products_id' => $request->products_id,
-            'transactions_id' => $transaction->id,
-            'quantity' => $request->quantity, // Menggunakan nilai tetap 1 untuk quantity
-        ]);
-
-        NotificationTransaction::create([
-            'transactions_id' => $transaction->incre_id
-        ]);
-
-        DB::commit();
-
-        // Get the transaction and user data
-        $transaction = Transaction::find($transaction->id);
-        $user = Auth::user();
-
-        // Send the email
         try {
+            $transaction = Transaction::create([
+                'id' => Transaction::generateTransactionId(),
+                'incre_id' => $increId,
+                'users_id' => $request->users_id,
+                'address' => $request->address,
+                'total_price' => $request->total_price,
+                'shipping_price' => $request->shipping_price,
+                'status' => $request->status,
+            ]);
+
+            TransactionItem::create([
+                'id' => Transaction::generateTransactionId(),
+                'incre_id' => $increId,
+                'users_id' => $transaction->users_id,
+                'products_id' => $request->products_id,
+                'transactions_id' => $transaction->id,
+                'quantity' => $request->quantity,
+            ]);
+
+            NotificationTransaction::create([
+                'transactions_id' => $transaction->incre_id
+            ]);
+
+            DB::commit();
+
+            $transaction = Transaction::find($transaction->id);
+            $user = Auth::user();
+
             Mail::to('andraryandra38@gmail.com')->send(new TransactionNotification($transaction, $user));
+
+            return redirect()->route('dashboard.transaction.indexPending')->withSuccess('Transaksi berhasil dibuat.');
         } catch (\Exception $e) {
-            // Tidak dapat mengirim email, lanjutkan eksekusi kode ke depan
+            DB::rollback();
+            return redirect()->back()->withErrors(['message' => 'Terjadi kesalahan saat membuat transaksi.']);
         }
-        return redirect()->route('dashboard.transaction.indexPending')->withSuccess('Transaksi berhasil dibuat.');
     }
+
 
     /**
      * Display the specified resource.

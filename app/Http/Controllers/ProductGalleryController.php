@@ -5,11 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Models\ProductGallery;
+use App\Http\Controllers\Controller;
+use App\Imports\ProductGalleryImport;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\ProductGalleryRequest;
 use Illuminate\Contracts\Encryption\DecryptException;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProductGalleryController extends Controller
 {
@@ -166,6 +169,50 @@ class ProductGalleryController extends Controller
         } catch (DecryptException $e) {
             // Tangani exception jika terjadi error pada dekripsi
             return back()->withErrors(['error' => 'Invalid payload.']);
+        }
+    }
+
+    // public function importProductGallery(Request $request, Product $productId)
+    // {
+    //     try {
+    //         $file = request()->file('file');
+
+    //         // Validasi tipe file
+    //         $allowedTypes = ['xlsx', 'csv'];
+    //         $fileExtension = $file->getClientOriginalExtension();
+    //         if (!in_array($fileExtension, $allowedTypes)) {
+    //             throw new \Exception('File type not allowed, File must be type .XLSX & .CSV');
+    //         }
+
+    //         $productId = request('products_id'); // mendapatkan id produk dari form
+    //         if (!$productId) {
+    //             throw new \Exception('Product ID not provided.');
+    //         }
+
+    //         Excel::import(new ProductGalleryImport($productId), $file); // memanggil ProductGalleryImport dengan menyediakan product ID
+    //         return redirect()->back()->withSuccess('Import successful!');
+    //     } catch (\Exception $e) {
+    //         $errorMessage = $e->getMessage();
+    //         return redirect()->back()->with(compact('errorMessage'))->withError($e->getMessage());
+    //     }
+    // }
+    public function importProductGallery(Request $request, Product $productId)
+    {
+        try {
+            $file = $request->file('file');
+
+            // Validasi tipe file
+            $allowedTypes = ['xlsx', 'csv'];
+            $fileExtension = $file->getClientOriginalExtension();
+            if (!in_array($fileExtension, $allowedTypes)) {
+                throw new \Exception('File type not allowed, File must be type .XLSX & .CSV');
+            }
+
+            Excel::import(new ProductGalleryImport($productId), $file); // memanggil ProductGalleryImport dengan menyediakan product ID
+            return redirect()->back()->withSuccess('Import successful!');
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage();
+            return redirect()->back()->with(compact('errorMessage'))->withError($e->getMessage());
         }
     }
 }

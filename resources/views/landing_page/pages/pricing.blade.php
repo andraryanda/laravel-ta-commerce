@@ -82,7 +82,7 @@
 
             <div class="container-fluid">
                 <div class="row justify-content-center d-flex">
-                    @forelse ($activeProducts as $product)
+                    @forelse ($products as $product)
                         <div class="col-lg-3 col-md-6 col-sm-12 d-flex justify-content-center">
                             <div class="card mb-3" width="300">
                                 <img src="{{ $product->productGallery->first()->url ?? 'Not Found!' }}" class="card-img-top"
@@ -115,8 +115,32 @@
                         </div>
                     @endforelse
                 </div>
-                <div class="d-flex justify-content-center my-3">
-                    {{ $activeProducts->links('pagination::bootstrap-4') }}
+
+                <div class="d-flex justify-content-between my-3">
+                    <div class="text-muted">
+                        Showing {{ $products->firstItem() }} to {{ $products->lastItem() }} of
+                        {{ $products->total() }} results
+                    </div>
+                    {{-- {{ $products->links('pagination::bootstrap-4') }} --}}
+                    @if ($products->lastPage() > 1)
+                        <ul class="pagination ml-3 mb-0 justify-content-center">
+                            <!-- tambahkan class justify-content-center -->
+                            <li class="page-item mx-2 {{ $products->currentPage() == 1 ? ' disabled' : '' }}">
+                                <a class="page-link rounded-pill" href="{{ $products->url(1) }}">First</a>
+                            </li>
+                            @for ($i = 1; $i <= $products->lastPage(); $i++)
+                                <li class="page-item mx-2 {{ $products->currentPage() == $i ? ' active' : '' }}">
+                                    <a class="page-link rounded-pill"
+                                        href="{{ $products->url($i) }}">{{ $i }}</a>
+                                </li>
+                            @endfor
+                            <li
+                                class="page-item mx-2 {{ $products->currentPage() == $products->lastPage() ? ' disabled' : '' }}">
+                                <a class="page-link rounded-pill"
+                                    href="{{ $products->url($products->lastPage()) }}">Last</a>
+                            </li>
+                        </ul>
+                    @endif
                 </div>
             </div>
         </div>
@@ -124,24 +148,7 @@
     <!-- Pricing Section End -->
 
 
-    {{-- @if ($paginatedProducts->lastPage() > 1)
-                        <ul class="pagination ml-3 mb-0">
-                            <li class="page-item mx-2 {{ $paginatedProducts->currentPage() == 1 ? ' disabled' : '' }}">
-                                <a class="page-link rounded-pill" href="{{ $paginatedProducts->url(1) }}">First</a>
-                            </li>
-                            @for ($i = 1; $i <= $paginatedProducts->lastPage(); $i++)
-                                <li class="page-item mx-2 {{ $paginatedProducts->currentPage() == $i ? ' active' : '' }}">
-                                    <a class="page-link rounded-pill"
-                                        href="{{ $paginatedProducts->url($i) }}">{{ $i }}</a>
-                                </li>
-                            @endfor
-                            <li
-                                class="page-item mx-2 {{ $paginatedProducts->currentPage() == $paginatedProducts->lastPage() ? ' disabled' : '' }}">
-                                <a class="page-link rounded-pill"
-                                    href="{{ $paginatedProducts->url($paginatedProducts->lastPage()) }}">Last</a>
-                            </li>
-                        </ul>
-                    @endif --}}
+
     @push('styles')
         <style>
             .card {
