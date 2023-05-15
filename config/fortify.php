@@ -48,6 +48,8 @@ return [
     */
 
     'username' => 'email',
+    // 'username' => 'auth',
+    // 'username' => 'identity',
 
     'email' => 'email',
 

@@ -12,6 +12,7 @@ use App\Models\TransactionItem;
 use App\Helpers\ResponseFormatter;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\TransactionRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Crypt;
@@ -21,12 +22,14 @@ use App\Notifications\TransactionNotification;
 class HalamanUtamaController extends Controller
 {
     public function index()
-    {
-
+{
+    try {
         $users_customer_count = User::where('roles', '=', 'USER')->count();
         $new_transaction = Transaction::count();
         $total_product = Product::count();
         $total_amount_success = Transaction::where('status', '=', 'SUCCESS')->sum('total_price');
+
+        $total_pending_count = 0;
         if (Auth::check()) {
             $user = Auth::user();
             if ($user->roles == "ADMIN") {
@@ -34,8 +37,6 @@ class HalamanUtamaController extends Controller
             } else {
                 $total_pending_count = Transaction::where('status', '=', 'PENDING')->where('users_id', '=', $user->id)->count();
             }
-        } else {
-            $total_pending_count = 0;
         }
 
         $products = Product::paginate(4);
@@ -52,10 +53,17 @@ class HalamanUtamaController extends Controller
             'total_amount_success',
             'total_pending_count',
         ));
+    } catch (\Exception $e) {
+        // Tangani kesalahan di sini
+        // Misalnya, tampilkan pesan kesalahan atau redirect ke halaman lain
+        return redirect()->back()->withError( 'Terjadi kesalahan: ' . $e->getMessage());
     }
+}
+
 
     public function checkout(Request $request)
     {
+
         $request->validate([
             'products_id' => 'required|exists:products,id', // Validasi product_id
             'total_price' => 'required',
@@ -63,69 +71,62 @@ class HalamanUtamaController extends Controller
             'status' => 'required|in:PENDING,SUCCESS,CANCELLED,FAILED,SHIPPING,SHIPPED',
         ]);
 
-        // Mendapatkan nilai incre_id terakhir
         $lastTransaction = Transaction::orderBy('incre_id', 'desc')->first();
 
-        // Mengisi nilai incre_id baru pada transaksi yang akan dibuat
         $increId = $lastTransaction ? $lastTransaction->incre_id + 1 : 1;
 
         DB::beginTransaction();
-        $transaction = Transaction::create([
-            'id' => Transaction::generateTransactionId(),
-            'incre_id' => $increId, // Mengisi nilai incre_id
-            'users_id' => Auth::user()->id,
-            'address' => $request->address,
-            'total_price' => $request->total_price,
-            'shipping_price' => $request->shipping_price,
-            'status' => $request->status,
-        ]);
 
-        $productModel = Product::find($request->products_id); // Mencari produk berdasarkan product_id dari form input
-
-        if ($productModel) {
-            $products_id = $productModel->id;
+        try {
+            $transaction = Transaction::create([
+                'id' => Transaction::generateTransactionId(),
+                'incre_id' => $increId,
+                'users_id' => Auth::user()->id,
+                'address' => $request->address,
+                'total_price' => $request->total_price,
+                'shipping_price' => $request->shipping_price,
+                'status' => $request->status,
+            ]);
 
             TransactionItem::create([
                 'id' => Transaction::generateTransactionId(),
-                'incre_id' => $increId, // Mengisi nilai incre_id
+                'incre_id' => $increId,
                 'users_id' => Auth::user()->id,
-                'products_id' => $products_id,
+                'products_id' => $request->products_id,
                 'transactions_id' => $transaction->id,
-                'quantity' => 1 // Menggunakan nilai tetap 1 untuk quantity
+                'quantity' => $request->quantity,
             ]);
-        } else {
-            // Jika produk tidak ditemukan, melakukan penanganan kesalahan
-            return redirect()->back()->withError('Produk tidak ditemukan.'); // Contoh: redirect kembali ke halaman sebelumnya dengan pesan error
-        }
 
-        NotificationTransaction::create([
-            'transactions_id' => $transaction->incre_id
-        ]);
+            NotificationTransaction::create([
+                // 'transactions_id' => $transaction->incre_id
+                'transactions_id' => $transaction->id
+            ]);
 
-        DB::commit();
+            DB::commit();
 
-        // Get the transaction and user data
-        $transaction = Transaction::find($transaction->id);
-        $user = Auth::user();
+            $transaction = Transaction::find($transaction->id);
+            $user = Auth::user();
 
-        // Send the email
-        try {
             Mail::to('andraryandra38@gmail.com')->send(new TransactionNotification($transaction, $user));
-        } catch (\Exception $e) {
-            // Tidak dapat mengirim email, lanjutkan eksekusi kode ke depan
-        }
 
-        if ($request->has('bayar_sekarang')) {
-            return redirect()->route('dashboard.payment', ['id' => $transaction->id])->withSuccess('Transaksi berhasil ditambahkan!');
-        } else if ($request->has('bayar_manual')) {
-            return redirect()->route('dashboard.transaction.sendMessageCustomerTransaction', ['transaction' => $transaction->id])->withSuccess('Transaksi berhasil ditambahkan!');
+            if ($request->has('bayar_sekarang')) {
+                return redirect()->route('dashboard.payment', ['id' => $transaction->id])->withSuccess('Transaksi berhasil ditambahkan!');
+            } else if ($request->has('bayar_manual')) {
+                return redirect()->route('dashboard.transaction.sendMessageCustomerTransaction', ['transaction' => $transaction->id])->withSuccess('Transaksi berhasil ditambahkan!');
+            }
+
+            // return redirect()->route('dashboard.transaction.indexPending')->withSuccess('Transaksi berhasil dibuat.');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()->withError(['message' => 'Terjadi kesalahan saat membuat transaksi.']);
         }
     }
 
 
     public function sendMessageCustomerTransaction(Transaction $transaction)
     {
-        $phone_number = '+62' . substr_replace($transaction->user->phone, '', 0, 1);
+        // Nomor Handphone Admin
+        $phone_number = '+62'.'85314005779';
 
         $transaction_id = $transaction->id;
 

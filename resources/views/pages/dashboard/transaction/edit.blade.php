@@ -9,7 +9,7 @@
         </button>
 
         <h2 class="my-2 text-2xl font-semibold text-gray-700 dark:text-gray-200">
-            Transaction &raquo; {{ $item->name }} &raquo; Edit
+            Transaction &raquo; Edit
         </h2>
     </x-slot>
 

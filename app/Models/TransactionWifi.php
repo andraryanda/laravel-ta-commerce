@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\User;
 use Ramsey\Uuid\Uuid;
+use App\Models\Transaction;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,7 +15,14 @@ class TransactionWifi extends Model
 
     protected $fillable =
     [
-        'id', 'incre_id', 'users_id', 'products_id', 'total_price_wifi', 'discount', 'status', 'expired_wifi'
+        'id',
+        'incre_id',
+        'users_id',
+        'products_id',
+        'transactions_id',
+        'total_price_wifi',
+        'status',
+        'expired_wifi',
     ];
 
 
@@ -45,6 +54,11 @@ class TransactionWifi extends Model
 
     public function items()
     {
-        return $this->hasMany(TransactionWifiItem::class, 'transactions_id', 'id');
+        return $this->belongsTo(Transaction::class, 'transactions_id', 'id');
+    }
+
+    public function wifi_items()
+    {
+        return $this->hasMany(TransactionWifiItem::class, 'transaction_wifi_id', 'id');
     }
 }

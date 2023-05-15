@@ -138,6 +138,12 @@ class ProductController extends Controller
             ];
 
             $categories = ProductCategory::all();
+
+            // Pengecekan data
+            if ($categories->isEmpty()) {
+                throw new \Exception('Tidak ada data kategori (categories)');
+            }
+
             return view('pages.dashboard.product.create', [
                 'status_product' => $status_product,
                 'categories' => $categories

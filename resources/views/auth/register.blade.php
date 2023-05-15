@@ -4,7 +4,6 @@
         <x-jet-authentication-card-logo />
     </x-slot>
 
-    <x-jet-validation-errors class="mb-4" />
 
     {{-- <form method="POST" action="{{ route('register') }}">
         @csrf
@@ -85,6 +84,9 @@
                     <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                         Create and account
                     </h1>
+
+                    <x-jet-validation-errors class="mb-3" />
+
                     <form class="space-y-4 md:space-y-6" method="POST" action="{{ route('register') }}">
                         @csrf
                         <div>
@@ -92,7 +94,15 @@
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your name</label>
                             <input type="text" name="name" id="name"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                placeholder="name" required="">
+                                placeholder="Tuliskan name" required="">
+                        </div>
+                        <div>
+                            <label for="username"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your
+                                username</label>
+                            <input type="text" name="username" id="username"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                placeholder="Tuliskan username" required="">
                         </div>
                         <div>
                             <label for="email"
@@ -104,7 +114,7 @@
                         <div>
                             <label for="password"
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
-                            <input type="password" name="password" id="password" placeholder="••••••••"
+                            <input type="password" name="password" id="password" placeholder="Password..."
                                 class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required="">
                         </div>
@@ -113,7 +123,7 @@
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirm
                                 password</label>
                             <input type="password" name="password_confirmation" id="confirmation-password"
-                                placeholder="••••••••"
+                                placeholder="Password..."
                                 class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required autocomplete="new-password" />
                         </div>

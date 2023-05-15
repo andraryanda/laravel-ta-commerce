@@ -18,7 +18,14 @@ class CreateNotificationTransactionsTable extends Migration
 
             $table->uuid('transactions_id');
 
+            $table->softDeletes();
             $table->timestamps();
+
+            $table->foreign('transactions_id')
+            ->references('id')
+            ->on('transactions')
+            ->onDelete('restrict')
+            ->onUpdate('restrict');
         });
     }
 

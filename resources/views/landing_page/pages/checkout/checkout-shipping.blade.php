@@ -32,9 +32,9 @@
                     {{-- Open Form --}}
                     <form action="{{ route('landingPage.checkout') }}" method="post">
                         @csrf
-                        <!-- Form input untuk product_id -->
-                        <input type="hidden" name="products_id" value="{{ $product->id }}">
-
+                        <div class="text-center mt-4">
+                            <h5 class="font-weight-bold">Data Profile:</h5>
+                        </div>
                         <div class="form-group">
                             <label for="address">Alamat</label>
                             <input type="text" class="form-control" name="address" id="address" value="Karangampel"
@@ -42,6 +42,12 @@
                         </div>
 
                         <div class="d-none">
+                            <div class="form-group">
+                                    <label for="total_price">Product ID</label>
+                                    <input type="text" class="form-control" name="products_id" id="products_id"
+                                    value="{{ $product->id }}" readonly required>
+                            </div>
+
                             <div class="form-group">
                                 <label for="total_price">Total Harga</label>
                                 <input type="number" class="form-control" name="total_price" id="total_price"
@@ -255,7 +261,7 @@
                     </button>
                     {{-- </form> --}}
                     {{-- Penutup Form --}}
-                    <button type="submit" name="bayar_manual" {{-- onclick="window.location.href='{{ route('dashboard.transaction.sendMessage2') }}'" --}}
+                    <button type="submit" name="bayar_manual"
                         class="btn btn-success my-2 py-2 rounded-pill">
                         <div class="d-flex justify-content-center align-items-center">
                             <img src="{{ asset('icon/whatsapp.png') }}" alt="whatsapp" width="30" class="mr-2">

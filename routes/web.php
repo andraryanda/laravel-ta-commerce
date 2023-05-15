@@ -114,7 +114,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
             Route::get('transactionCancelled', [TransactionController::class, 'indexCancelled'])->name('transaction.indexCancelled');
 
             Route::resource('pembayaran/wifi/bulan', TransactionWifiController::class)->only([
-                'index',
+                'index','create','store','show',
             ]);
 
             // Route::resource('transaction/pending', TransactionController::class)->only([

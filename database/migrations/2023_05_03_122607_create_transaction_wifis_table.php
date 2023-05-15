@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTransactionItemsTable extends Migration
+class CreateTransactionWifisTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,17 @@ class CreateTransactionItemsTable extends Migration
      */
     public function up()
     {
-        Schema::create('transaction_items', function (Blueprint $table) {
-
+        Schema::create('transaction_wifis', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->bigInteger('incre_id');
+
+            $table->unsignedbigInteger('incre_id');
             $table->unsignedbigInteger('users_id');
             $table->unsignedbigInteger('products_id');
             $table->uuid('transactions_id');
 
-            $table->bigInteger('quantity');
+            $table->decimal('total_price_wifi', 12, 2);
+            $table->string('status');
+            $table->date('expired_wifi');
 
             $table->softDeletes();
             $table->timestamps();
@@ -53,6 +55,6 @@ class CreateTransactionItemsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('transaction_items');
+        Schema::dropIfExists('transaction_wifis');
     }
 }

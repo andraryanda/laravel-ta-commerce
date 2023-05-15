@@ -9,8 +9,7 @@
     {{-- <title>{{ __('Als Store RT/RW NET') }}</title> --}}
 
     <link rel="shortcut icon" href="{{ asset('icon/store.png') }}">
-
-    <link href="{{ url('https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.4/flowbite.min.css') }}" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/flowbite.min.css" rel="stylesheet" />
     <link rel="stylesheet"
         href="{{ url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200') }}" />
     <link rel="stylesheet"
@@ -175,7 +174,7 @@
     <script src="{{ url('https://code.jquery.com/jquery-3.6.0.min.js') }}"></script>
     <script src="{{ url('https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ url('https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js') }}"></script>
-    <script src="{{ url('https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.4/flowbite.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/flowbite.min.js"></script>
     <script src="{{ asset('assets/js/focus-trap.js') }}" defer></script>
     <script src="{{ url('https://cdn.jsdelivr.net/npm/sweetalert2@11') }}"></script>
     <script src="{{ url('https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js') }}"></script>

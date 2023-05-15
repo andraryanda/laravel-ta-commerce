@@ -23,10 +23,25 @@ class CreateProductsTable extends Migration
             $table->string('tags')->nullable();
             $table->string('status_product')->nullable();
 
-            $table->bigInteger('categories_id');
+            // $table->bigInteger('categories_id');
+            $table->unsignedBigInteger('categories_id');
 
             $table->softDeletes();
             $table->timestamps();
+
+
+            $table->foreign('categories_id')
+            ->references('id')
+            ->on('product_categories')
+            ->onDelete('restrict')
+            ->onUpdate('restrict');
+
+            // $table->foreign('categories_id')
+            // ->references('id')
+            // ->on('product_categories')
+            // ->onDelete('restrict')
+            // ->onUpdate('restrict');
+            // $table->foreign('categories_id')->references('id')->on('product_categories')->onDelete('restrict')->onUpdate('restrict');
         });
     }
 

@@ -242,40 +242,43 @@ class TransactionController extends Controller
             $query = Transaction::with(['user'])->where('status', '=', 'PENDING')->orderBy('created_at', 'desc');
 
             return DataTables::of($query)
-                ->addColumn('user.name', function ($item) {
-                    return '
-                    <td class="px-4 py-3">
-                        <div class="flex items-center text-sm">
-                            <!-- Avatar with inset shadow -->
-                            <div class="relative hidden w-8 h-8 mr-3 rounded-full md:block">
-                                ' . (Jetstream::managesProfilePhotos() ?
-                        (Auth::user()->profile_photo_url ? '
-                                        <img class="object-cover w-full h-full rounded-full"
-                                            src="' . Auth::user()->profile_photo_url . '"
-                                            alt="' . $item->user->name . '" loading="lazy" />' : '
-                                        <img class="object-cover w-full h-full rounded-full"
-                                            src="' . asset('img/default-avatar.jpg') . '"
-                                            alt="' . $item->user->name . '" loading="lazy" />'
-                        ) : '
+                ->editColumn('user.name', function ($item) {
+                    if ($item->user->profile_photo_url) {
+                        return '
+                            <td class="px-4 py-3">
+                                <div class="flex items-center text-sm">
+                                    <!-- Avatar with inset shadow -->
+                                    <div class="relative hidden w-8 h-8 mr-3 rounded-full md:block">
+                                        <img class="object-cover w-full h-full rounded-full" src="' . $item->user->profile_photo_url . '" alt="' . $item->user->name . '" loading="lazy" />
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold">' . $item->user->name . '</p>
+                                        <p class="text-xs text-gray-600 dark:text-gray-400">@' . $item->user->username . '</p>
+                                    </div>
+                                </div>
+                            </td>
+                        ';
+                    } else {
+                        return '
+                            <td class="px-4 py-3">
+                                <div class="flex items-center text-sm">
                                     <span class="inline-block h-8 w-8 rounded-full overflow-hidden bg-gray-100">
                                         <svg class="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
                                             <path
                                                 d="M12 14.75c2.67 0 8 1.34 8 4v1.25H4v-1.25c0-2.66 5.33-4 8-4zm0-9.5c-2.22 0-4 1.78-4 4s1.78 4 4 4 4-1.78 4-4-1.78-4-4-4zm0 6c-1.11 0-2-.89-2-2s.89-2 2-2 2 .89 2 2-.89 2-2 2z" />
                                         </svg>
                                     </span>
-                                ') . '
-                                <div class="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></div>
-                            </div>
-                            <div>
-                                <p class="font-semibold">' . $item->user->name . '</p>
-                                <p class="text-xs text-gray-600 dark:text-gray-400">@' . $item->user->username . '</p>
-                            </div>
-                        </div>
-                    </td>
-                ';
+                                    <div>
+                                        <p class="font-semibold">' . $item->user->name . '</p>
+                                        <p class="text-xs text-gray-600 dark:text-gray-400">@' . $item->user->username . '</p>
+                                    </div>
+                                </div>
+                            </td>
+                        ';
+                    }
                 })
 
-                ->addColumn('status', function ($item) {
+                ->editColumn('status', function ($item) {
                     if ($item->status == 'SUCCESS') {
                         return '
                         <td class="px-4 py-3 text-xs">
@@ -309,7 +312,7 @@ class TransactionController extends Controller
                     }
                 })
 
-                ->addColumn('action', function ($item) {
+                ->editColumn('action', function ($item) {
                     $encryptedId = Crypt::encrypt($item->id);
                     $status = $item->status;
                     if ($status == 'SUCCESS' || $status == 'CANCELLED') {
@@ -531,40 +534,43 @@ class TransactionController extends Controller
         if (request()->ajax()) {
             $query = Transaction::with(['user'])->where('status', '=', 'CANCELLED')->orderByDesc('created_at');
             return DataTables::of($query)
-                ->addColumn('user.name', function ($item) {
+            ->editColumn('user.name', function ($item) {
+                if ($item->user->profile_photo_url) {
                     return '
-                    <td class="px-4 py-3">
-                        <div class="flex items-center text-sm">
-                            <!-- Avatar with inset shadow -->
-                            <div class="relative hidden w-8 h-8 mr-3 rounded-full md:block">
-                                ' . (Jetstream::managesProfilePhotos() ?
-                        (Auth::user()->profile_photo_url ? '
-                                        <img class="object-cover w-full h-full rounded-full"
-                                            src="' . Auth::user()->profile_photo_url . '"
-                                            alt="' . $item->user->name . '" loading="lazy" />' : '
-                                        <img class="object-cover w-full h-full rounded-full"
-                                            src="' . asset('img/default-avatar.jpg') . '"
-                                            alt="' . $item->user->name . '" loading="lazy" />'
-                        ) : '
-                                    <span class="inline-block h-8 w-8 rounded-full overflow-hidden bg-gray-100">
-                                        <svg class="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
-                                            <path
-                                                d="M12 14.75c2.67 0 8 1.34 8 4v1.25H4v-1.25c0-2.66 5.33-4 8-4zm0-9.5c-2.22 0-4 1.78-4 4s1.78 4 4 4 4-1.78 4-4-1.78-4-4-4zm0 6c-1.11 0-2-.89-2-2s.89-2 2-2 2 .89 2 2-.89 2-2 2z" />
-                                        </svg>
-                                    </span>
-                                ') . '
-                                <div class="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></div>
+                        <td class="px-4 py-3">
+                            <div class="flex items-center text-sm">
+                                <!-- Avatar with inset shadow -->
+                                <div class="relative hidden w-8 h-8 mr-3 rounded-full md:block">
+                                    <img class="object-cover w-full h-full rounded-full" src="' . $item->user->profile_photo_url . '" alt="' . $item->user->name . '" loading="lazy" />
+                                </div>
+                                <div>
+                                    <p class="font-semibold">' . $item->user->name . '</p>
+                                    <p class="text-xs text-gray-600 dark:text-gray-400">@' . $item->user->username . '</p>
+                                </div>
                             </div>
-                            <div>
-                                <p class="font-semibold">' . $item->user->name . '</p>
-                                <p class="text-xs text-gray-600 dark:text-gray-400">@' . $item->user->username . '</p>
+                        </td>
+                    ';
+                } else {
+                    return '
+                        <td class="px-4 py-3">
+                            <div class="flex items-center text-sm">
+                                <span class="inline-block h-8 w-8 rounded-full overflow-hidden bg-gray-100">
+                                    <svg class="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+                                        <path
+                                            d="M12 14.75c2.67 0 8 1.34 8 4v1.25H4v-1.25c0-2.66 5.33-4 8-4zm0-9.5c-2.22 0-4 1.78-4 4s1.78 4 4 4 4-1.78 4-4-1.78-4-4-4zm0 6c-1.11 0-2-.89-2-2s.89-2 2-2 2 .89 2 2-.89 2-2 2z" />
+                                    </svg>
+                                </span>
+                                <div>
+                                    <p class="font-semibold">' . $item->user->name . '</p>
+                                    <p class="text-xs text-gray-600 dark:text-gray-400">@' . $item->user->username . '</p>
+                                </div>
                             </div>
-                        </div>
-                    </td>
-                ';
-                })
+                        </td>
+                    ';
+                }
+            })
 
-                ->addColumn('status', function ($item) {
+                ->editColumn('status', function ($item) {
                     if ($item->status == 'SUCCESS') {
                         return '
                         <td class="px-4 py-3 text-xs">
@@ -598,7 +604,7 @@ class TransactionController extends Controller
                     }
                 })
 
-                ->addColumn('action', function ($item) {
+                ->editColumn('action', function ($item) {
                     $encryptedId = Crypt::encrypt($item->id);
                     $status = $item->status;
                     if ($status == 'SUCCESS' || $status == 'CANCELLED') {
@@ -1015,15 +1021,37 @@ class TransactionController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create()
-    {
+{
+    try {
         $users = User::where('roles', '=', 'USER')->get();
         $products = Product::with('galleries')->with('category')->get();
+
+        $status_transaction = [
+            ['label' => 'PENDING', 'value' => 'PENDING'],
+            ['label' => 'SUCCESS', 'value' => 'SUCCESS'],
+            ['label' => 'CANCELLED', 'value' => 'CANCELLED'],
+        ];
+
+        // Pengecekan data
+        if ($users->isEmpty()) {
+            throw new \Exception('Tidak ada data pengguna (users)');
+        }
+
+        if ($products->isEmpty()) {
+            throw new \Exception('Tidak ada data produk (products)');
+        }
 
         return view('pages.dashboard.transaction.create', compact(
             'products',
             'users',
-        ));
+        'status_transaction',));
+    } catch (\Exception $e) {
+        // Tangani kesalahan di sini
+        // Misalnya, tampilkan pesan kesalahan atau redirect ke halaman lain
+        return redirect()->back()->withError( 'Terjadi kesalahan: ' . $e->getMessage());
     }
+}
+
 
     /**
      * Store a newly created resource in storage.
@@ -1033,13 +1061,6 @@ class TransactionController extends Controller
      */
     public function store(TransactionRequest $request)
     {
-        // $request->validate([
-        //     'products_id' => 'required|exists:products,id',
-        //     'total_price' => 'required',
-        //     'shipping_price' => 'required',
-        //     'status' => 'required|in:PENDING,SUCCESS,CANCELLED,FAILED,SHIPPING,SHIPPED',
-        // ]);
-
         $lastTransaction = Transaction::orderBy('incre_id', 'desc')->first();
 
         $increId = $lastTransaction ? $lastTransaction->incre_id + 1 : 1;
@@ -1067,7 +1088,8 @@ class TransactionController extends Controller
             ]);
 
             NotificationTransaction::create([
-                'transactions_id' => $transaction->incre_id
+                // 'transactions_id' => $transaction->incre_id
+                'transactions_id' => $transaction->id
             ]);
 
             DB::commit();

@@ -17,20 +17,22 @@ class CreateTransactionsTable extends Migration
             $table->uuid('id')->primary();
             $table->bigInteger('incre_id');
 
-            $table->bigInteger('users_id');
+            $table->unsignedbigInteger('users_id');
 
             $table->text('address')->nullable();
-
-            // $table->float('total_price')->default(0);
             $table->decimal('total_price', 12, 2);
-
             $table->float('shipping_price')->default(0);
             $table->string('status')->default('PENDING');
-
             $table->string('payment')->default('MANUAL');
 
             $table->softDeletes();
             $table->timestamps();
+
+            $table->foreign('users_id')
+            ->references('id')
+            ->on('users')
+            ->onDelete('restrict')
+            ->onUpdate('restrict');
         });
     }
 

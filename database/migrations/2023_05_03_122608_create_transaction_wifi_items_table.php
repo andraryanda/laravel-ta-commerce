@@ -13,16 +13,38 @@ class CreateTransactionWifiItemsTable extends Migration
      */
     public function up()
     {
-        Schema::create('transaction_wifi_item', function (Blueprint $table) {
+        Schema::create('transaction_wifi_items', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->bigInteger('incre_id');
-            $table->bigInteger('users_id');
-            $table->bigInteger('products_id');
-            $table->bigInteger('transaction_wifi_id');
+
+            $table->unsignedbigInteger('incre_id');
+            $table->unsignedbigInteger('users_id');
+            $table->unsignedbigInteger('products_id');
+            $table->uuid('transaction_wifi_id');
+
             $table->string('payment_status');
             $table->decimal('payment_transaction', 12, 2);
-            $table->longText('description');
+            $table->longText('description')->nullable();
+
+            $table->softDeletes();
             $table->timestamps();
+
+            $table->foreign('transaction_wifi_id')
+            ->references('id')
+            ->on('transaction_wifis')
+            ->onDelete('restrict')
+            ->onUpdate('restrict');
+
+            $table->foreign('products_id')
+            ->references('id')
+            ->on('products')
+            ->onDelete('restrict')
+            ->onUpdate('restrict');
+
+            $table->foreign('users_id')
+            ->references('id')
+            ->on('users')
+            ->onDelete('restrict')
+            ->onUpdate('restrict');
         });
     }
 
@@ -33,6 +55,6 @@ class CreateTransactionWifiItemsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('transaction_wifi_item');
+        Schema::dropIfExists('transaction_wifi_items');
     }
 }
