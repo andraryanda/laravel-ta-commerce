@@ -64,6 +64,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
 
 
         // Midtrans
+        // Transaksi Pembelian Produk
         Route::get('dashboard/payment/cancel/{id}', [MidtransWebhookController::class, 'cancelPayment'])->name('midtrans.cancel');
 
         Route::get('transaction/{id}/payment', [MidtransWebhookController::class, 'payment'])->name('payment');
@@ -75,6 +76,12 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
         Route::get('payment/error', [MidtransWebhookController::class, 'handleError'])->name('payment.error');
         Route::get('transactionShowMidtrans/{transaction}', [MidtransWebhookController::class, 'show'])->name('midtrans.show');
         Route::get('transactionCustomerMidtrans/{transaction}', [MidtransWebhookController::class, 'showCustomer'])->name('midtrans.showCustomer');
+
+        // Transaksi Wifi
+        Route::get('transactionWifi/{id}/payment', [MidtransWebhookController::class, 'paymentWifi'])->name('midtrans.paymentWifi');
+        Route::get('transactionWifiShowMidtrans/{transaction}', [MidtransWebhookController::class, 'showCustomerWifi1showCustomerWifi1'])->name('midtrans.showCustomerWifi1');
+        Route::get('transactionCustomerWifiMidtrans/{transaction}', [MidtransWebhookController::class, 'showCustomerWifi'])->name('midtrans.showCustomerWifi');
+
 
         Route::get('exportPDF-{transaction}', [ReportController::class, 'exportPDF'])->name('report.exportPDF');
         Route::get('sendMessageCustomerTransaction-{transaction}', [HalamanUtamaController::class, 'sendMessageCustomerTransaction'])->name('transaction.sendMessageCustomerTransaction');

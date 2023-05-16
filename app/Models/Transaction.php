@@ -49,4 +49,9 @@ class Transaction extends Model
     {
         return $this->hasMany(TransactionItem::class, 'transactions_id', 'id');
     }
+
+    public function wifi_items()
+    {
+        return $this->hasMany(TransactionWifi::class, 'transactions_id', 'id');
+    }
 }

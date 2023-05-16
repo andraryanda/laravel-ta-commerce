@@ -97,12 +97,19 @@ class TransactionWifiController extends Controller
                     $encryptedId = Crypt::encrypt($item->id);
                     // $status = $item->status;
                         return '
-                    <a href="' . route('dashboard.bulan.show', $encryptedId) . '" title="Show"
-                        class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-blue-500 bg-blue-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-blue-500 focus:outline-none focus:shadow-outline">
-                        <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/show.png') . '" alt="show" loading="lazy" width="20" />
-                        <p class="mt-1 text-xs">Lihat</p>
-                    </a>
-                   ';
+                    <div class="flex justify-start items-center space-x-3.5">
+                        <a href="'. route('dashboard.midtrans.paymentWifi', $item->id) .'" target="_blank" title="Bayar"
+                            class="flex flex-col shadow-sm items-center justify-center w-20 h-12 border border-purple-500 bg-purple-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-purple-500 focus:outline-none focus:shadow-outline">
+                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/credit-card.png') . '" alt="Bayar" loading="lazy" width="20" />
+                            <p class="mt-1 text-xs">Bayar Wifi</p>
+                        </a>
+                        <a href="' . route('dashboard.bulan.show', $encryptedId) . '" title="Show"
+                            class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-blue-500 bg-blue-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-blue-500 focus:outline-none focus:shadow-outline">
+                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/show.png') . '" alt="show" loading="lazy" width="20" />
+                            <p class="mt-1 text-xs">Lihat</p>
+                        </a>
+                    </div>
+                    ';
                 })
                 ->rawColumns(['action','status','user.name'])
                 ->make();
@@ -121,11 +128,11 @@ class TransactionWifiController extends Controller
         try {
             $users = User::where('roles', '=', 'USER')->get();
             $products = Product::with('galleries')->with('category')->get();
-            $transactions = Transaction::with(['user'])->get();
+            $transactions = Transaction::with(['user','wifi_items'])->get();
 
             $status_wifi = [
-                ['label' => 'Tersedia', 'value' => 'ACTIVE'],
-                ['label' => 'Tidak Tersedia', 'value' => 'INACTIVE'],
+                ['label' => 'Aktif', 'value' => 'ACTIVE'],
+                ['label' => 'Tidak Aktif', 'value' => 'INACTIVE'],
             ];
 
             $status_payment = [

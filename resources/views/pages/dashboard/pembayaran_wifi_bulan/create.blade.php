@@ -98,7 +98,7 @@
                                             @foreach ($tf->items as $tff)
                                                 {{ $tff->product->name }} ||
                                                 {{ 'Rp ' . number_format($tff->product->price, 0, ',', '.') }} ||
-                                                {{ $tff->transactions_id }} ||
+                                                {{ $tff->id }} ||
                                             @endforeach
                                             {{ $tf->id }}
                                         </option>
