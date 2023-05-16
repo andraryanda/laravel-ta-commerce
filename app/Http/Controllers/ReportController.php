@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\Transaction;
 use App\Exports\UsersExport;
 use Illuminate\Http\Request;
+use App\Models\TransactionWifi;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
@@ -437,8 +438,6 @@ class ReportController extends Controller
         }
     }
 
-
-
     public function exportAllTransactions()
     {
         $transactions = DB::table('transactions')
@@ -451,7 +450,6 @@ class ReportController extends Controller
 
         $headers = [
             'Content-Type' => 'text/csv',
-            // 'Content-Disposition' => 'attachment; filename=all_transactions.csv',
             'Content-Disposition' => 'attachment; filename=all_transactions_' . date('d-m-Y') . '.csv',
         ];
 
@@ -709,6 +707,108 @@ class ReportController extends Controller
 
         return new StreamedResponse($callback, 200, $headers);
     }
+
+    public function exportTransactionWifi()
+    {
+        $transactions = TransactionWifi::with(['user', 'items', 'wifi_items'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename=transaction_wifis_' . date('d-m-Y') . '.csv',
+        ];
+
+        $callback = function () use ($transactions) {
+            $file = fopen('php://output', 'w');
+
+            fputcsv($file, [
+                'Transaction ID',
+                'User ID',
+                'User Name',
+                'Product ID',
+                'Total Price Wifi',
+                'Status',
+                'Expired Wifi',
+                'Deleted At',
+                'Created At',
+                'Updated At',
+            ]);
+
+            foreach ($transactions as $transaction) {
+                fputcsv($file, [
+                    $transaction->id,
+                    $transaction->users_id,
+                    $transaction->user->name,
+                    $transaction->products_id,
+                    $transaction->total_price_wifi,
+                    $transaction->status,
+                    $transaction->expired_wifi,
+                    $transaction->deleted_at,
+                    $transaction->created_at,
+                    $transaction->updated_at,
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return new StreamedResponse($callback, 200, $headers);
+    }
+
+    public function exportTransactionCustomWifi(Request $request)
+{
+    $startDate = $request->input('start_date');
+    $endDate = $request->input('end_date');
+
+    $transactions = TransactionWifi::with(['user', 'items', 'wifi_items'])
+        ->whereBetween('created_at', [$startDate, $endDate])
+        ->orderBy('created_at', 'desc')
+        ->get();
+
+    $headers = [
+        'Content-Type' => 'text/csv',
+        'Content-Disposition' => 'attachment; filename=transaction_wifis_' . date('d-m-Y') . '.csv',
+    ];
+
+    $callback = function () use ($transactions) {
+        $file = fopen('php://output', 'w');
+
+        fputcsv($file, [
+            'Transaction ID',
+            'User ID',
+            'User Name',
+            'Product ID',
+            'Total Price Wifi',
+            'Status',
+            'Expired Wifi',
+            'Deleted At',
+            'Created At',
+            'Updated At',
+        ]);
+
+        foreach ($transactions as $transaction) {
+            fputcsv($file, [
+                $transaction->id,
+                $transaction->users_id,
+                $transaction->user->name,
+                $transaction->products_id,
+                $transaction->total_price_wifi,
+                $transaction->status,
+                $transaction->expired_wifi,
+                $transaction->deleted_at,
+                $transaction->created_at,
+                $transaction->updated_at,
+            ]);
+        }
+
+        fclose($file);
+    };
+
+    return new StreamedResponse($callback, 200, $headers);
+}
+
+
 
     /**
      * Show the form for creating a new resource.

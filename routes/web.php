@@ -163,6 +163,9 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
             Route::get('exportTransactionCustomSuccess', [ReportController::class, 'exportTransactionCustomSuccess'])->name('report.exportTransactionCustomSuccess');
             Route::get('exportTransactionCustomCancelled', [ReportController::class, 'exportTransactionCustomCancelled'])->name('report.exportTransactionCustomCancelled');
 
+            Route::get('exportTransactionWifi', [ReportController::class, 'exportTransactionWifi'])->name('report.exportTransactionWifi');
+            Route::get('exportTransactionCustomWifi', [ReportController::class, 'exportTransactionCustomWifi'])->name('report.exportTransactionCustomWifi');
+
             // // Midtrans
             // Route::get('dashboard/payment/cancel/{id}', [MidtransWebhookController::class, 'cancelPayment'])->name('midtrans.cancel');
             // Route::get('payment/finish/{id}', [TransactionController::class, 'handlefinish'])->name('payment.finish');
