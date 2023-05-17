@@ -24,15 +24,51 @@
             <script>
                 $(document).ready(function() {
                     // Setup - add a text input to each footer cell
-                    $('#crudTable tfoot th').each(function() {
+                    $('#crudTable tfoot th:not(.no-search)').each(function() {
                         var title = $(this).text();
                         $(this).html(
-                            '<input type="text" class="text-xs rounded-full font-semibold tracking-wide text-left " placeholder="Search ..." ' +
-                            title + '" />');
+                            '<input type="text" class="text-xs rounded-full font-semibold tracking-wide text-left " style="text-align: left;" placeholder="Search ... ' +
+                            title + '" />'
+                        );
                     });
 
                     // DataTable
                     var table = $('#crudTable').DataTable({
+                        initComplete: function() {
+                            // Apply the search
+                            this.api()
+                                .columns('')
+                                .every(function() {
+                                    var that = this;
+
+                                    $('input', this.footer()).on('keyup change clear', function() {
+                                        if (that.search() !== this.value) {
+                                            that.search(this.value).draw();
+                                        }
+                                    });
+                                });
+                            // Set width for search tfoot
+                            $('tfoot tr').children().each(function(index, element) {
+                                if (index == 0) {
+                                    $(element).css('width', '2%'); // Set width for id column
+                                } else if (index == 1) {
+                                    $(element).css('width', '7%'); // Set width for id column
+                                } else if (index == 2) {
+                                    $(element).css('width', '7%'); // Set width for id column
+                                } else if (index == 3) {
+                                    $(element).css('width', '10%'); // Set width for id column
+                                } else if (index == 4) {
+                                    $(element).css('width', '8%'); // Set width for id column
+                                } else if (index == 5) {
+                                    $(element).css('width', '10%'); // Set width for id column
+                                } else {
+                                    $(element).css('width', 'auto'); // Set width for other columns
+                                }
+                            });
+                        },
+                        processing: true,
+                        serverSide: false,
+                        responsive: false,
                         ajax: {
                             url: '{!! url()->current() !!}',
                         },
@@ -46,8 +82,10 @@
                                 name: 'product.name'
                             },
                             {
-                                data: 'product.price',
-                                name: 'product.price'
+                                data: 'wifis.total_price_wifi',
+                                name: 'wifis.total_price_wifi',
+                                searchable: true,
+                                render: $.fn.dataTable.render.number(',', '.', 2, 'Rp '),
                             },
                             {
                                 data: 'payment_transaction',
@@ -60,6 +98,10 @@
                                 name: 'payment_status'
                             },
                             {
+                                data: 'payment_method',
+                                name: 'payment_method'
+                            },
+                            {
                                 data: 'description',
                                 name: 'description'
                             },
@@ -67,6 +109,7 @@
                                 data: 'created_at',
                                 name: 'created_at',
                                 title: 'Tanggal Transaksi',
+                                searchable: true,
                                 className: 'dt-body-start',
                                 render: function(data) {
                                     var date = new Date(data);
@@ -83,22 +126,47 @@
                             },
                         ],
                         pagingType: 'full_numbers',
-                        order: [
-                            [0, 'desc'] // Kolom indeks 0 diurutkan secara descending
-                        ],
+                        // order: [
+                        //     // [1, 'desc'], // Kolom indeks 1 diurutkan secara descending
+                        //     // [0, 'asc'] // Kolom indeks 0 (DT_RowIndex) diurutkan secara ascending
+                        // ],
                         language: {
-                            searchPlaceholder: "Search Data Transaction ...",
+                            searchPlaceholder: "Search Data Transaction Wifi",
+                            decimal: ',',
+                            thousands: '.',
                             paginate: {
                                 first: "First",
                                 last: "Last",
                                 next: "Next",
                                 previous: "Prev",
                             },
-                        }
-                    })
+                        },
+                    });
                 });
             </script>
         </x-slot>
+
+        @push('style')
+            <style>
+                #crudTable tbody tr:hover {
+                    background-color: #f7fafc;
+                    transition: all 0.3s ease-in-out;
+                    /* background-color: rgba(0, 0, 0, 0.075); */
+                }
+
+                #crudTable:hover {
+                    cursor: pointer;
+                }
+
+                #crudTable.hover:bg-gray-100 tbody tr:hover {
+                    background-color: #edf2f7;
+                }
+
+                #crudTable tfoot input {
+                    width: 100%;
+                }
+            </style>
+        @endpush
 
 
         <div class="py-2">
@@ -142,7 +210,7 @@
                                 <td class="border px-6 py-4">{{ $transaction->payment }}</td>
                             </tr> --}}
                             <tr>
-                                <th class="border px-6 py-4 text-right">Total Pembayaran</th>
+                                <th class="border px-6 py-4 text-right">Total Pembayaran Wifi Perbulan</th>
                                 <td class="border px-6 py-4">{{ 'Rp ' . number_format($transaction->total_price_wifi) }}
                                 </td>
                             </tr>
@@ -182,9 +250,10 @@
                         <tr class="text-xs font-semibold tracking-wide text-left text-gray-700 uppercase border-b">
                             <th>ID</th>
                             <th>Nama Produk</th>
-                            <th>Harga Produk</th>
+                            <th>Harga Wifi Perbulan</th>
                             <th>Total Pembayaran</th>
                             <th>Status Pembayaran</th>
+                            <th>Metode Pembayaran</th>
                             <th>Description</th>
                             <th>Tanggal Transaksi</th>
                         </tr>
@@ -195,10 +264,11 @@
                         <tr
                             class="text-xs font-semibold tracking-wide text-left text-gray-600 uppercase border-b dark:border-gray-800 bg-gray-50 dark:text-gray-800 dark:bg-gray-400">
                             <th>ID</th>
-                            <th>Produk</th>
-                            <th>Harga</th>
+                            <th>Nama Produk</th>
+                            <th>Harga Wifi Perbulan</th>
                             <th>Total Pembayaran</th>
                             <th>Status Pembayaran</th>
+                            <th>Metode Pembayaran</th>
                             <th>Description</th>
                             <th>Tanggal Transaksi</th>
                         </tr>

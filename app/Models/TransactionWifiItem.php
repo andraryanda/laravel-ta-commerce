@@ -20,6 +20,7 @@ class TransactionWifiItem extends Model
         'transaction_wifi_id',
         'payment_status',
         'payment_transaction',
+        'payment_method',
         'description',
     ];
 
@@ -53,6 +54,11 @@ class TransactionWifiItem extends Model
     public function category()
     {
         return $this->belongsTo(ProductCategory::class, 'id', 'products_id');
+    }
+
+    public function wifis()
+    {
+        return $this->belongsTo(TransactionWifi::class, 'transaction_wifi_id', 'id');
     }
 
     public function galleries()

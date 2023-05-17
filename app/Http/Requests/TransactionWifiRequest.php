@@ -35,6 +35,7 @@ class TransactionWifiRequest extends FormRequest
         'status' => 'required|in:ACTIVE,INACTIVE',
         'expired_wifi' => 'required',
         'payment_status' => 'required|in:PAID,UNPAID',
+        'payment_method' => 'required|in:BANK TRANSFER,MANUAL',
         'payment_transaction' => 'required|numeric|not_in:0',
         'description' => 'nullable',
     ];
@@ -56,6 +57,8 @@ class TransactionWifiRequest extends FormRequest
         'expired_wifi.required' => 'Field Tanggal Kadaluarsa Wifi harus diisi.',
         'payment_status.required' => 'Field Status Pembayaran harus diisi.',
         'payment_status.in' => 'Status Pembayaran harus berupa PAID atau UNPAID.',
+        'payment_method.required' => 'Field Metode Pembayaran harus diisi.',
+        'payment_method.in' => 'Metode Pembayaran harus berupa BANK TRANSFER atau MANUAL.',
         'payment_transaction.required' => 'Kolom transaksi pembayaran wajib diisi.',
         'payment_transaction.numeric' => 'Transaksi pembayaran harus berupa angka.',
         'payment_transaction.not_in' => 'Transaksi pembayaran harus lebih dari 0.',

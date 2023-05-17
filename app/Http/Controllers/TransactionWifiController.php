@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Crypt;
 use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\TransactionWifiRequest;
 use App\Notifications\TransactionNotification;
+use App\Notifications\TransactionWifiNotification;
 use Illuminate\Contracts\Encryption\DecryptException;
 
 class TransactionWifiController extends Controller
@@ -98,6 +99,11 @@ class TransactionWifiController extends Controller
                     // $status = $item->status;
                         return '
                     <div class="flex justify-start items-center space-x-3.5">
+                        <a href="' . route('dashboard.bulan.sendWifiMessage', $item->id) . '" title="WhatsApp" target="_blank"
+                            class="inline-flex flex-col items-center justify-center w-20 h-12 bg-green-400 text-white rounded-md border border-green-500 transition duration-500 ease select-none hover:bg-green-500 focus:outline-none focus:shadow-outline">
+                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/whatsapp.png') . '" alt="whatsapp" loading="lazy" width="20" />
+                            <p class="mt-1 text-xs">WhatsApp</p>
+                        </a>
                         <a href="'. route('dashboard.midtrans.paymentWifi', $item->id) .'" target="_blank" title="Bayar"
                             class="flex flex-col shadow-sm items-center justify-center w-20 h-12 border border-purple-500 bg-purple-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-purple-500 focus:outline-none focus:shadow-outline">
                             <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/credit-card.png') . '" alt="Bayar" loading="lazy" width="20" />
@@ -107,6 +113,11 @@ class TransactionWifiController extends Controller
                             class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-blue-500 bg-blue-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-blue-500 focus:outline-none focus:shadow-outline">
                             <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/show.png') . '" alt="show" loading="lazy" width="20" />
                             <p class="mt-1 text-xs">Lihat</p>
+                        </a>
+                        <a href="' . route('dashboard.bulan.edit', $item->id) . '" title="Edit"
+                            class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-yellow-500 bg-yellow-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-yellow-500 focus:outline-none focus:shadow-outline">
+                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/edit.png') . '" alt="show" loading="lazy" width="20" />
+                            <p class="mt-1 text-xs">Edit</p>
                         </a>
                     </div>
                     ';
@@ -140,9 +151,18 @@ class TransactionWifiController extends Controller
                 ['label' => 'UNPAID', 'value' => 'UNPAID'],
             ];
 
+            $status_payment_method = [
+                ['label' => 'BANK TRANSFER', 'value' => 'BANK TRANSFER'],
+                ['label' => 'MANUAL', 'value' => 'MANUAL'],
+            ];
+
             // Pengecekan data
         if ($users->isEmpty()) {
             throw new \Exception('Tidak ada data pengguna (users)');
+        }
+
+        if ($transactions->isEmpty()) {
+            throw new \Exception('Tidak ada data transaksi utama (transactions)');
         }
 
         if ($products->isEmpty()) {
@@ -156,6 +176,7 @@ class TransactionWifiController extends Controller
                 'transactions',
                 'status_wifi',
                 'status_payment',
+                'status_payment_method',
             ));
         } catch (\Exception $e) {
             // Tangani kesalahan di sini
@@ -198,20 +219,16 @@ class TransactionWifiController extends Controller
                 'transaction_wifi_id' => $transactionWifi->id,
                 'payment_status' => $request->payment_status,
                 'payment_transaction' => $request->payment_transaction,
+                'payment_method' => $request->payment_method,
                 'description' => $request->description,
             ]);
 
-            // NotificationTransaction::create([
-            //     // 'transactions_id' => $transaction->incre_id
-            //     'transactions_id' => $transaction->id
-            // ]);
-
             DB::commit();
 
-            // $transactionWifi = TransactionWifi::find($transactionWifi->id);
-            // $user = Auth::user();
+            $transactionWifi = TransactionWifi::find($transactionWifi->id);
+            $user = Auth::user();
 
-            // Mail::to('andraryandra38@gmail.com')->send(new TransactionNotification($transactionWifi, $user));
+            Mail::to('andraryandra38@gmail.com')->send(new TransactionWifiNotification($transactionWifi, $user));
 
             return redirect()->route('dashboard.bulan.index')->withSuccess('Transaksi berhasil dibuat.');
         } catch (\Exception $e) {
@@ -237,7 +254,7 @@ class TransactionWifiController extends Controller
             }
 
             if (request()->ajax()) {
-                $query = TransactionWifiItem::with(['product'])->where('transaction_wifi_id', $transaction->id);
+                $query = TransactionWifiItem::with(['product','wifis'])->where('transaction_wifi_id', $transaction->id);
 
                 return DataTables::of($query)
                     ->editColumn('product.price', function ($item) {
@@ -303,6 +320,53 @@ class TransactionWifiController extends Controller
         }
     }
 
+    public function sendWifiMessage(TransactionWifi $transactionWifi)
+    {
+        $phone_number = '+62' . substr_replace($transactionWifi->user->phone, '', 0, 1);
+
+        $transaction_id = $transactionWifi->id;
+
+        $items = TransactionWifiItem::with('product')
+            ->where('transaction_wifi_id', $transaction_id)
+            ->get();
+
+        $total = 0;
+        foreach ($items as $item) {
+            $total += $item->product->price * $item->quantity;
+        }
+
+        $message = "Halo " . '*' . 'Admin' . '*' . ", saya ingin melakukan pembayaran Manual. Berikut adalah detail pesanan:\n\n";
+        $message .= "-----------------------------------\n";
+        $message .= "*Detail User:*\n";
+        $message .= "*Nama       : "  . $transactionWifi->user->name . "*\n";
+        $message .= "*Email        : "  . $transactionWifi->user->email . "*\n";
+        $message .= "*Phone      : "  . $transactionWifi->user->phone . "*\n";
+        $message .= "*Alamat     : "  . $transactionWifi->user->address . "*\n\n";
+
+        $message .= "*Pesanan WiFi:*\n";
+        // foreach ($items as $item) {
+        //     $message .= "*Nama WiFi       : "  . $item->product->name . "*\n";
+        //     $message .= "*Qty                        : "  . $item->quantity . "*\n";
+        //     $message .= "*Harga WiFi       : Rp "  . number_format($item->product->price, 0, '.', ',') . "*\n";
+        //     $message .= "*Subtotal                : Rp "  . number_format($item->product->price * $item->quantity, 0, '.', ',') . "*\n\n";
+        // }
+        // $message .= "*Total pembayaran : Rp "  . number_format($total, 0, '.', ',') . "*\n";
+        // $message .= "*Status pesanan      : "  . $transactionWifi->status . "*\n\n";
+        $message .= "-----------------------------------\n\n";
+
+        if ($transactionWifi->status == 'ACTIVE') {
+            $message .= "WiFi telah diaktifkan. Anda dapat menggunakan WiFi sekarang. Terima kasih!\n";
+            $message .= "Silakan hubungi kami jika Anda memiliki pertanyaan atau masukan.\n";
+            $message .= "*Al's Store: 085314005779*";
+        } else if ($transactionWifi->status == 'INACTIVE') {
+            $message .= "WiFi tidak aktif. Silakan hubungi kami jika Anda memiliki pertanyaan atau masukan.\n\n";
+            $message .= "*Al's Store: 085314005779*";
+        }
+
+        $url = 'https://wa.me/' . $phone_number . '?text=' . urlencode($message);
+        return redirect()->away($url);
+    }
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -311,8 +375,45 @@ class TransactionWifiController extends Controller
      */
     public function edit($id)
     {
-        //
+        try {
+            $users = User::where('roles', '=', 'USER')->get();
+            $products = Product::with('galleries')->with('category')->get();
+            $transactions = Transaction::with(['user', 'wifi_items'])->get();
+
+            $status_wifi = [
+                ['label' => 'Aktif', 'value' => 'ACTIVE'],
+                ['label' => 'Tidak Aktif', 'value' => 'INACTIVE'],
+            ];
+
+            $status_payment = [
+                ['label' => 'PAID', 'value' => 'PAID'],
+                ['label' => 'UNPAID', 'value' => 'UNPAID'],
+            ];
+
+            $status_payment_method = [
+                ['label' => 'BANK TRANSFER', 'value' => 'BANK TRANSFER'],
+                ['label' => 'MANUAL', 'value' => 'MANUAL'],
+            ];
+
+            // Retrieve the transaction wifi by ID
+            $transactionWifi = TransactionWifi::with('wifi_items')->findOrFail($id);
+
+            return view('pages.dashboard.pembayaran_wifi_bulan.edit', compact(
+                'transactionWifi',
+                'products',
+                'users',
+                'transactions',
+                'status_wifi',
+                'status_payment',
+                'status_payment_method',
+            ));
+        } catch (\Exception $e) {
+            // Handle errors here
+            // For example, display an error message or redirect to another page
+            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -321,10 +422,60 @@ class TransactionWifiController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(TransactionWifiRequest $validatedData, $id)
     {
-        //
+        try {
+            // Validate the request data
+            // $validatedData = $request->validate([
+            //     'users_id' => 'required',
+            //     'products_id' => 'required',
+            //     'transactions_id' => 'required',
+            //     'total_price_wifi' => 'required',
+            //     'status' => 'required',
+            //     'expired_wifi' => 'required',
+            //     'payment_status' => 'required',
+            //     'payment_transaction' => 'required',
+            //     'payment_method' => 'required',
+            //     'description' => 'nullable',
+            // ]);
+
+            // Find the transaction wifi by ID
+            $transactionWifi = TransactionWifi::findOrFail($id);
+
+            // Update the transaction wifi
+            $transactionWifi->update([
+                'users_id' => $validatedData['users_id'],
+                'products_id' => $validatedData['products_id'],
+                'transactions_id' => $validatedData['transactions_id'],
+                'total_price_wifi' => $validatedData['total_price_wifi'],
+                'status' => $validatedData['status'],
+                'expired_wifi' => $validatedData['expired_wifi'],
+            ]);
+
+            // Find the transaction wifi item by ID
+            $transactionWifiItem = TransactionWifiItem::where('transaction_wifi_id', $id)->first();
+
+            // Update the transaction wifi item
+            $transactionWifiItem->update([
+                'users_id' => $transactionWifi->users_id,
+                'products_id' => $transactionWifi->products_id,
+                'transaction_wifi_id' => $transactionWifi->id,
+                'payment_status' => $validatedData['payment_status'],
+                'payment_transaction' => $validatedData['payment_transaction'],
+                'payment_method' => $validatedData['payment_method'],
+                'description' => $validatedData['description'],
+            ]);
+
+            // Redirect or return a response
+            return redirect()->route('dashboard.bulan.index')->withSuccess('Transaction Wifi updated successfully');
+        } catch (\Exception $e) {
+        //     // Handle errors here
+        //     // For example, display an error message or redirect to another page
+            return redirect()->back()->withError('Terjadi kesalahan: ' . $e->getMessage());
+        }
     }
+
+
 
     /**
      * Remove the specified resource from storage.

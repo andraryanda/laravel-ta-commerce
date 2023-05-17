@@ -451,7 +451,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
                                 </svg>
-                                <span class="ml-3" style="font-size: 12px;" >Pembayaran Wifi/Bulan</span>
+                                <span class="ml-3" style="font-size: 12px;">Pembayaran Wifi/Bulan</span>
                             </span>
                             <svg class="w-4 h-4" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
                                 id="icon4" class="transform" width="24" height="24" viewBox="0 0 24 24"
@@ -676,7 +676,7 @@
             @endif
 
         </ul>
-        <div class="px-6 my-6">
+        <div class="px-6 my-4">
             <button onclick="window.location.href='{{ route('landingPage.index') }}'" title="Home Page"
                 class="inline-flex items-center justify-between w-full text-sm font-semibold text-white bg-gradient-to-r from-indigo-500 via-indigo-600 to-indigo-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-indigo-800 shadow-lg shadow-purple-500/50 dark:shadow-lg dark:shadow-purple-800/80 font-medium rounded-lg text-sm px-3 py-2.5 text-center sm:mr-2 sm:mb-2">
 
@@ -685,6 +685,15 @@
                     <p class="inline-block">Home Page</p>
                 </div>
             </button>
+        </div>
+        <div class="px-6 my-4">
+            <a href="#" target="_blank" title="Whatsapp Admin"
+                class="inline-flex items-center justify-between w-full text-sm font-semibold text-white bg-gradient-to-r from-green-500 via-green-600 to-green-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-purple-500/50 dark:shadow-lg dark:shadow-purple-800/80 font-medium rounded-lg text-sm px-3 py-2.5 text-center sm:mr-2 sm:mb-2">
+                <div class="flex items-center">
+                    <img src="{{ asset('icon/whatsapp.png') }}" class="mr-2" alt="Whatsapp" width="25">
+                    <p class="inline-block">Whatsapp - Admin</p>
+                </div>
+            </a>
         </div>
     </div>
 </aside>

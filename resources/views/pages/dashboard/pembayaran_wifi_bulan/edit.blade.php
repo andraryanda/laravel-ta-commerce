@@ -33,12 +33,13 @@
                             </div>
                         @endif
                         <h2 class="my-2 text-2xl font-semibold text-gray-700 dark:text-gray-200">
-                            {{ __('Create Transaction Wifi') }}
+                            {{ __('Edit Transaction Wifi') }}
                         </h2>
                         <hr class="my-2">
-                        <form action="{{ route('dashboard.bulan.store') }}" method="post" enctype="multipart/form-data"
-                            class="w-full">
+                        <form action="{{ route('dashboard.bulan.update', $transactionWifi->id) }}" method="post"
+                            enctype="multipart/form-data" class="w-full">
                             @csrf
+                            @method('put')
                             <div class="mb-4">
                                 <label for="users_id" class="block mb-2 text-sm font-medium text-gray-700">Pilih
                                     Pengguna
@@ -74,7 +75,8 @@
                                     @foreach ($users as $user)
                                         <option></option>
                                         <option value="{{ $user->id }}"
-                                            {{ old('users_id') == $user->id ? 'selected' : '' }}>{{ $user->name }}
+                                            {{ old('users_id', $user->id) == $transactionWifi->users_id ? 'selected' : '' }}>
+                                            {{ $user->name }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -88,13 +90,12 @@
                                 <label for="transactions_id" class="block mb-2 text-sm font-medium text-gray-700">
                                     Pilih ID Transaksi
                                 </label>
-                                <select name="transactions_id" id="transactions_id"
-                                    class="select-id-transaksi w-full p-2 border border-gray-300 rounded-md @error('transactions_id') border-red-500 @enderror">
+                                <select name="transactions_id" id="transactions_id" class="select-id-transaksi w-full">
+                                    <option value="" selected disabled>-- Pilih Status --</option>
                                     @foreach ($transactions as $tf)
-                                        <option value="" selected disabled>-- Pilih Status --</option>
                                         @if ($tf->status == 'SUCCESS')
                                             <option value="{{ $tf->id }}"
-                                                {{ old('transactions_id') == $tf->id ? 'selected' : '' }}>
+                                                {{ old('transactions_id', $tf->id) == $transactionWifi->transactions_id ? 'selected' : '' }}>
                                                 {{ $tf->user->name }} ||
                                                 @foreach ($tf->items as $tff)
                                                     {{ $tff->product->name }} ||
@@ -106,6 +107,7 @@
                                         @endif
                                     @endforeach
                                 </select>
+
                                 @error('transactions_id')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -120,7 +122,7 @@
                                     <option value="" selected disabled>-- Pilih Produk --</option>
                                     @foreach ($products as $product)
                                         <option value="{{ $product->id }}"
-                                            {{ old('products_id') == $product->id ? 'selected' : '' }}>
+                                            {{ old('products_id', $product->id) ? 'selected' : '' }}>
                                             {{ $product->name }}</option>
                                     @endforeach
                                 </select>
@@ -134,7 +136,8 @@
                                     Harga</label>
                                 <input type="text" name="total_price_wifi" id="total_price_wifi"
                                     class="input-harga w-full p-2 border border-gray-300 rounded-md @error('total_price_wifi') border-red-500 @enderror"
-                                    value="{{ old('total_price_wifi') }}" placeholder="Masukan Total Harga Wifi ...">
+                                    value="{{ $transactionWifi->total_price_wifi }}"
+                                    placeholder="Masukan Total Harga Wifi ...">
                                 @error('total_price_wifi')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -145,7 +148,8 @@
                                     Expired Tanggal Wifi
                                 </label>
                                 <input type="date" name="expired_wifi" id="expired_wifi"
-                                    class="w-full p-2 border border-gray-300 rounded-md" required>
+                                    class="w-full p-2 border border-gray-300 rounded-md"
+                                    value="{{ $transactionWifi->expired_wifi }}" required>
                             </div>
                             <div class="mb-4">
                                 <label for="status" class="block mb-2 text-sm font-medium text-gray-700">Status
@@ -155,11 +159,12 @@
                                     <option value="" selected disabled>-- Pilih Status Wifi --</option>
                                     @foreach ($status_wifi as $item)
                                         <option value="{{ $item['value'] }}"
-                                            {{ $item['value'] == old('status_product', $item['value'] == $item['value']) ? '' : '' }}>
+                                            {{ $item['value'] == old('status', $transactionWifi->status) ? 'selected' : '' }}>
                                             {{ $item['label'] }}
                                         </option>
                                     @endforeach
                                 </select>
+
                                 @error('status')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -187,21 +192,26 @@
                                 <label for="payment_transaction" class="block mb-2 text-sm font-medium text-gray-700">
                                     Total Pembayaran Transaksi
                                 </label>
-                                <input type="text" name="payment_transaction" id="payment_transaction"
-                                    class="input-harga w-full p-2 border border-gray-300 rounded-md @error('payment_transaction') border-red-500 @enderror"
-                                    value="{{ old('payment_transaction') }}"
-                                    placeholder="Masukan Total Pembayaran Transaksi ...">
+                                @foreach ($transactionWifi->wifi_items as $wifiItem)
+                                    <input type="text" name="payment_transaction" id="payment_transaction"
+                                        class="input-harga w-full p-2 border border-gray-300 rounded-md @error('payment_transaction') border-red-500 @enderror"
+                                        value="{{ $wifiItem->payment_transaction }}"
+                                        placeholder="Masukan Total Pembayaran Transaksi ...">
+                                @endforeach
                                 @error('payment_transaction')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
 
+
                             <div class="mb-4">
                                 <label for="description"
                                     class="block mb-2 text-sm font-medium text-gray-700 dark:text-white">Catatan:</label>
-                                <textarea id="message" name="description" rows="4"
-                                    class="block p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    placeholder="Tuliskan catatan..."></textarea>
+                                @foreach ($transactionWifi->wifi_items as $wifiItem)
+                                    <textarea id="message" name="description" rows="4"
+                                        class="block p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                        placeholder="Tuliskan catatan...">{{ $wifiItem->description }}</textarea>
+                                @endforeach
                             </div>
 
                             <div class="mb-4">
@@ -209,16 +219,16 @@
                                     Metode Pembayaran
                                 </label>
                                 <select name="payment_method" id="payment_method"
-                                    class="w-full p-2 border border-gray-300 rounded-md @error('payment_method') border-red-500 @enderror"
-                                    required>
-                                    <option value="" selected disabled>-- Pilih Metode Pembayaran --</option>
+                                    class="w-full p-2 border border-gray-300 rounded-md @error('payment_method') border-red-500 @enderror">
+                                    <option value="" selected disabled>-- Pilih Status Pembayaran --</option>
                                     @foreach ($status_payment_method as $item)
                                         <option value="{{ $item['value'] }}"
-                                            {{ $item['value'] == old('payment_method', $item['value'] == $item['value']) ? '' : '' }}>
+                                            @if ($transactionWifi->wifi_items->contains('payment_method', $item['value'])) selected @endif>
                                             {{ $item['label'] }}
                                         </option>
                                     @endforeach
                                 </select>
+
                                 @error('payment_method ')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -228,12 +238,11 @@
                                 <label for="payment_status" class="block mb-2 text-sm font-medium text-gray-700">Status
                                     Pembayaran</label>
                                 <select name="payment_status" id="payment_status"
-                                    class="w-full p-2 border border-gray-300 rounded-md @error('payment_status') border-red-500 @enderror"
-                                    required>
+                                    class="w-full p-2 border border-gray-300 rounded-md @error('payment_status') border-red-500 @enderror">
                                     <option value="" selected disabled>-- Pilih Status Pembayaran --</option>
                                     @foreach ($status_payment as $item)
                                         <option value="{{ $item['value'] }}"
-                                            {{ $item['value'] == old('payment_status', $item['value'] == $item['value']) ? '' : '' }}>
+                                            @if ($transactionWifi->wifi_items->contains('payment_status', $item['value'])) selected @endif>
                                             {{ $item['label'] }}
                                         </option>
                                     @endforeach
@@ -351,7 +360,7 @@
                         });
                     });
                 </script>
-                <script>
+                {{-- <script>
                     // Mendapatkan elemen input tanggal
                     var expiredWifiInput = document.getElementById('expired_wifi');
 
@@ -371,7 +380,7 @@
 
                     // Mengatur nilai input tanggal kedaluwarsa
                     expiredWifiInput.value = formattedDate;
-                </script>
+                </script> --}}
                 <script>
                     document.addEventListener('DOMContentLoaded', function() {
                         var selectedOption = document.getElementById('selectedOption');
