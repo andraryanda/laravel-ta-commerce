@@ -323,35 +323,36 @@ class TransactionWifiController extends Controller
     public function sendWifiMessage(TransactionWifi $transactionWifi)
     {
         $phone_number = '+62' . substr_replace($transactionWifi->user->phone, '', 0, 1);
-
         $transaction_id = $transactionWifi->id;
 
-        $items = TransactionWifiItem::with('product')
+        $itemss = TransactionWifiItem::with(['product'])
             ->where('transaction_wifi_id', $transaction_id)
             ->get();
 
         $total = 0;
-        foreach ($items as $item) {
-            $total += $item->product->price * $item->quantity;
+        foreach ($itemss as $item) {
+            $total += $item->product->price;
         }
 
-        $message = "Halo " . '*' . 'Admin' . '*' . ", saya ingin melakukan pembayaran Manual. Berikut adalah detail pesanan:\n\n";
+        $message = "Halo *" . $transactionWifi->user->name . "*, terima kasih telah berlangganan WiFi bulanan di toko *Al's Store*. Berikut adalah detail pesanan Anda:\n\n";
         $message .= "-----------------------------------\n";
-        $message .= "*Detail User:*\n";
-        $message .= "*Nama       : "  . $transactionWifi->user->name . "*\n";
-        $message .= "*Email        : "  . $transactionWifi->user->email . "*\n";
-        $message .= "*Phone      : "  . $transactionWifi->user->phone . "*\n";
-        $message .= "*Alamat     : "  . $transactionWifi->user->address . "*\n\n";
+        $message .= "*Detail Pengguna:*\n";
+        $message .= "*Nama     : " . $transactionWifi->user->name . "*\n";
+        $message .= "*Email     : " . $transactionWifi->user->email . "*\n";
+        $message .= "*Telepon  : " . $transactionWifi->user->phone . "*\n";
+        $message .= "*Alamat   : " . $transactionWifi->items->address . "*\n\n";
 
-        $message .= "*Pesanan WiFi:*\n";
-        // foreach ($items as $item) {
-        //     $message .= "*Nama WiFi       : "  . $item->product->name . "*\n";
-        //     $message .= "*Qty                        : "  . $item->quantity . "*\n";
-        //     $message .= "*Harga WiFi       : Rp "  . number_format($item->product->price, 0, '.', ',') . "*\n";
-        //     $message .= "*Subtotal                : Rp "  . number_format($item->product->price * $item->quantity, 0, '.', ',') . "*\n\n";
-        // }
-        // $message .= "*Total pembayaran : Rp "  . number_format($total, 0, '.', ',') . "*\n";
-        // $message .= "*Status pesanan      : "  . $transactionWifi->status . "*\n\n";
+        $message .= "*Detail Pesanan WiFi:*\n";
+        foreach ($itemss as $item) {
+            $message .= "*Nama WiFi      : " . $item->product->name . "*\n";
+            $message .= "*Harga WiFi      : Rp " . number_format($item->wifis->total_price_wifi, 0, ',', '.') . "*\n\n";
+        }
+
+        // $message .= "*Total pembayaran : Rp " . number_format($total, 0, ',', '.') . "*\n";
+        $message .= "*Status Wifi : " . $transactionWifi->status . "*\n";
+        if ($transactionWifi->status == 'INACTIVE') {
+            $message .= "*Total yang harus dibayarkan  : Rp " . number_format($item->wifis->total_price_wifi, 0, ',', '.') . "*\n";
+        }
         $message .= "-----------------------------------\n\n";
 
         if ($transactionWifi->status == 'ACTIVE') {
@@ -359,13 +360,14 @@ class TransactionWifiController extends Controller
             $message .= "Silakan hubungi kami jika Anda memiliki pertanyaan atau masukan.\n";
             $message .= "*Al's Store: 085314005779*";
         } else if ($transactionWifi->status == 'INACTIVE') {
-            $message .= "WiFi tidak aktif. Silakan hubungi kami jika Anda memiliki pertanyaan atau masukan.\n\n";
+            $message .= "WiFi tidak aktif. Mohon segera melakukan pembayaran agar WiFi dapat diaktifkan kembali.\n\n";
             $message .= "*Al's Store: 085314005779*";
         }
 
         $url = 'https://wa.me/' . $phone_number . '?text=' . urlencode($message);
         return redirect()->away($url);
     }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -425,20 +427,6 @@ class TransactionWifiController extends Controller
     public function update(TransactionWifiRequest $validatedData, $id)
     {
         try {
-            // Validate the request data
-            // $validatedData = $request->validate([
-            //     'users_id' => 'required',
-            //     'products_id' => 'required',
-            //     'transactions_id' => 'required',
-            //     'total_price_wifi' => 'required',
-            //     'status' => 'required',
-            //     'expired_wifi' => 'required',
-            //     'payment_status' => 'required',
-            //     'payment_transaction' => 'required',
-            //     'payment_method' => 'required',
-            //     'description' => 'nullable',
-            // ]);
-
             // Find the transaction wifi by ID
             $transactionWifi = TransactionWifi::findOrFail($id);
 

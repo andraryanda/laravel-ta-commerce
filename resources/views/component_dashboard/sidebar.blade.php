@@ -687,13 +687,14 @@
             </button>
         </div>
         <div class="px-6 my-4">
-            <a href="#" target="_blank" title="Whatsapp Admin"
+            <a href="https://api.whatsapp.com/send?phone=6285314005779" target="_blank" title="Whatsapp Admin"
                 class="inline-flex items-center justify-between w-full text-sm font-semibold text-white bg-gradient-to-r from-green-500 via-green-600 to-green-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-purple-500/50 dark:shadow-lg dark:shadow-purple-800/80 font-medium rounded-lg text-sm px-3 py-2.5 text-center sm:mr-2 sm:mb-2">
                 <div class="flex items-center">
                     <img src="{{ asset('icon/whatsapp.png') }}" class="mr-2" alt="Whatsapp" width="25">
                     <p class="inline-block">Whatsapp - Admin</p>
                 </div>
             </a>
+
         </div>
     </div>
 </aside>

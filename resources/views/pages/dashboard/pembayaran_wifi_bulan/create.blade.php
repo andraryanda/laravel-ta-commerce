@@ -183,28 +183,126 @@
                                 @enderror
                             </div> --}}
 
-                            <div class="mb-4">
-                                <label for="payment_transaction" class="block mb-2 text-sm font-medium text-gray-700">
-                                    Total Pembayaran Transaksi
+                            <div class="flex items-center mb-4">
+                                <input id="payment-manual" type="radio" name="payment_method" value="manual-cash"
+                                    class="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600">
+                                <label for="payment-manual"
+                                    class="block ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                    Manual - Cash
                                 </label>
-                                <input type="text" name="payment_transaction" id="payment_transaction"
-                                    class="input-harga w-full p-2 border border-gray-300 rounded-md @error('payment_transaction') border-red-500 @enderror"
-                                    value="{{ old('payment_transaction') }}"
-                                    placeholder="Masukan Total Pembayaran Transaksi ...">
-                                @error('payment_transaction')
-                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                @enderror
+
+                                <input id="payment-transfer" type="radio" name="payment_method" value="transfer-bank"
+                                    class="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600 ml-4">
+                                <label for="payment-transfer"
+                                    class="block ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                    Transfer Bank
+                                </label>
                             </div>
 
-                            <div class="mb-4">
-                                <label for="description"
-                                    class="block mb-2 text-sm font-medium text-gray-700 dark:text-white">Catatan:</label>
-                                <textarea id="message" name="description" rows="4"
-                                    class="block p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    placeholder="Tuliskan catatan..."></textarea>
+                            <div id="manual-cash-form" style="display: none;">
+                                <div class="mb-4">
+                                    <label for="payment_transaction" class="block mb-2 text-sm font-medium text-gray-700">
+                                        Total Pembayaran Transaksi
+                                    </label>
+                                    <input type="text" name="payment_transaction" id="payment_transaction"
+                                        class="input-harga w-full p-2 border border-gray-300 rounded-md @error('payment_transaction') border-red-500 @enderror"
+                                        value="{{ old('payment_transaction') }}"
+                                        placeholder="Masukan Total Pembayaran Transaksi ...">
+                                    @error('payment_transaction')
+                                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="description"
+                                        class="block mb-2 text-sm font-medium text-gray-700 dark:text-white">Catatan:</label>
+                                    <textarea id="message" name="description" rows="4"
+                                        class="block p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                        placeholder="Tuliskan catatan..."></textarea>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="payment_status"
+                                        class="block mb-2 text-sm font-medium text-gray-700">Status Pembayaran</label>
+                                    <select name="payment_status" id="payment_status"
+                                        class="w-full p-2 border border-gray-300 rounded-md @error('payment_status') border-red-500 @enderror"
+                                        required>
+                                        <option value="" selected disabled>-- Pilih Status Pembayaran --</option>
+                                        @foreach ($status_payment as $item)
+                                            <option value="{{ $item['value'] }}"
+                                                {{ $item['value'] == old('payment_status', $item['value'] == $item['value']) ? '' : '' }}>
+                                                {{ $item['label'] }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('payment_status')
+                                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
                             </div>
 
-                            <div class="mb-4">
+                            <div id="transfer-bank-form" style="display: none;">
+                                <div class="mb-4">
+                                    <label for="payment_status"
+                                        class="block mb-2 text-sm font-medium text-gray-700">NamaBank</label>
+                                    <select name="payment_status" id="payment_status"
+                                        class="w-full p-2 border border-gray-300 rounded-md @error('payment_status') border-red-500 @enderror"
+                                        required>
+                                        <option value="" selected disabled>-- Pilih Nama Bank --</option>
+                                        @foreach ($status_payment as $item)
+                                            <option value="{{ $item['value'] }}"
+                                                {{ $item['value'] == old('payment_status', $item['value'] == $item['value']) ? '' : '' }}>
+                                                {{ $item['label'] }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('payment_status')
+                                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="payment_transaction" class="block mb-2 text-sm font-medium text-gray-700">
+                                        Total Pembayaran Transaksi
+                                    </label>
+                                    <input type="text" name="payment_transaction" id="payment_transaction"
+                                        class="input-harga w-full p-2 border border-gray-300 rounded-md @error('payment_transaction') border-red-500 @enderror"
+                                        value="{{ old('payment_transaction') }}"
+                                        placeholder="Masukan Total Pembayaran Transaksi ...">
+                                    @error('payment_transaction')
+                                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="description"
+                                        class="block mb-2 text-sm font-medium text-gray-700 dark:text-white">Catatan:</label>
+                                    <textarea id="message" name="description" rows="4"
+                                        class="block p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                        placeholder="Tuliskan catatan..."></textarea>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="payment_status"
+                                        class="block mb-2 text-sm font-medium text-gray-700">Status Pembayaran</label>
+                                    <select name="payment_status" id="payment_status"
+                                        class="w-full p-2 border border-gray-300 rounded-md @error('payment_status') border-red-500 @enderror"
+                                        required>
+                                        <option value="" selected disabled>-- Pilih Status Pembayaran --</option>
+                                        @foreach ($status_payment as $item)
+                                            <option value="{{ $item['value'] }}"
+                                                {{ $item['value'] == old('payment_status', $item['value'] == $item['value']) ? '' : '' }}>
+                                                {{ $item['label'] }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('payment_status')
+                                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            {{-- <div class="mb-4">
                                 <label for="payment_method" class="block mb-2 text-sm font-medium text-gray-700">
                                     Metode Pembayaran
                                 </label>
@@ -222,26 +320,9 @@
                                 @error('payment_method ')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
-                            </div>
+                            </div> --}}
 
-                            <div class="mb-4">
-                                <label for="payment_status" class="block mb-2 text-sm font-medium text-gray-700">Status
-                                    Pembayaran</label>
-                                <select name="payment_status" id="payment_status"
-                                    class="w-full p-2 border border-gray-300 rounded-md @error('payment_status') border-red-500 @enderror"
-                                    required>
-                                    <option value="" selected disabled>-- Pilih Status Pembayaran --</option>
-                                    @foreach ($status_payment as $item)
-                                        <option value="{{ $item['value'] }}"
-                                            {{ $item['value'] == old('payment_status', $item['value'] == $item['value']) ? '' : '' }}>
-                                            {{ $item['label'] }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('payment_status')
-                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
+
 
                             <div class="flex flex-wrap -mx-3 mb-6">
                                 <div class="w-full px-3 text-right">
@@ -299,6 +380,22 @@
                         window.history.back();
                     }
                 </script>
+
+                <script>
+                    var manualCashForm = document.getElementById('manual-cash-form');
+                    var transferBankForm = document.getElementById('transfer-bank-form');
+
+                    document.getElementById('payment-manual').addEventListener('click', function() {
+                        manualCashForm.style.display = 'block';
+                        transferBankForm.style.display = 'none';
+                    });
+
+                    document.getElementById('payment-transfer').addEventListener('click', function() {
+                        manualCashForm.style.display = 'none';
+                        transferBankForm.style.display = 'block';
+                    });
+                </script>
+
 
                 <script>
                     function disableButton(button) {
