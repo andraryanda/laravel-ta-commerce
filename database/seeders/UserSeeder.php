@@ -34,7 +34,7 @@ class UserSeeder extends Seeder
             'phone' => '085314005779',
             'roles' => 'USER',
             'password' => Hash::make('password'),
-        ]);
+        ])->markEmailAsVerified();
 
         for ($i = 0; $i < 10; $i++) {
             User::updateOrCreate([
@@ -46,7 +46,7 @@ class UserSeeder extends Seeder
                 'roles' => 'USER',
                 'password' => Hash::make('password'),
                 'remember_token' => Str::random(10),
-            ]);
+            ])->markEmailAsVerified();
         }
 
         // $this->command->info('Seeder User berhasil dijalankan.');

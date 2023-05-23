@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             UserAdminSeeder::class,
             // TransactionSeeder::class,
+            IndoBankSeeder::class,
         ]);
     }
 }

@@ -170,87 +170,102 @@
                                 @enderror
                             </div>
 
+
+
+
                             <hr class="my-2">
                             <h2 class="my-2 text-2xl font-semibold text-gray-700 dark:text-gray-200">
                                 {{ __('Pembayaran Customer') }}
                             </h2>
+
                             <hr class="my-2">
-
-                            {{-- <div class="mb-4">
-                                <label for="payment_transaction" class="block mb-2 text-sm font-medium text-gray-700">
-                                    Total Pembayaran Transaksi
-                                </label>
-                                <input type="number" name="payment_transaction" id="payment_transaction"
-                                    class="w-full p-2 border border-gray-300 rounded-md @error('payment_transaction') border-red-500 @enderror"
-                                    value="{{ $products->first()->price }}">
-                                @error('payment_transaction')
+                            @foreach ($transactionWifi->wifi_items as $transactionItem)
+                                @error('payment_method')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
-                            </div> --}}
+                                <div class="mb-4">
+                                    <label for="payment_method" class="block mb-2 text-sm font-medium text-gray-700">Metode
+                                        Pembayaran</label>
+                                    <div>
+                                        <input id="payment-manual" type="radio" name="payment_method" value="MANUAL"
+                                            {{ $transactionItem->payment_method == 'MANUAL' ? 'checked' : '' }}
+                                            class="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600 ml-4">
+                                        <label for="payment-manual"
+                                            class="inline-block ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Manual
+                                            Cash</label>
+                                        <input id="payment-transfer" type="radio" name="payment_method"
+                                            value="BANK TRANSFER"
+                                            {{ $transactionItem->payment_method == 'BANK TRANSFER' ? 'checked' : '' }}
+                                            class="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600 ml-4">
+                                        <label for="payment-transfer"
+                                            class="inline-block ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Transfer
+                                            Bank</label>
+                                    </div>
+                                </div>
 
-                            <div class="mb-4">
-                                <label for="payment_transaction" class="block mb-2 text-sm font-medium text-gray-700">
-                                    Total Pembayaran Transaksi
-                                </label>
-                                @foreach ($transactionWifi->wifi_items as $wifiItem)
-                                    <input type="text" name="payment_transaction" id="payment_transaction"
+                                <div class="mb-4" id="nama-bank-input" style="display: none;">
+                                    <label for="payment_bank" class="block mb-2 text-sm font-medium text-gray-700">Nama
+                                        Bank</label>
+                                    <select name="payment_bank" id="payment_bank"
+                                        class=" w-full p-2 border border-gray-300 rounded-md select2 @error('payment_bank') border-red-500 @enderror"
+                                        required>
+                                        <option value="" selected>-- Pilih Nama Bank --</option>
+                                        @foreach ($banks as $bank)
+                                            <option value="{{ $bank->nama_bank }}"
+                                                {{ $bank->nama_bank == old('payment_bank', $transactionItem->payment_bank) ? 'selected' : '' }}>
+                                                {{ $bank->nama_bank }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('payment_bank')
+                                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+
+                                <div class="mb-4" id="total-pembayaran-input">
+                                    <label for="payment_transaction"
+                                        class="block mb-2 text-sm font-medium text-gray-700">Total Pembayaran
+                                        Transaksi</label>
+                                    <input type="text" name="payment_transaction"
                                         class="input-harga w-full p-2 border border-gray-300 rounded-md @error('payment_transaction') border-red-500 @enderror"
-                                        value="{{ $wifiItem->payment_transaction }}"
+                                        value="{{ $transactionItem->payment_transaction }}"
                                         placeholder="Masukan Total Pembayaran Transaksi ...">
-                                @endforeach
-                                @error('payment_transaction')
-                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
+                                    @error('payment_transaction')
+                                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
 
-
-                            <div class="mb-4">
-                                <label for="description"
-                                    class="block mb-2 text-sm font-medium text-gray-700 dark:text-white">Catatan:</label>
-                                @foreach ($transactionWifi->wifi_items as $wifiItem)
-                                    <textarea id="message" name="description" rows="4"
+                                <div class="mb-4" id="description">
+                                    <label for="description"
+                                        class="block mb-2 text-sm font-medium text-gray-700 dark:text-white">Catatan:</label>
+                                    <textarea name="description" rows="4"
                                         class="block p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                        placeholder="Tuliskan catatan...">{{ $wifiItem->description }}</textarea>
-                                @endforeach
-                            </div>
+                                        placeholder="Tuliskan catatan..." value="{{ $transactionItem->description }}">{{ $transactionItem->description }}</textarea>
+                                </div>
 
-                            <div class="mb-4">
-                                <label for="payment_method" class="block mb-2 text-sm font-medium text-gray-700">
-                                    Metode Pembayaran
-                                </label>
-                                <select name="payment_method" id="payment_method"
-                                    class="w-full p-2 border border-gray-300 rounded-md @error('payment_method') border-red-500 @enderror">
-                                    <option value="" selected disabled>-- Pilih Status Pembayaran --</option>
-                                    @foreach ($status_payment_method as $item)
-                                        <option value="{{ $item['value'] }}"
-                                            @if ($transactionWifi->wifi_items->contains('payment_method', $item['value'])) selected @endif>
-                                            {{ $item['label'] }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                <div class="mb-4" id="payment_status">
+                                    <label for="payment_status"
+                                        class="block mb-2 text-sm font-medium text-gray-700">Status
+                                        Pembayaran</label>
+                                    <select name="payment_status"
+                                        class="w-full p-2 border border-gray-300 rounded-md @error('payment_status') border-red-500 @enderror"
+                                        required>
+                                        <option value="" selected disabled>-- Pilih Status Pembayaran --</option>
+                                        @foreach ($status_payment as $item)
+                                            <option value="{{ $item['value'] }}"
+                                                {{ $item['value'] == old('payment_status', $transactionItem->payment_status) ? 'selected' : '' }}>
+                                                {{ $item['label'] }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('payment_status')
+                                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            @endforeach
 
-                                @error('payment_method ')
-                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
 
-                            <div class="mb-4">
-                                <label for="payment_status" class="block mb-2 text-sm font-medium text-gray-700">Status
-                                    Pembayaran</label>
-                                <select name="payment_status" id="payment_status"
-                                    class="w-full p-2 border border-gray-300 rounded-md @error('payment_status') border-red-500 @enderror">
-                                    <option value="" selected disabled>-- Pilih Status Pembayaran --</option>
-                                    @foreach ($status_payment as $item)
-                                        <option value="{{ $item['value'] }}"
-                                            @if ($transactionWifi->wifi_items->contains('payment_status', $item['value'])) selected @endif>
-                                            {{ $item['label'] }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('payment_status')
-                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
+
+
 
                             <div class="flex flex-wrap -mx-3 mb-6">
                                 <div class="w-full px-3 text-right">
@@ -295,18 +310,76 @@
                 </script>
 
                 <script>
-                    {{-- $(document).ready(function() {
-                        $('#transactions_id option[value=""]').css('display', 'none');
-                    }); --}}
-
                     $(document).ready(function() {
-                        $('option[value=""]').css('display', 'none');
+                        $('#transactions_id option[value=""]').css('display', 'none');
                     });
+                    $(document).ready(function() {
+                        $('#status option[value=""]').css('display', 'none');
+                    });
+                    // $(document).ready(function() {
+                    //     $('option[value=""]').css('display', 'none');
+                    // });
                 </script>
                 <script>
                     function goBack() {
                         window.history.back();
                     }
+                </script>
+
+
+                <script>
+                    const paymentTransfer = document.getElementById('payment-transfer');
+                    const paymentManual = document.getElementById('payment-manual');
+                    const namaBankInput = document.getElementById('nama-bank-input');
+                    const totalPembayaranInput = document.getElementById('total-pembayaran-input');
+                    const descriptionInput = document.getElementById('description');
+                    const statusPembayaranInput = document.getElementById('payment_status');
+                    const paymentBankInput = document.getElementById('payment_bank');
+
+
+
+                    function toggleFormInputs() {
+                        if (paymentTransfer.checked) {
+                            namaBankInput.style.display = 'block';
+                            totalPembayaranInput.style.display = 'block';
+                            descriptionInput.style.display = 'block';
+                            statusPembayaranInput.style.display = 'block';
+                            paymentBankInput.required = true;
+                        } else if (paymentManual.checked) {
+                            namaBankInput.style.display = 'none';
+                            totalPembayaranInput.style.display = 'block';
+                            descriptionInput.style.display = 'block';
+                            statusPembayaranInput.style.display = 'block';
+                            paymentBankInput.value = '';
+                            paymentBankInput.required = false;
+                        } else {
+                            namaBankInput.style.display = 'none';
+                            totalPembayaranInput.style.display = 'none';
+                            descriptionInput.style.display = 'none';
+                            statusPembayaranInput.style.display = 'none';
+                            paymentBankInput.value = '';
+                            paymentBankInput.required = false;
+                        }
+                    }
+
+                    function handlePaymentMethodChange() {
+                        toggleFormInputs();
+                    }
+
+                    // Initial state
+                    toggleFormInputs();
+
+                    // Check the initial selected option on page load
+                    window.addEventListener('DOMContentLoaded', function() {
+                        if (!paymentTransfer.checked && !paymentManual.checked) {
+                            // Tidak ada opsi yang terpilih, sembunyikan form input terkait
+                            toggleFormInputs();
+                        }
+                    });
+
+                    // Event listeners
+                    paymentTransfer.addEventListener('change', handlePaymentMethodChange);
+                    paymentManual.addEventListener('change', handlePaymentMethodChange);
                 </script>
 
                 <script>
@@ -331,35 +404,70 @@
 
                 <script>
                     function formatRupiah(angka) {
-                        var rupiah = '';
-                        var angkarev = angka.toString().split('').reverse().join('');
-                        for (var i = 0; i < angkarev.length; i++)
-                            if (i % 3 == 0) rupiah += angkarev.substr(i, 3) + '.';
-                        return 'Rp. ' + rupiah.split('', rupiah.length - 1).reverse().join('');
+                        var bilangan = Math.floor(angka);
+                        var rupiah = 'Rp. ' + bilangan.toLocaleString('id-ID');
+                        return rupiah;
                     }
 
                     function formatInputValue(input) {
-                        var nilaiInput = input.value.replace(/\D/g, '');
-                        var nilaiFormat = formatRupiah(nilaiInput);
-                        input.value = nilaiFormat;
+                        var nilaiInput = parseFloat(input.value);
+
+                        // Cek apakah nilai input adalah angka valid
+                        if (!isNaN(nilaiInput)) {
+                            var nilaiFormat = formatRupiah(nilaiInput);
+                            input.value = nilaiFormat;
+                        } else if (input.value !== '') {
+                            var formattedValue = input.value.replace(/\D/g, '');
+                            var nilaiFormat = formatRupiah(formattedValue);
+                            input.value = nilaiFormat;
+                        }
                     }
 
-                    var inputHarga = document.querySelectorAll('.input-harga');
-                    inputHarga.forEach(function(input) {
-                        input.addEventListener('input', function(e) {
-                            formatInputValue(e.target);
-                        });
-                    });
-
-                    var form = document.querySelector('form');
-                    form.addEventListener('submit', function(e) {
+                    window.addEventListener('DOMContentLoaded', function() {
                         var inputHarga = document.querySelectorAll('.input-harga');
                         inputHarga.forEach(function(input) {
-                            var nilaiInput = input.value.replace(/\D/g, '');
-                            input.value = nilaiInput;
+                            formatInputValue(input);
+
+                            input.addEventListener('input', function(e) {
+                                formatInputValue(e.target);
+                            });
+
+                            input.addEventListener('keydown', function(e) {
+                                if (e.key === 'Backspace') {
+                                    setTimeout(function() {
+                                        formatInputValue(input);
+                                    }, 0);
+                                }
+                            });
                         });
                     });
                 </script>
+
+
+
+
+                {{-- <script>
+                    //mendapatkan nilai dari input price
+                    let priceInput = document.getElementById("input-harga").value;
+
+                    //mengubah nilai menjadi float dan kemudian menggunakan toFixed() untuk menghilangkan .00 di belakang angka
+                    let formattedPrice = parseFloat(priceInput).toFixed(0);
+
+                    //memasukkan nilai yang telah diformat ke dalam input price
+                    document.getElementById("input-harga").value = formattedPrice;
+                </script> --}}
+
+
+
+
+
+
+
+
+
+
+
+
                 {{-- <script>
                     // Mendapatkan elemen input tanggal
                     var expiredWifiInput = document.getElementById('expired_wifi');

@@ -164,11 +164,22 @@
                     button.disabled = true;
                     var buttonText = document.getElementById("buttonText");
                     buttonText.innerText = "Tunggu...";
-                    button.form.submit();
+
+                    // Mengganti format angka sebelum submit
+                    var inputHarga = document.querySelectorAll('.input-harga');
+                    inputHarga.forEach(function(input) {
+                        var nilaiInput = input.value.replace(/\D/g, '');
+                        input.value = nilaiInput;
+                    });
+
+                    // Menjalankan submit form setelah 500ms
+                    setTimeout(function() {
+                        button.form.submit();
+                    }, 500);
                 }
             </script>
 
-            <script>
+            {{-- <script>
                 //mendapatkan nilai dari input price
                 let priceInput = document.getElementById("input-harga").value;
 
@@ -177,6 +188,46 @@
 
                 //memasukkan nilai yang telah diformat ke dalam input price
                 document.getElementById("input-harga").value = formattedPrice;
+            </script> --}}
+            <script>
+                function formatRupiah(angka) {
+                    var bilangan = Math.floor(angka);
+                    var rupiah = 'Rp. ' + bilangan.toLocaleString('id-ID');
+                    return rupiah;
+                }
+
+                function formatInputValue(input) {
+                    var nilaiInput = parseFloat(input.value);
+
+                    // Cek apakah nilai input adalah angka valid
+                    if (!isNaN(nilaiInput)) {
+                        var nilaiFormat = formatRupiah(nilaiInput);
+                        input.value = nilaiFormat;
+                    } else if (input.value !== '') {
+                        var formattedValue = input.value.replace(/\D/g, '');
+                        var nilaiFormat = formatRupiah(formattedValue);
+                        input.value = nilaiFormat;
+                    }
+                }
+
+                window.addEventListener('DOMContentLoaded', function() {
+                    var inputHarga = document.querySelectorAll('.input-harga');
+                    inputHarga.forEach(function(input) {
+                        formatInputValue(input);
+
+                        input.addEventListener('input', function(e) {
+                            formatInputValue(e.target);
+                        });
+
+                        input.addEventListener('keydown', function(e) {
+                            if (e.key === 'Backspace') {
+                                setTimeout(function() {
+                                    formatInputValue(input);
+                                }, 0);
+                            }
+                        });
+                    });
+                });
             </script>
         @endpush
 

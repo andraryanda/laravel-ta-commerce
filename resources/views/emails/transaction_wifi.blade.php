@@ -202,7 +202,7 @@
                 <h2 class="invoice">Invoice</h2>
                 <p class="transaction-id">Transaction ID: {{ $transactionWifi->id }}</p>
                 <p class="payment-status">Status Pembayaran: {{ $transactionWifi->status }}</p>
-                <p class="expired-date">Expired Date: {{ $transactionWifi->expired_wifi->format('d/m/Y') }}</p>
+                <p class="expired-date">Expired Date: {{ $transactionWifi->expired_wifi }}</p>
                 <p class="transaction-date">Tanggal Transaksi: {{ $transactionWifi->created_at->format('d/m/Y') }}</p>
                 <br>
                 <h3 class="user-profile">Profil User</h3>

@@ -21,6 +21,7 @@ class TransactionWifiItem extends Model
         'payment_status',
         'payment_transaction',
         'payment_method',
+        'payment_bank',
         'description',
     ];
 

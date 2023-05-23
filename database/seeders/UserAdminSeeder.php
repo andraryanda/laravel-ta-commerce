@@ -33,7 +33,7 @@ class UserAdminSeeder extends Seeder
             'phone' => '',
             'roles' => 'ADMIN',
             'password' => Hash::make('password'),
-        ]);
+        ])->markEmailAsVerified();
 
         foreach (range(1, 5) as $item) {
             User::updateOrCreate([
@@ -46,7 +46,7 @@ class UserAdminSeeder extends Seeder
                 'roles' => 'ADMIN',
                 'password' => Hash::make('password'),
                 'remember_token' => Str::random(10),
-            ]);
+            ])->markEmailAsVerified();
         }
 
         // $this->command->info('Seeder User berhasil dijalankan.');

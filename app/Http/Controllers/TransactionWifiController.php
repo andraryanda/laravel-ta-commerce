@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Bank;
 use App\Models\User;
 use App\Models\Product;
 use App\Models\Transaction;
@@ -140,6 +141,7 @@ class TransactionWifiController extends Controller
             $users = User::where('roles', '=', 'USER')->get();
             $products = Product::with('galleries')->with('category')->get();
             $transactions = Transaction::with(['user','wifi_items'])->get();
+            $banks = Bank::get();
 
             $status_wifi = [
                 ['label' => 'Aktif', 'value' => 'ACTIVE'],
@@ -177,6 +179,7 @@ class TransactionWifiController extends Controller
                 'status_wifi',
                 'status_payment',
                 'status_payment_method',
+                'banks',
             ));
         } catch (\Exception $e) {
             // Tangani kesalahan di sini
@@ -199,7 +202,7 @@ class TransactionWifiController extends Controller
 
         DB::beginTransaction();
 
-        try {
+        // try {
             $transactionWifi = TransactionWifi::create([
                 'id' => TransactionWifi::generateTransactionId(),
                 'incre_id' => $increId,
@@ -220,6 +223,7 @@ class TransactionWifiController extends Controller
                 'payment_status' => $request->payment_status,
                 'payment_transaction' => $request->payment_transaction,
                 'payment_method' => $request->payment_method,
+                'payment_bank' => $request->payment_bank,
                 'description' => $request->description,
             ]);
 
@@ -231,10 +235,10 @@ class TransactionWifiController extends Controller
             Mail::to('andraryandra38@gmail.com')->send(new TransactionWifiNotification($transactionWifi, $user));
 
             return redirect()->route('dashboard.bulan.index')->withSuccess('Transaksi berhasil dibuat.');
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect()->back()->withErrors(['message' => 'Terjadi kesalahan saat membuat transaksi.']);
-        }
+        // } catch (\Exception $e) {
+        //     DB::rollback();
+        //     return redirect()->back()->withErrors(['message' => 'Terjadi kesalahan saat membuat transaksi.']);
+        // }
     }
 
     /**
@@ -381,6 +385,7 @@ class TransactionWifiController extends Controller
             $users = User::where('roles', '=', 'USER')->get();
             $products = Product::with('galleries')->with('category')->get();
             $transactions = Transaction::with(['user', 'wifi_items'])->get();
+            $banks = Bank::get();
 
             $status_wifi = [
                 ['label' => 'Aktif', 'value' => 'ACTIVE'],
@@ -408,6 +413,7 @@ class TransactionWifiController extends Controller
                 'status_wifi',
                 'status_payment',
                 'status_payment_method',
+                'banks',
             ));
         } catch (\Exception $e) {
             // Handle errors here
@@ -451,6 +457,7 @@ class TransactionWifiController extends Controller
                 'payment_status' => $validatedData['payment_status'],
                 'payment_transaction' => $validatedData['payment_transaction'],
                 'payment_method' => $validatedData['payment_method'],
+                'payment_bank' => $validatedData['payment_bank'],
                 'description' => $validatedData['description'],
             ]);
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\ProductGallery;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -15,19 +16,19 @@ use App\Http\Controllers\SearchGlobalController;
 use App\Http\Controllers\MyTransactionController;
 use App\Http\Controllers\ProductGalleryController;
 use App\Http\Controllers\ProductCategoryController;
+use App\Http\Controllers\TransactionWifiController;
 use App\Http\Controllers\TransactionChartController;
 use App\Http\Controllers\LandingPage\AboutController;
 use App\Http\Controllers\LandingPage\ContactController;
 use App\Http\Controllers\LandingPage\HostingController;
 use App\Http\Controllers\LandingPage\PricingController;
+use Laravel\Fortify\Http\Controllers\VerifyEmailController;
 use App\Http\Controllers\Customer\PricingCustomerController;
 use App\Http\Controllers\LandingPage\HalamanUtamaController;
 use App\Http\Controllers\Midtrans\MidtransWebhookController;
 use App\Http\Controllers\Customer\TransactionCustomerController;
 use App\Http\Controllers\Search\PricingDashboardSearchController;
 use App\Http\Controllers\Search\PricingLandingPageSearchController;
-use App\Http\Controllers\TransactionWifiController;
-use App\Models\ProductGallery;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,6 +46,15 @@ use App\Models\ProductGallery;
 // });
 
 // Route::get('/dashboard2', [DashboardController::class, 'statusDashboard']);
+
+Route::get('/email/verify', function () {
+    return view('auth.verify-email');
+})->middleware('auth')->name('verification.notice');
+Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, '__invoke'])
+    ->middleware(['auth', 'signed', 'throttle:6,1'])
+    ->name('verification.verify');
+
+
 Route::get('/', [HalamanUtamaController::class, 'index'])->name('landingPage.index');
 Route::get('about', [AboutController::class, 'index'])->name('landingPage.about');
 Route::get('hosting', [HostingController::class, 'index'])->name('landingPage.hosting');

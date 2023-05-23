@@ -14,6 +14,23 @@
             </div>
         @endif
 
+        <div class="mb-4 text-sm text-gray-600">
+            {{ __('Jika sudah verifikasi Email dan tidak berpindah halaman secara otomatis, maka silahkan klik tombol Dashboard. Apabila tidak bisa login/memasuki halaman Dashboard, silahkan melakukan login 2x dan jika masih tetap tidak bisa silahkan menghubungi Admin. Whatsapp: 085314005779') }}
+        </div>
+        @if (Auth::user()->roles == 'ADMIN')
+            <x-jet-button type="button" onclick="window.location.href='{{ route('dashboard.indexDashboardCustomer') }}'">
+                {{ __('Dashboard') }}
+            </x-jet-button>
+        @elseif (Auth::user()->roles == 'USER')
+            <x-jet-button type="button" onclick="window.location.href='{{ route('dashboard.indexDashboardCustomer') }}'">
+                {{ __('Dashboard') }}
+            </x-jet-button>
+        @else
+            <x-jet-button type="button" onclick="window.location.href='{{ route('landingPage.index') }}'">
+                {{ __('Dashboard') }}
+            </x-jet-button>
+        @endif
+
         <div class="mt-4 flex items-center justify-between">
             <form method="POST" action="{{ route('verification.send') }}">
                 @csrf

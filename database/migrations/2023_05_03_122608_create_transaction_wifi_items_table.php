@@ -24,6 +24,7 @@ class CreateTransactionWifiItemsTable extends Migration
             $table->string('payment_status')->default('UNPAID');
             $table->decimal('payment_transaction', 12, 2);
             $table->string('payment_method')->default('MANUAL');
+            $table->string('payment_bank')->nullable();
             $table->longText('description')->nullable();
 
             $table->softDeletes();

@@ -183,29 +183,107 @@
                                 @enderror
                             </div> --}}
 
-                            <div class="flex items-center mb-4">
-                                <input id="payment-manual" type="radio" name="payment_method" value="manual-cash"
+                            @error('payment_method')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                            <div class="mb-4">
+                                <label for="payment_method" class="block mb-2 text-sm font-medium text-gray-700">Metode
+                                    Pembayaran</label>
+                                <div>
+                                    <input id="payment-manual" type="radio" name="payment_method" value="MANUAL"
+                                        class="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600 ml-4">
+                                    <label for="payment-manual"
+                                        class="inline-block ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Manual
+                                        Cash</label>
+                                    <input id="payment-transfer" type="radio" name="payment_method" value="BANK TRANSFER"
+                                        class="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600 ml-4">
+                                    <label for="payment-transfer"
+                                        class="inline-block ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Transfer
+                                        Bank</label>
+                                </div>
+                            </div>
+
+                            <div class="mb-4" id="nama-bank-input" style="display: none;">
+                                <label for="payment_bank" class="block mb-2 text-sm font-medium text-gray-700">Nama
+                                    Bank</label>
+                                <select name="payment_bank" id="payment_bank"
+                                    class=" w-full p-2 border border-gray-300 rounded-md select2 @error('payment_bank') border-red-500 @enderror"
+                                    required>
+                                    <option value="" selected disabled>-- Pilih Nama Bank --</option>
+                                    @foreach ($banks as $bank)
+                                        <option value="{{ $bank->nama_bank }}">{{ $bank->nama_bank }}</option>
+                                    @endforeach
+                                </select>
+                                @error('payment_bank')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+
+                            <div class="mb-4" id="total-pembayaran-input">
+                                <label for="payment_transaction"
+                                    class="block mb-2 text-sm font-medium text-gray-700">Total Pembayaran
+                                    Transaksi</label>
+                                <input type="text" name="payment_transaction"
+                                    class="input-harga w-full p-2 border border-gray-300 rounded-md @error('payment_transaction') border-red-500 @enderror"
+                                    value="{{ old('payment_transaction') }}"
+                                    placeholder="Masukan Total Pembayaran Transaksi ...">
+                                @error('payment_transaction')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="mb-4" id="description">
+                                <label for="description"
+                                    class="block mb-2 text-sm font-medium text-gray-700 dark:text-white">Catatan:</label>
+                                <textarea name="description" rows="4"
+                                    class="block p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    placeholder="Tuliskan catatan..."></textarea>
+                            </div>
+
+                            <div class="mb-4" id="payment_status">
+                                <label for="payment_status" class="block mb-2 text-sm font-medium text-gray-700">Status
+                                    Pembayaran</label>
+                                <select name="payment_status"
+                                    class="w-full p-2 border border-gray-300 rounded-md @error('payment_status') border-red-500 @enderror"
+                                    required>
+                                    <option value="" selected disabled>-- Pilih Status Pembayaran --</option>
+                                    @foreach ($status_payment as $item)
+                                        <option value="{{ $item['value'] }}">{{ $item['label'] }}</option>
+                                    @endforeach
+                                </select>
+                                @error('payment_status')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+
+
+
+
+                            {{-- <div class="flex items-center mb-4">
+                                <input id="payment-manual" type="radio" name="payment_method" value="MANUAL" required
                                     class="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600">
                                 <label for="payment-manual"
                                     class="block ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                                     Manual - Cash
                                 </label>
 
-                                <input id="payment-transfer" type="radio" name="payment_method" value="transfer-bank"
+                                <input id="payment-transfer" type="radio" name="payment_method" value="MANUAL" required
                                     class="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600 ml-4">
                                 <label for="payment-transfer"
                                     class="block ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                                     Transfer Bank
                                 </label>
-                            </div>
+                            </div> --}}
 
-                            <div id="manual-cash-form" style="display: none;">
+                            {{-- <div id="manual-cash-form">
                                 <div class="mb-4">
                                     <label for="payment_transaction" class="block mb-2 text-sm font-medium text-gray-700">
                                         Total Pembayaran Transaksi
                                     </label>
-                                    <input type="text" name="payment_transaction" id="payment_transaction"
-                                        class="input-harga w-full p-2 border border-gray-300 rounded-md @error('payment_transaction') border-red-500 @enderror"
+                                    <input type="text" name="payment_transaction"
+                                        class="w-full p-2 border border-gray-300 rounded-md @error('payment_transaction') border-red-500 @enderror"
                                         value="{{ old('payment_transaction') }}"
                                         placeholder="Masukan Total Pembayaran Transaksi ...">
                                     @error('payment_transaction')
@@ -230,7 +308,7 @@
                                         <option value="" selected disabled>-- Pilih Status Pembayaran --</option>
                                         @foreach ($status_payment as $item)
                                             <option value="{{ $item['value'] }}"
-                                                {{ $item['value'] == old('payment_status', $item['value'] == $item['value']) ? '' : '' }}>
+                                                {{ $item['value'] == old('payment_status', $item['value']) ? 'selected' : '' }}>
                                                 {{ $item['label'] }}
                                             </option>
                                         @endforeach
@@ -239,24 +317,25 @@
                                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                     @enderror
                                 </div>
-                            </div>
+                            </div> --}}
 
-                            <div id="transfer-bank-form" style="display: none;">
+
+                            {{-- <div id="transfer-bank-form" style="display: none;">
                                 <div class="mb-4">
-                                    <label for="payment_status"
-                                        class="block mb-2 text-sm font-medium text-gray-700">NamaBank</label>
-                                    <select name="payment_status" id="payment_status"
-                                        class="w-full p-2 border border-gray-300 rounded-md @error('payment_status') border-red-500 @enderror"
+                                    <label for="payment_bank" class="block mb-2 text-sm font-medium text-gray-700">Nama
+                                        Bank</label>
+                                    <select name="payment_bank" id="payment_bank"
+                                        class="w-full p-2 border border-gray-300 rounded-md @error('payment_bank') border-red-500 @enderror"
                                         required>
                                         <option value="" selected disabled>-- Pilih Nama Bank --</option>
-                                        @foreach ($status_payment as $item)
-                                            <option value="{{ $item['value'] }}"
-                                                {{ $item['value'] == old('payment_status', $item['value'] == $item['value']) ? '' : '' }}>
-                                                {{ $item['label'] }}
+                                        @foreach ($banks as $bank)
+                                            <option value="{{ $bank->nama_bank }}"
+                                                {{ $bank->id == old('payment_bank', $bank->id) ? 'selected' : '' }}>
+                                                {{ $bank->nama_bank }}
                                             </option>
                                         @endforeach
                                     </select>
-                                    @error('payment_status')
+                                    @error('payment_bank')
                                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                     @enderror
                                 </div>
@@ -265,8 +344,8 @@
                                     <label for="payment_transaction" class="block mb-2 text-sm font-medium text-gray-700">
                                         Total Pembayaran Transaksi
                                     </label>
-                                    <input type="text" name="payment_transaction" id="payment_transaction"
-                                        class="input-harga w-full p-2 border border-gray-300 rounded-md @error('payment_transaction') border-red-500 @enderror"
+                                    <input type="text" name="payment_transaction"
+                                        class=" w-full p-2 border border-gray-300 rounded-md @error('payment_transaction') border-red-500 @enderror"
                                         value="{{ old('payment_transaction') }}"
                                         placeholder="Masukan Total Pembayaran Transaksi ...">
                                     @error('payment_transaction')
@@ -291,7 +370,7 @@
                                         <option value="" selected disabled>-- Pilih Status Pembayaran --</option>
                                         @foreach ($status_payment as $item)
                                             <option value="{{ $item['value'] }}"
-                                                {{ $item['value'] == old('payment_status', $item['value'] == $item['value']) ? '' : '' }}>
+                                                {{ $item['value'] == old('payment_status', $item['value']) ? 'selected' : '' }}>
                                                 {{ $item['label'] }}
                                             </option>
                                         @endforeach
@@ -300,7 +379,8 @@
                                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                     @enderror
                                 </div>
-                            </div>
+                            </div> --}}
+
 
                             {{-- <div class="mb-4">
                                 <label for="payment_method" class="block mb-2 text-sm font-medium text-gray-700">
@@ -364,11 +444,18 @@
                             allowClear: true
                         });
                     });
+
+                    $(document).ready(function() {
+                        $('.select-payment-bank').select2({
+                            placeholder: "Pilih Nama Bank",
+                            allowClear: true
+                        });
+                    });
                 </script>
 
                 <script>
                     {{-- $(document).ready(function() {
-                        $('#transactions_id option[value=""]').css('display', 'none');
+                        $('#payment_status option[value=""]').css('display', 'none');
                     }); --}}
 
                     $(document).ready(function() {
@@ -382,6 +469,53 @@
                 </script>
 
                 <script>
+                    const paymentTransfer = document.getElementById('payment-transfer');
+                    const paymentManual = document.getElementById('payment-manual');
+                    const namaBankInput = document.getElementById('nama-bank-input');
+                    const totalPembayaranInput = document.getElementById('total-pembayaran-input');
+                    const descriptionInput = document.getElementById('description');
+                    const statusPembayaranInput = document.getElementById('payment_status');
+
+                    function toggleFormInputs() {
+                        if (paymentTransfer.checked) {
+                            namaBankInput.style.display = 'block';
+                            totalPembayaranInput.style.display = 'block';
+                            descriptionInput.style.display = 'block';
+                            statusPembayaranInput.style.display = 'block';
+                        } else if (paymentManual.checked) {
+                            namaBankInput.style.display = 'none';
+                            totalPembayaranInput.style.display = 'block';
+                            descriptionInput.style.display = 'block';
+                            statusPembayaranInput.style.display = 'block';
+                        } else {
+                            namaBankInput.style.display = 'none';
+                            totalPembayaranInput.style.display = 'none';
+                            descriptionInput.style.display = 'none';
+                            statusPembayaranInput.style.display = 'none';
+                        }
+                    }
+
+                    function handlePaymentMethodChange() {
+                        toggleFormInputs();
+                    }
+
+                    // Initial state
+                    toggleFormInputs();
+
+                    // Check the initial selected option on page load
+                    window.addEventListener('DOMContentLoaded', function() {
+                        if (!paymentTransfer.checked && !paymentManual.checked) {
+                            // Tidak ada opsi yang terpilih, sembunyikan form input terkait
+                            toggleFormInputs();
+                        }
+                    });
+
+                    // Event listeners
+                    paymentTransfer.addEventListener('change', handlePaymentMethodChange);
+                    paymentManual.addEventListener('change', handlePaymentMethodChange);
+                </script>
+
+                {{-- <script>
                     var manualCashForm = document.getElementById('manual-cash-form');
                     var transferBankForm = document.getElementById('transfer-bank-form');
 
@@ -394,7 +528,7 @@
                         manualCashForm.style.display = 'none';
                         transferBankForm.style.display = 'block';
                     });
-                </script>
+                </script> --}}
 
 
                 <script>
