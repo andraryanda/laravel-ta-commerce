@@ -48,6 +48,8 @@ class JetstreamServiceProvider extends ServiceProvider
         });
 
         Jetstream::deleteUsersUsing(DeleteUser::class);
+
+        // Fortify::createUsersUsing(CreateNewUser::class);
     }
 
     /**

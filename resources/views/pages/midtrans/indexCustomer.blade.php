@@ -60,7 +60,8 @@
                             },
                             {
                                 data: 'product.price',
-                                name: 'product.price'
+                                name: 'product.price',
+
                             },
                             {
                                 data: 'quantity',

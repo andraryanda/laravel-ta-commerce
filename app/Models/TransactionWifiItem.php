@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\User;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -45,6 +46,11 @@ class TransactionWifiItem extends Model
         } while (self::where('id', $id)->exists());
 
         return $id;
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'users_id', 'id');
     }
 
     public function product()

@@ -1,7 +1,7 @@
 <x-layout.apps>
     <x-slot name="header">
         <x-slot name="header">
-            <button onclick="goBack()"
+            <button onclick="window.location.href='{{ route('dashboard.bulan.index') }}'"
                 class="w-24 my-6 text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 shadow-lg shadow-purple-500/50 dark:shadow-lg dark:shadow-purple-800/80 font-medium rounded-lg text-sm px-3 py-2.5 text-center mr-2 mb-2">
                 <div class="flex items-center">
                     <img src="{{ asset('icon/left.png') }}" class="mr-2 bg-white rounded-full" alt="Back"
@@ -33,7 +33,8 @@
                             </div>
                         @endif
                         <h2 class="my-2 text-2xl font-semibold text-gray-700 dark:text-gray-200">
-                            {{ __('Edit Transaction Wifi') }}
+                            {{ __('Edit Transaction Wifi') }} - {{ $transactionWifi->id }} -
+                            {{ $transactionWifi->user->name }}
                         </h2>
                         <hr class="my-2">
                         <form action="{{ route('dashboard.bulan.update', $transactionWifi->id) }}" method="post"
@@ -71,13 +72,15 @@
                                     </div>
                                 </div> --}}
                                 <select name="users_id" id="users_id"
-                                    class="select-users w-full p-2 border border-gray-300 rounded-md @error('users_id') border-red-500 @enderror">
-                                    @foreach ($users as $user)
-                                        <option></option>
-                                        <option value="{{ $user->id }}"
-                                            {{ old('users_id', $user->id) == $transactionWifi->users_id ? 'selected' : '' }}>
-                                            {{ $user->name }}
-                                        </option>
+                                    class="select-users w-full p-2 border border-gray-300 rounded-md @error('users_id') border-red-500 @enderror"
+                                    readonly>
+                                    <option value="" selected disabled>-- Pilih Pengguna --</option>
+                                    @foreach ($users as $item)
+                                        @if ($transactionWifi->users_id == $item->id)
+                                            <option value="{{ $item->id }}"
+                                                @if ($item->id == $transactionWifi->users_id) selected @endif>{{ $item->name }}
+                                            </option>
+                                        @endif
                                     @endforeach
                                 </select>
                                 @error('users_id')
@@ -90,19 +93,24 @@
                                 <label for="transactions_id" class="block mb-2 text-sm font-medium text-gray-700">
                                     Pilih ID Transaksi
                                 </label>
-                                <select name="transactions_id" id="transactions_id" class="select-id-transaksi w-full">
+                                <select name="transactions_id" id="transactions_id" class="select-id-transaksi w-full"
+                                    readonly>
                                     <option value="" selected disabled>-- Pilih Status --</option>
                                     @foreach ($transactions as $tf)
                                         @if ($tf->status == 'SUCCESS')
                                             <option value="{{ $tf->id }}"
                                                 {{ old('transactions_id', $tf->id) == $transactionWifi->transactions_id ? 'selected' : '' }}>
-                                                {{ $tf->user->name }} ||
-                                                @foreach ($tf->items as $tff)
-                                                    {{ $tff->product->name }} ||
-                                                    {{ 'Rp ' . number_format($tff->product->price, 0, ',', '.') }} ||
-                                                    {{ $tff->id }} ||
-                                                @endforeach
-                                                {{ $tf->id }}
+                                                @if ($tf->id == $transactionWifi->transactions_id)
+                                                    {{ $tf->user->name }} ||
+                                                    @foreach ($tf->items as $tff)
+                                                        {{ $tff->product->name }} ||
+                                                        {{ 'Rp ' . number_format($tff->product->price, 0, ',', '.') }} ||
+                                                        {{ $tff->id }} {{ __('- (Transaction Utama ID)') }} ||
+                                                    @endforeach
+                                                    @foreach ($tf->wifi_items as $item2)
+                                                        {{ $item2->id }} {{ __('- (Transaction Wifi ID)') }}
+                                                    @endforeach
+                                                @endif
                                             </option>
                                         @endif
                                     @endforeach
@@ -173,99 +181,98 @@
 
 
 
-                            <hr class="my-2">
+                            {{-- <hr class="my-2">
                             <h2 class="my-2 text-2xl font-semibold text-gray-700 dark:text-gray-200">
                                 {{ __('Pembayaran Customer') }}
                             </h2>
 
                             <hr class="my-2">
-                            @foreach ($transactionWifi->wifi_items as $transactionItem)
-                                @error('payment_method')
-                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                @enderror
-                                <div class="mb-4">
-                                    <label for="payment_method" class="block mb-2 text-sm font-medium text-gray-700">Metode
-                                        Pembayaran</label>
-                                    <div>
-                                        <input id="payment-manual" type="radio" name="payment_method" value="MANUAL"
-                                            {{ $transactionItem->payment_method == 'MANUAL' ? 'checked' : '' }}
-                                            class="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600 ml-4">
-                                        <label for="payment-manual"
-                                            class="inline-block ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Manual
-                                            Cash</label>
-                                        <input id="payment-transfer" type="radio" name="payment_method"
-                                            value="BANK TRANSFER"
-                                            {{ $transactionItem->payment_method == 'BANK TRANSFER' ? 'checked' : '' }}
-                                            class="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600 ml-4">
-                                        <label for="payment-transfer"
-                                            class="inline-block ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Transfer
-                                            Bank</label>
+                            <div class="">
+                                @foreach ($transactionWifi->wifi_items as $transactionItem)
+                                    @error('payment_method')
+                                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                    @enderror
+                                    <div class="mb-4">
+                                        <label for="payment_method"
+                                            class="block mb-2 text-sm font-medium text-gray-700">Metode
+                                            Pembayaran</label>
+                                        <div>
+                                            <input id="payment-manual" type="radio" name="payment_method" value="MANUAL"
+                                                {{ $transactionItem->payment_method == 'MANUAL' ? 'checked' : '' }}
+                                                class="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600 ml-4">
+                                            <label for="payment-manual"
+                                                class="inline-block ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Manual
+                                                Cash</label>
+                                            <input id="payment-transfer" type="radio" name="payment_method"
+                                                value="BANK TRANSFER"
+                                                {{ $transactionItem->payment_method == 'BANK TRANSFER' ? 'checked' : '' }}
+                                                class="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600 ml-4">
+                                            <label for="payment-transfer"
+                                                class="inline-block ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Transfer
+                                                Bank</label>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="mb-4" id="nama-bank-input" style="display: none;">
-                                    <label for="payment_bank" class="block mb-2 text-sm font-medium text-gray-700">Nama
-                                        Bank</label>
-                                    <select name="payment_bank" id="payment_bank"
-                                        class=" w-full p-2 border border-gray-300 rounded-md select2 @error('payment_bank') border-red-500 @enderror"
-                                        required>
-                                        <option value="" selected>-- Pilih Nama Bank --</option>
-                                        @foreach ($banks as $bank)
-                                            <option value="{{ $bank->nama_bank }}"
-                                                {{ $bank->nama_bank == old('payment_bank', $transactionItem->payment_bank) ? 'selected' : '' }}>
-                                                {{ $bank->nama_bank }}</option>
-                                        @endforeach
-                                    </select>
-                                    @error('payment_bank')
-                                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-
-                                <div class="mb-4" id="total-pembayaran-input">
-                                    <label for="payment_transaction"
-                                        class="block mb-2 text-sm font-medium text-gray-700">Total Pembayaran
-                                        Transaksi</label>
-                                    <input type="text" name="payment_transaction"
-                                        class="input-harga w-full p-2 border border-gray-300 rounded-md @error('payment_transaction') border-red-500 @enderror"
-                                        value="{{ $transactionItem->payment_transaction }}"
-                                        placeholder="Masukan Total Pembayaran Transaksi ...">
-                                    @error('payment_transaction')
-                                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <div class="mb-4" id="description">
-                                    <label for="description"
-                                        class="block mb-2 text-sm font-medium text-gray-700 dark:text-white">Catatan:</label>
-                                    <textarea name="description" rows="4"
-                                        class="block p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                        placeholder="Tuliskan catatan..." value="{{ $transactionItem->description }}">{{ $transactionItem->description }}</textarea>
-                                </div>
-
-                                <div class="mb-4" id="payment_status">
-                                    <label for="payment_status"
-                                        class="block mb-2 text-sm font-medium text-gray-700">Status
-                                        Pembayaran</label>
-                                    <select name="payment_status"
-                                        class="w-full p-2 border border-gray-300 rounded-md @error('payment_status') border-red-500 @enderror"
-                                        required>
-                                        <option value="" selected disabled>-- Pilih Status Pembayaran --</option>
-                                        @foreach ($status_payment as $item)
-                                            <option value="{{ $item['value'] }}"
-                                                {{ $item['value'] == old('payment_status', $transactionItem->payment_status) ? 'selected' : '' }}>
-                                                {{ $item['label'] }}</option>
-                                        @endforeach
-                                    </select>
-                                    @error('payment_status')
-                                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                            @endforeach
+                                    <div class="mb-4" id="nama-bank-input" style="display: none;">
+                                        <label for="payment_bank" class="block mb-2 text-sm font-medium text-gray-700">Nama
+                                            Bank</label>
+                                        <select name="payment_bank" id="payment_bank"
+                                            class=" w-full p-2 border border-gray-300 rounded-md select2 @error('payment_bank') border-red-500 @enderror"
+                                            required>
+                                            <option value="" selected>-- Pilih Nama Bank --</option>
+                                            @foreach ($banks as $bank)
+                                                <option value="{{ $bank->nama_bank }}"
+                                                    {{ $bank->nama_bank == old('payment_bank', $transactionItem->payment_bank) ? 'selected' : '' }}>
+                                                    {{ $bank->nama_bank }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('payment_bank')
+                                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                        @enderror
+                                    </div>
 
 
+                                    <div class="mb-4" id="total-pembayaran-input">
+                                        <label for="payment_transaction"
+                                            class="block mb-2 text-sm font-medium text-gray-700">Total Pembayaran
+                                            Transaksi</label>
+                                        <input type="text" name="payment_transaction"
+                                            class="input-harga w-full p-2 border border-gray-300 rounded-md @error('payment_transaction') border-red-500 @enderror"
+                                            value="{{ $transactionItem->payment_transaction }}"
+                                            placeholder="Masukan Total Pembayaran Transaksi ...">
+                                        @error('payment_transaction')
+                                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                        @enderror
+                                    </div>
 
+                                    <div class="mb-4" id="description">
+                                        <label for="description"
+                                            class="block mb-2 text-sm font-medium text-gray-700 dark:text-white">Catatan:</label>
+                                        <textarea name="description" rows="4"
+                                            class="block p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                            placeholder="Tuliskan catatan..." value="{{ $transactionItem->description }}">{{ $transactionItem->description }}</textarea>
+                                    </div>
 
+                                    <div class="mb-4" id="payment_status">
+                                        <label for="payment_status"
+                                            class="block mb-2 text-sm font-medium text-gray-700">Status
+                                            Pembayaran</label>
+                                        <select name="payment_status"
+                                            class="w-full p-2 border border-gray-300 rounded-md @error('payment_status') border-red-500 @enderror"
+                                            required>
+                                            <option value="" selected disabled>-- Pilih Status Pembayaran --</option>
+                                            @foreach ($status_payment as $item)
+                                                <option value="{{ $item['value'] }}"
+                                                    {{ $item['value'] == old('payment_status', $transactionItem->payment_status) ? 'selected' : '' }}>
+                                                    {{ $item['label'] }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('payment_status')
+                                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                @endforeach
+                            </div> --}}
 
                             <div class="flex flex-wrap -mx-3 mb-6">
                                 <div class="w-full px-3 text-right">

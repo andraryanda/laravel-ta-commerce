@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\User;
 use Ramsey\Uuid\Uuid;
+use App\Models\Product;
 use App\Models\Transaction;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -55,6 +56,11 @@ class TransactionWifi extends Model
     public function items()
     {
         return $this->belongsTo(Transaction::class, 'transactions_id', 'id');
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'products_id', 'id');
     }
 
     public function wifi_items()

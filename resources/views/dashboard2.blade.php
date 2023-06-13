@@ -200,7 +200,99 @@
             <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-2">Selamat datang,
                 {{ Auth::user()->name . ' || ' . Auth::user()->email }}!</h3>
             <p class="text-sm text-gray-600 dark:text-gray-300">Anda telah berhasil login ke halaman dashboard.</p>
+
+
+
+
+
+
+
         </div>
+
+
+        <div class="w-full overflow-hidden rounded-lg shadow-xs mt-5">
+
+            <div class="overflow-x-auto bg-white ">
+                <table id="crudTable" class="w-full row-border whitespace-no-wrap my-2 py-2">
+                    <thead>
+                        <tr
+                            class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
+                            <th>No</th>
+                            <th>Nama</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Last Seen</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
+                        @foreach ($users as $user)
+                            <tr>
+                                <td class="px-4 py-2">{{ $loop->iteration }}</td>
+                                <td class="px-4 py-2">{{ $user->name }}</td>
+                                <td class="px-4 py-2">{{ $user->email }}</td>
+                                <td class="px-4 py-2">
+                                    @if (Cache::has('user-is-online-' . $user->id))
+                                        <span class="text-green-600">Online</span>
+                                    @else
+                                        <span class="text-gray-600">Offline</span>
+                                    @endif
+                                </td>
+                                <td class="px-4 py-2">
+                                    {{ \Carbon\Carbon::parse($user->last_seen)->diffForHumans() }}
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {{-- <div class="container mx-auto mt-5">
+            <div class="flex justify-center">
+                <div class="w-11/12 md:w-8/12 lg:w-7/12 xl:w-6/12">
+                    <div
+                        class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow">
+                        <div
+                            class="bg-gray-100 dark:bg-gray-900 px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                            <h2 class="text-lg font-semibold">Users</h2>
+                        </div>
+                        <div class="p-4">
+                            @php $users = DB::table('users')->get(); @endphp
+                            <div class="container">
+                                <table class="w-full border border-gray-200 dark:border-gray-700">
+                                    <thead class="bg-gray-100 dark:bg-gray-900">
+                                        <tr>
+                                            <th class="px-4 py-2">Name</th>
+                                            <th class="px-4 py-2">Email</th>
+                                            <th class="px-4 py-2">Status</th>
+                                            <th class="px-4 py-2">Last Seen</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($users as $user)
+                                            <tr>
+                                                <td class="px-4 py-2">{{ $user->name }}</td>
+                                                <td class="px-4 py-2">{{ $user->email }}</td>
+                                                <td class="px-4 py-2">
+                                                    @if (Cache::has('user-is-online-' . $user->id))
+                                                        <span class="text-green-600 dark:text-green-400">Online</span>
+                                                    @else
+                                                        <span class="text-gray-600 dark:text-gray-400">Offline</span>
+                                                    @endif
+                                                </td>
+                                                <td class="px-4 py-2">
+                                                    {{ \Carbon\Carbon::parse($user->last_seen)->diffForHumans() }}
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> --}}
+
 
         <br>
 
@@ -237,5 +329,10 @@
     </x-slot>
 
     @push('javascript')
+        <script>
+            $(document).ready(function() {
+                $('#crudTable').DataTable();
+            });
+        </script>
     @endpush
 </x-layout.apps>

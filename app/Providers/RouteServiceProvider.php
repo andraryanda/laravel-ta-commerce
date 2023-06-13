@@ -20,7 +20,8 @@ class RouteServiceProvider extends ServiceProvider
      */
 
     // protected $redirectTo = '/dashboard';
-    public const HOME = '/dashboard';
+    // public const HOME = '/dashboard';
+    public const HOME = 'redirects';
 
 
     /**

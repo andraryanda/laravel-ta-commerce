@@ -1,6 +1,6 @@
 <x-layout.apps>
     <x-slot name="header">
-        <button onclick="window.location.href='{{ route('dashboard.bulan.index') }}'"
+        <button onclick="goBack()"
             class="w-24 my-6 text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 shadow-lg shadow-purple-500/50 dark:shadow-lg dark:shadow-purple-800/80 font-medium rounded-lg text-sm px-3 py-2.5 text-center mr-2 mb-2">
             <div class="flex items-center">
                 <img src="{{ asset('icon/left.png') }}" class="mr-2 bg-white rounded-full" alt="Back" width="25">
@@ -124,14 +124,6 @@
                                     });
                                 }
                             },
-                            {
-                                data: 'action',
-                                name: 'action',
-                                className: 'dt-body-start',
-                                orderable: false,
-                                searchable: false,
-                                width: '25%',
-                            }
                         ],
                         pagingType: 'full_numbers',
                         // order: [
@@ -255,12 +247,6 @@
                                     </span>
                                 </td>
                             </tr>
-
-
-
-
-
-
                             <tr>
                                 <th class="border px-6 py-4 text-right">Tanggal Transaksi</th>
                                 <td class="border px-6 py-4">
@@ -302,18 +288,7 @@
         <div class="w-full overflow-hidden rounded-lg shadow-xs">
             <div class="px-3 py-3 overflow-x-auto bg-white sm:p-6">
                 <div class="flex justify-start space-x-2 my-3 mx-3">
-                    <button type="button"
-                        onclick="window.location.href='{{ route('dashboard.item.show', encrypt($transaction->id)) }}'"
-                        title="Create"
-                        class="text-gray-900 shadow-sm bg-white hover:bg-green-100 border border-green-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 mr-2 mb-2">
-                        <div class="flex items-center">
-                            <img src="{{ asset('icon/create.png') }}" alt="Create" width="25" class="mr-2">
-                            <p>Create Transaction Wifi</p>
-                        </div>
-                    </button>
                 </div>
-
-
                 <table id="crudTable" class="w-full row-border whitespace-no-wrap mt-2 pt-2">
                     <thead>
                         <tr class="text-xs font-semibold tracking-wide text-left text-gray-700 uppercase border-b">
@@ -325,7 +300,6 @@
                             <th>Metode Pembayaran</th>
                             <th>Description</th>
                             <th>Tanggal Transaksi</th>
-                            <th></th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
@@ -341,7 +315,6 @@
                             <th>Metode Pembayaran</th>
                             <th>Description</th>
                             <th>Tanggal Transaksi</th>
-                            <th></th>
                         </tr>
                     </tfoot>
                 </table>

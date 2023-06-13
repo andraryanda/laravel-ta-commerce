@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Midtrans;
 
+use Carbon\Carbon;
 use Midtrans\Snap;
 use Midtrans\Config;
 use GuzzleHttp\Client;
@@ -50,7 +51,7 @@ class MidtransWebhookController extends Controller
 
     public function paymentWifi($id)
     {
-        $transaction = TransactionWifi::with('user')->findOrFail($id);
+        $transaction = TransactionWifi::with(['user','product'])->findOrFail($id);
 
         // Set konfigurasi midtrans
         Config::$serverKey = env('MIDTRANS_SERVER_KEY');
@@ -60,19 +61,29 @@ class MidtransWebhookController extends Controller
 
         // Buat array untuk data pembayaran
         $transaction_details = [
-            'order_id' => $transaction->id,
+            'order_id' => $transaction->id . '_' . time(), // Tambahkan timestamp ke order ID
             'gross_amount' => $transaction->total_price_wifi,
         ];
 
-        $items = [];
-        foreach ($transaction->wifi_items as $item) {
-            $items[] = [
-                'id' => $item->id,
-                'price' => $item->product->price,
+        // $items = [];
+        // foreach ($transaction->wifi_items as $item) {
+        //     $items[] = [
+        //         'id' => $item->id,
+        //         'price' => $item->product->price,
+        //         'quantity' => 1,
+        //         'name' => $item->product->name,
+        //     ];
+        // }
+
+        $items = [
+            [
+                'id' => $transaction->id,
+                'price' => $transaction->total_price_wifi,
                 'quantity' => 1,
-                'name' => $item->product->name,
-            ];
-        }
+                'name' => $transaction->product->name
+            ],
+        ];
+
 
         // Buat array untuk data pembelian
         $transaction_data = [
@@ -308,9 +319,16 @@ class MidtransWebhookController extends Controller
         Config::$isSanitized = true;
         Config::$is3ds = true;
 
+
+        $order_id_parts = explode('_', $request->order_id);
+        $order_id_time = $order_id_parts[0]; // Ambil ID transaksi saja, tanpa timestamp
+
+
         // Cek apakah transaksi ditemukan dalam database berdasarkan order_id
         $transaction = Transaction::where('id', $request->order_id)->first();
-        $transactionWifi = TransactionWifi::with(['wifi_items'])->where('id', $request->order_id)->first();
+        // $transactionWifi = TransactionWifi::with(['wifi_items'])->where('id', $request->order_id)->first();
+        $transactionWifi = TransactionWifi::with(['wifi_items'])->where('id', $order_id_time)->first();
+
 
 
         // if (!$transaction) {
@@ -388,10 +406,31 @@ class MidtransWebhookController extends Controller
     if ($request->status_code == 200) {
         if ($request->transaction_status == 'settlement' || $request->transaction_status == 'capture') {
             $transactionWifi->status = 'ACTIVE';
-            foreach ($transactionWifi->wifi_items as $wifi_item) {
-                $wifi_item->payment_status = 'PAID';
-                $wifi_item->save();
-            }
+
+                    // Menambahkan data pada tabel transaction_wifi_items
+            $lastTransaction = TransactionWifiItem::orderBy('incre_id', 'desc')->first();
+            $increId = $lastTransaction ? $lastTransaction->incre_id + 1 : 1;
+
+            $transactionWifiItem = new TransactionWifiItem();
+            $transactionWifiItem->incre_id = $increId;
+            $transactionWifiItem->users_id = $transactionWifi->users_id;
+            $transactionWifiItem->products_id = $transactionWifi->products_id;
+            $transactionWifiItem->transaction_wifi_id = $transactionWifi->id;
+            $transactionWifiItem->order_id = $transactionWifi->id;
+            $transactionWifiItem->payment_status = 'PAID';
+            $transactionWifiItem->payment_transaction = $transactionWifi->total_price_wifi;
+            $transactionWifiItem->payment_method = 'BANK TRANSFER';
+            $transactionWifiItem->payment_bank = 'MIDTRANS';
+            $transactionWifiItem->description = 'Pembayaran Lunas Wifi - Otomatis dari Customer '. Carbon::now()->format('d-m-Y H:i:s');
+            $transactionWifiItem->created_at = now();
+            $transactionWifiItem->updated_at = now();
+            $transactionWifiItem->save();
+
+            // Menambahkan 1 bulan pada tanggal expired_wifi
+            $expiredWifi = Carbon::parse($transactionWifi->expired_wifi);
+            $newExpiredWifi = $expiredWifi->addMonth();
+            $transactionWifi->expired_wifi = $newExpiredWifi;
+            $transactionWifi->save();
         } elseif ($request->transaction_status == 'pending') {
             $transactionWifi->status = 'INACTIVE';
             foreach ($transactionWifi->wifi_items as $wifi_item) {
@@ -456,9 +495,12 @@ class MidtransWebhookController extends Controller
         $userId = $transactionWifi->users_id;
 
         // Logika pengalihan pengguna berdasarkan role dan nilai order_id
-        if ($user->roles == 'USER' && $transactionWifi->id == $request->order_id && $transactionWifi->users_id == $user->id) {
-            // Jika pengguna bukan admin dan order_id == request->order_id dan users_id == id pengguna
+
+        // if ($user->roles == 'USER' && $transactionWifi->id == $request->order_id && $transactionWifi->users_id == $user->id) {
+            if ($user->roles == 'USER' && $transactionWifi->id . '_' . time() == $request->order_id && $transactionWifi->users_id == $user->id) {// Jika pengguna bukan admin dan order_id == request->order_id dan users_id == id pengguna
             return redirect()->route('dashboard.bulan.showCustomerWifi1', encrypt($transactionId));
+            // return redirect()->route('dashboard.midtrans.showCustomerWifi', encrypt($transactionId));
+            // return redirect()->route('dashboard.bulan-customer.index')->withSuccess('Pembayaran Berhasil Dilakukan');
         } else {
             // Jika pengguna tidak memiliki peran admin atau ko  ndisi lainnya ADMIN
             return redirect()->route('dashboard.midtrans.showCustomerWifi', encrypt($transactionId));
@@ -604,7 +646,7 @@ class MidtransWebhookController extends Controller
                             return '
                             <td class="px-4 py-3 text-xs">
                                 <span class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
-                                    ' . $item->payment_status . '
+                                    ' . 'Sudah Dibayar'.'
                                 </span>
                             </td>
                         ';
@@ -612,7 +654,7 @@ class MidtransWebhookController extends Controller
                             return '
                             <td class="px-4 py-3 text-xs">
                                 <span class="px-2 py-1 font-semibold leading-tight text-yellow-700 bg-yellow-100 rounded-full dark:bg-yellow-700 dark:text-yellow-100">
-                                    ' . $item->payment_status . '
+                                    ' .'Belum Dibayar'.'
                                 </span>
                             </td>
                         ';
@@ -681,7 +723,7 @@ class MidtransWebhookController extends Controller
                             return '
                             <td class="px-4 py-3 text-xs">
                                 <span class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
-                                    ' . $item->payment_status . '
+                                    ' . 'Sudah Dibayar'.'
                                 </span>
                             </td>
                         ';
@@ -689,7 +731,7 @@ class MidtransWebhookController extends Controller
                             return '
                             <td class="px-4 py-3 text-xs">
                                 <span class="px-2 py-1 font-semibold leading-tight text-yellow-700 bg-yellow-100 rounded-full dark:bg-yellow-700 dark:text-yellow-100">
-                                    ' . $item->payment_status . '
+                                    ' . 'Belum Dibayar'.'
                                 </span>
                             </td>
                         ';

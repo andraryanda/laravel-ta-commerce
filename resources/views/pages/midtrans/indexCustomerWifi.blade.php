@@ -1,12 +1,25 @@
 <x-layout.apps>
     <x-slot name="header">
-        <button onclick="window.location.href='{{ route('dashboard.bulan.index') }}'"
-            class="w-24 my-6 text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 shadow-lg shadow-purple-500/50 dark:shadow-lg dark:shadow-purple-800/80 font-medium rounded-lg text-sm px-3 py-2.5 text-center mr-2 mb-2">
-            <div class="flex items-center">
-                <img src="{{ asset('icon/left.png') }}" class="mr-2 bg-white rounded-full" alt="Back" width="25">
-                <p class="inline-block">Back</p>
-            </div>
-        </button>
+
+        @if (Auth::user()->roles == 'ADMIN')
+            <button onclick="window.location.href='{{ route('dashboard.bulan.index') }}'"
+                class="w-24 my-6 text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 shadow-lg shadow-purple-500/50 dark:shadow-lg dark:shadow-purple-800/80 font-medium rounded-lg text-sm px-3 py-2.5 text-center mr-2 mb-2">
+                <div class="flex items-center">
+                    <img src="{{ asset('icon/left.png') }}" class="mr-2 bg-white rounded-full" alt="Back"
+                        width="25">
+                    <p class="inline-block">Back</p>
+                </div>
+            </button>
+        @elseif (Auth::user()->roles == 'USER')
+            <button onclick="window.location.href='{{ route('dashboard.bulan-customer.index') }}'"
+                class="w-24 my-6 text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 shadow-lg shadow-purple-500/50 dark:shadow-lg dark:shadow-purple-800/80 font-medium rounded-lg text-sm px-3 py-2.5 text-center mr-2 mb-2">
+                <div class="flex items-center">
+                    <img src="{{ asset('icon/left.png') }}" class="mr-2 bg-white rounded-full" alt="Back"
+                        width="25">
+                    <p class="inline-block">Back</p>
+                </div>
+            </button>
+        @endif
 
         <h2 class="my-2 text-2xl font-semibold text-gray-700 dark:text-gray-200">
             Transaction &raquo; #{{ $transaction->id }} {{ $transaction->name }}
@@ -185,7 +198,7 @@
                             <tr>
                                 <th class="border px-6 py-4 text-right">Tanggal Expired Wifi</th>
                                 <td class="border px-6 py-4">
-                                    {{ \Carbon\Carbon::parse($transaction->created_at)->timezone('Asia/Jakarta')->locale('id_ID')->isoFormat('dddd, D MMMM Y HH:mm:ss') }}
+                                    {{ \Carbon\Carbon::parse($transaction->expired_wifi)->timezone('Asia/Jakarta')->locale('id_ID')->isoFormat('dddd, D MMMM Y HH:mm:ss') }}
                                 </td>
                             </tr>
                             <tr>

@@ -11,6 +11,7 @@ use App\Exports\UsersExport;
 use Illuminate\Http\Request;
 use App\Models\TransactionWifi;
 use Illuminate\Support\Facades\DB;
+use App\Models\TransactionWifiItem;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Crypt;
@@ -808,71 +809,69 @@ class ReportController extends Controller
     return new StreamedResponse($callback, 200, $headers);
 }
 
+public function exportTransactionWifiItem()
+{
+    $items = TransactionWifiItem::with(['wifis', 'user', 'product'])
+        ->orderBy('created_at', 'desc')
+        ->get();
+
+    $headers = [
+        'Content-Type' => 'text/csv',
+        'Content-Disposition' => 'attachment; filename=transaction_wifi_items_' . date('d-m-Y') . '.csv',
+    ];
+
+    $callback = function () use ($items) {
+        $file = fopen('php://output', 'w');
+
+        fputcsv($file, [
+            'ID',
+            'Incre ID',
+            'User ID',
+            'Product ID',
+            'Transaction Wifi ID',
+            'Nama Produk',
+            'Harga Produk',
+            'Name Customer',
+            'Total Harga Wifi',
+            'Status Pembayaran',
+            'Total Pembayaran Customer',
+            'Metode Pembayaran',
+            'Bank Pembayaran',
+            'Deskripsi',
+            'Deleted At',
+            'Created At',
+            'Updated At',
+        ]);
+
+        foreach ($items as $item) {
+            fputcsv($file, [
+                $item->id,
+                $item->incre_id,
+                $item->users_id,
+                $item->products_id,
+                $item->transaction_wifi_id,
+                $item->product->name,
+                $item->product->price,
+                $item->user->name,
+                $item->wifis->total_price_wifi,
+                $item->payment_status,
+                $item->payment_transaction,
+                $item->payment_method,
+                $item->payment_bank,
+                $item->description,
+                $item->deleted_at,
+                $item->created_at,
+                $item->updated_at,
+            ]);
+        }
+
+        fclose($file);
+    };
+
+    return new StreamedResponse($callback, 200, $headers);
+}
 
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
 }

@@ -9,6 +9,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\FrontendController;
+use App\Http\Controllers\Auth\HomeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserChartController;
 use App\Http\Controllers\TransactionController;
@@ -22,6 +23,7 @@ use App\Http\Controllers\LandingPage\AboutController;
 use App\Http\Controllers\LandingPage\ContactController;
 use App\Http\Controllers\LandingPage\HostingController;
 use App\Http\Controllers\LandingPage\PricingController;
+use App\Http\Controllers\TransactionWifiItemController;
 use Laravel\Fortify\Http\Controllers\VerifyEmailController;
 use App\Http\Controllers\Customer\PricingCustomerController;
 use App\Http\Controllers\LandingPage\HalamanUtamaController;
@@ -29,6 +31,7 @@ use App\Http\Controllers\Midtrans\MidtransWebhookController;
 use App\Http\Controllers\Customer\TransactionCustomerController;
 use App\Http\Controllers\Search\PricingDashboardSearchController;
 use App\Http\Controllers\Search\PricingLandingPageSearchController;
+use App\Http\Controllers\Customer\TransactionWifiCustomerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,6 +49,9 @@ use App\Http\Controllers\Search\PricingLandingPageSearchController;
 // });
 
 // Route::get('/dashboard2', [DashboardController::class, 'statusDashboard']);
+
+Route::get('redirects', [HomeController::class, 'index'])->name('redirects');
+
 
 Route::get('/email/verify', function () {
     return view('auth.verify-email');
@@ -72,6 +78,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::name('dashboard.')->prefix('dashboard')->group(function () {
         // Route::get('dashboard', [DashboardController::class, 'statusDashboard'])->name('index');
 
+        Route::get('/update-last-seen/{userId}', [DashboardController::class, 'updateLastSeen'])->name('users.update_last_seen');
 
         // Midtrans
         // Transaksi Pembelian Produk
@@ -89,7 +96,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
 
         // Transaksi Wifi
         Route::get('transactionWifi/{id}/payment', [MidtransWebhookController::class, 'paymentWifi'])->name('midtrans.paymentWifi');
-        Route::get('transactionWifiShowMidtrans/{transaction}', [MidtransWebhookController::class, 'showCustomerWifi1showCustomerWifi1'])->name('midtrans.showCustomerWifi1');
+        Route::get('transactionWifiShowMidtrans/{transaction}', [MidtransWebhookController::class, 'showCustomerWifi1'])->name('midtrans.showCustomerWifi1');
         Route::get('transactionCustomerWifiMidtrans/{transaction}', [MidtransWebhookController::class, 'showCustomerWifi'])->name('midtrans.showCustomerWifi');
 
 
@@ -106,6 +113,12 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
             Route::resource('pricingCustomer', PricingCustomerController::class)->only([
                 'index', 'searchProductCustomer'
             ]);
+
+            Route::resource('pembayaran/wifi/bulan-customer', TransactionWifiCustomerController::class)->only([
+                'index','create','store','show','edit','update'
+            ]);
+
+
             Route::get('/searchProductDashboardCustomer', [PricingDashboardSearchController::class, 'searchProductDashboardCustomer'])->name('pricingCustomer.searchProductDashboardCustomer');
         });
 
@@ -133,8 +146,13 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
             Route::resource('pembayaran/wifi/bulan', TransactionWifiController::class)->only([
                 'index','create','store','show','edit','update'
             ]);
+            Route::get('pembayaran/wifi/bulan-inactive', [TransactionWifiController::class, 'indexAdminInactive'])->name('bulan.indexAdminInactive');
             Route::get('sendWifiMessage-{transactionWifi}', [TransactionWifiController::class, 'sendWifiMessage'])->name('bulan.sendWifiMessage');
 
+            Route::resource('pembayaran/wifi/bulan/item', TransactionWifiItemController::class)->only([
+                'show','store','edit','update'
+            ]);
+            // Route::get('/transaction-wifi/{encryptedId}/edit', [TransactionWifiItemController::class, 'edit'])->name('transaction-wifi.edit');
             // Route::resource('transaction/pending', TransactionController::class)->only([
             //     'indexPending', 'show', 'edit', 'update'
             // ]);
@@ -183,6 +201,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
 
             Route::get('exportTransactionWifi', [ReportController::class, 'exportTransactionWifi'])->name('report.exportTransactionWifi');
             Route::get('exportTransactionCustomWifi', [ReportController::class, 'exportTransactionCustomWifi'])->name('report.exportTransactionCustomWifi');
+            Route::get('exportTransactionWifiItem', [ReportController::class, 'exportTransactionWifiItem'])->name('report.exportTransactionWifiItem');
 
             // // Midtrans
             // Route::get('dashboard/payment/cancel/{id}', [MidtransWebhookController::class, 'cancelPayment'])->name('midtrans.cancel');

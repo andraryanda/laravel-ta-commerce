@@ -20,6 +20,7 @@ class CreateTransactionWifiItemsTable extends Migration
             $table->unsignedbigInteger('users_id');
             $table->unsignedbigInteger('products_id');
             $table->uuid('transaction_wifi_id');
+            $table->string('order_id')->nullable();
 
             $table->string('payment_status')->default('UNPAID');
             $table->decimal('payment_transaction', 12, 2);

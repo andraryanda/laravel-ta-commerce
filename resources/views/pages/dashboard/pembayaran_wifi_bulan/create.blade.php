@@ -1,7 +1,7 @@
 <x-layout.apps>
     <x-slot name="header">
         <x-slot name="header">
-            <button onclick="goBack()"
+            <button onclick="window.location.href='{{ route('dashboard.bulan.index') }}'"
                 class="w-24 my-6 text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 shadow-lg shadow-purple-500/50 dark:shadow-lg dark:shadow-purple-800/80 font-medium rounded-lg text-sm px-3 py-2.5 text-center mr-2 mb-2">
                 <div class="flex items-center">
                     <img src="{{ asset('icon/left.png') }}" class="mr-2 bg-white rounded-full" alt="Back"
@@ -73,9 +73,14 @@
                                     class="select-users w-full p-2 border border-gray-300 rounded-md @error('users_id') border-red-500 @enderror">
                                     @foreach ($users as $user)
                                         <option></option>
-                                        <option value="{{ $user->id }}"
-                                            {{ old('users_id') == $user->id ? 'selected' : '' }}>{{ $user->name }}
-                                        </option>
+                                        @foreach ($user->transactions as $item2)
+                                            @if ($item2->status == 'SUCCESS')
+                                                <option value="{{ $user->id }}"
+                                                    {{ old('users_id') == $user->id ? 'selected' : '' }}>
+                                                    {{ $user->name }}
+                                                </option>
+                                            @endif
+                                        @endforeach
                                     @endforeach
                                 </select>
                                 @error('users_id')
@@ -131,7 +136,7 @@
 
                             <div class="mb-4">
                                 <label for="total_price_wifi" class="block mb-2 text-sm font-medium text-gray-700">Total
-                                    Harga</label>
+                                    Harga Wifi Per/bulan</label>
                                 <input type="text" name="total_price_wifi" id="total_price_wifi"
                                     class="input-harga w-full p-2 border border-gray-300 rounded-md @error('total_price_wifi') border-red-500 @enderror"
                                     value="{{ old('total_price_wifi') }}" placeholder="Masukan Total Harga Wifi ...">
