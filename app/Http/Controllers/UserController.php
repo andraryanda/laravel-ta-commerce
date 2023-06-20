@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 use App\Imports\UserAllImport;
 use App\Imports\UserAdminImport;
 use App\Http\Requests\UserRequest;
@@ -13,8 +14,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Request;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -145,9 +146,9 @@ class UserController extends Controller
                     <button type="button" title="Edit"
                     class="flex flex-col edit-button shadow-sm items-center justify-center w-20 h-12 border border-yellow-500 bg-yellow-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-yellow-500 focus:outline-none focus:shadow-outline"
                     data-id="' . $encryptedId . '">
-                    <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/edit.png') . '" alt="delete" loading="lazy" width="20" />
-                    <p class="mt-1 text-xs">Edit</p>
-                </button>
+                        <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/edit.png') . '" alt="delete" loading="lazy" width="20" />
+                        <p class="mt-1 text-xs">Edit</p>
+                    </button>
                     <button type="button" title="Delete"
                             class="flex flex-col delete-button shadow-sm items-center justify-center w-20 h-12 border border-red-500 bg-red-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-red-500 focus:outline-none focus:shadow-outline"
                             data-id="' . $encryptedId . '">
@@ -208,11 +209,11 @@ class UserController extends Controller
                     return '
                     <div class="flex justify-start items-center space-x-3.5">
                     <button type="button" title="Edit"
-                            class="flex flex-col edit-button shadow-sm items-center justify-center w-20 h-12 border border-yellow-500 bg-yellow-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-yellow-500 focus:outline-none focus:shadow-outline"
-                            data-id="' . $encryptedId . '">
-                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/edit.png') . '" alt="delete" loading="lazy" width="20" />
-                            <p class="mt-1 text-xs">Edit</p>
-                        </button>
+                    class="flex flex-col edit-button shadow-sm items-center justify-center w-20 h-12 border border-yellow-500 bg-yellow-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-yellow-500 focus:outline-none focus:shadow-outline"
+                    data-id="' . $encryptedId . '">
+                        <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/edit.png') . '" alt="delete" loading="lazy" width="20" />
+                        <p class="mt-1 text-xs">Edit</p>
+                    </button>
                     <button type="button" title="Delete"
                             class="flex flex-col delete-button shadow-sm items-center justify-center w-20 h-12 border border-red-500 bg-red-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-red-500 focus:outline-none focus:shadow-outline"
                             data-id="' . $encryptedId . '">
@@ -384,11 +385,11 @@ class UserController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|\Illuminate\View\View
      */
-    public function edit($encryptedId)
+        public function edit($encryptedId)
     {
         try {
             $id = Crypt::decrypt($encryptedId);
-            $user = User::find($id);
+            $user = User::findOrFail($id);
 
             if (!$user) {
                 // Lakukan penanganan jika pengguna tidak ditemukan
@@ -404,7 +405,6 @@ class UserController extends Controller
         }
     }
 
-
     /**
      * Update the specified resource in storage.
      *
@@ -412,16 +412,83 @@ class UserController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(UserRequest $request, User $user)
+    // public function update(UserRequest $request, User $user)
+    // {
+    //     // try {
+    //         $data = $request->validated();
+    //         $user->update($data);
+    //         return redirect()->route('dashboard.user.index')->withSuccess('User berhasil diubah!');
+    //     // } catch (\Exception $e) {
+    //     //     return redirect()->back()->withError(['msg' => $e->getMessage()]);
+    //     // }
+    // }
+
+    public function update(Request $request, $encryptedId)
     {
         try {
-            $data = $request->all();
-            $user->update($data);
-            return redirect()->route('dashboard.user.index')->withSuccess('User berhasil diubah!');
-        } catch (\Exception $e) {
-            return redirect()->back()->withError(['msg' => $e->getMessage()]);
+            $id = Crypt::decrypt($encryptedId);
+        } catch (DecryptException $e) {
+            // Lakukan penanganan jika ID tidak valid
+            abort(404);
+        }
+
+        $user = User::findOrFail($id);
+
+        if (!$user) {
+            // Lakukan penanganan jika user tidak ditemukan
+            abort(404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'email' => 'required|email',
+            'username' => 'required',
+            'roles' => 'required|in:ADMIN,USER',
+            'alamat' => 'required',
+            'phone' => 'required',
+            'password' => 'nullable|min:8', // Password opsional dengan panjang minimal 8 karakter
+        ], [
+            'name.required' => 'Nama harus diisi.',
+            'email.required' => 'Email harus diisi.',
+            'email.email' => 'Email tidak valid.',
+            'username.required' => 'Username harus diisi.',
+            'roles.required' => 'Role harus diisi.',
+            'roles.in' => 'Role tidak valid.',
+            'alamat.required' => 'Alamat harus diisi.',
+            'phone.required' => 'Nomor telepon harus diisi.',
+            'password.min' => 'Password minimal 8 karakter.',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $data = [
+            'name' => $request->name,
+            'email' => $request->email,
+            'username' => $request->username,
+            'roles' => $request->roles,
+            'alamat' => $request->alamat,
+            'phone' => $request->phone,
+        ];
+
+        if (!empty($request->password)) {
+            $data['password'] = bcrypt($request->password);
+        }
+
+        $user->update($data);
+
+        if ($user->roles == 'ADMIN') {
+            return redirect()->route('dashboard.user.indexUserAdmin')->withSuccess('User berhasil diubah!')->with('encryptedId', $encryptedId);
+        } elseif ($user->roles == 'USER') {
+            return redirect()->route('dashboard.user.indexUserCustomer')->withSuccess('User berhasil diubah!')->with('encryptedId', $encryptedId);
+        } else {
+            return redirect()->route('dashboard.index')->withSuccess('User berhasil diubah!');
         }
     }
+
+
+
 
 
     /**

@@ -32,6 +32,7 @@ class UserSeeder extends Seeder
             'name' => 'Andraryanda',
             'username' => 'andra',
             'phone' => '085314005779',
+            'alamat' => 'Jl. Raya Cikarang Cibarusah No. 27, Cikarang Utara, Bekasi, Jawa Barat 17530',
             'roles' => 'USER',
             'password' => Hash::make('password'),
         ])->markEmailAsVerified();
@@ -43,6 +44,7 @@ class UserSeeder extends Seeder
                 'name' => $faker->name,
                 'username' => $faker->unique()->userName,
                 'phone' => $faker->phoneNumber,
+                'alamat' => $faker->address,
                 'roles' => 'USER',
                 'password' => Hash::make('password'),
                 'remember_token' => Str::random(10),

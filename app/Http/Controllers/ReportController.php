@@ -13,6 +13,7 @@ use App\Models\TransactionWifi;
 use Illuminate\Support\Facades\DB;
 use App\Models\TransactionWifiItem;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
@@ -411,7 +412,7 @@ class ReportController extends Controller
             $transaction = Transaction::findOrFail($transaction_id);
 
             // Verifikasi role pengguna
-            if (auth()->user()->roles != 'ADMIN' && $transaction->users_id != auth()->user()->id) {
+            if (auth()->user()->roles != 'ADMIN' && Auth::user()->roles != 'OWNER' && $transaction->users_id != auth()->user()->id) {
                 return redirect()->route('landingPage.index')->with('error', 'Anda tidak memiliki akses untuk ekspor PDF transaksi ini');
             }
 

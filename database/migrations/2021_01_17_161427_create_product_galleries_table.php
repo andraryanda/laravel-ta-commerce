@@ -19,14 +19,14 @@ class CreateProductGalleriesTable extends Migration
             $table->unsignedBigInteger('products_id');
             $table->string('url');
 
-            $table->softDeletes();
+            // $table->softDeletes();
             $table->timestamps();
 
             $table->foreign('products_id')
             ->references('id')
             ->on('products')
-            ->onDelete('restrict')
-            ->onUpdate('restrict');
+            ->onDelete('cascade')
+            ->onUpdate('cascade');
         });
     }
 

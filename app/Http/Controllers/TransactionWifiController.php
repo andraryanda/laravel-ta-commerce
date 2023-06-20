@@ -368,6 +368,9 @@ class TransactionWifiController extends Controller
             $transaction = TransactionWifi::with(['items','wifi_items'])
             ->orderByDesc('created_at')
             ->findOrFail($id);
+
+            $transactionProduk = Transaction::with(['user'])->where('id', $transaction->transactions_id)->first();
+
             $transactionWifiItem = TransactionWifiItem::where('transaction_wifi_id', $id)->first();
             if (!$transaction) {
                 // Lakukan penanganan jika transaksi tidak ditemukan
@@ -453,7 +456,7 @@ class TransactionWifiController extends Controller
                 ->make();
             }
 
-            return view('pages.dashboard.pembayaran_wifi_bulan.show', compact('transaction','transactionWifiItem'));
+            return view('pages.dashboard.pembayaran_wifi_bulan.show', compact('transaction','transactionWifiItem','transactionProduk'));
         } catch (DecryptException $e) {
             return redirect()->route('landingPage.index')->with('error', 'Terjadi kesalahan dalam menampilkan transaksi');
         }

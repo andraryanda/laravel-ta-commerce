@@ -4,7 +4,8 @@
         @if (Auth::user()->roles == 'ADMIN' || Auth::user()->roles == 'OWNER')
             <a class="ml-6 flex items-center text-lg font-bold text-gray-800 dark:text-gray-200"
                 href="{{ route('dashboard.index') }}">
-                <img src="{{ asset('icon/store.png') }}" alt="Al's Store" width="50" class="mr-2"> {{ __('Store') }}
+                <img src="{{ asset('icon/store.png') }}" alt="Al's Store" width="50" class="mr-2">
+                {{ __('Als Store') }}
             </a>
 
             <ul class="mt-6">
@@ -24,7 +25,7 @@
             <a class="ml-6 flex items-center text-lg font-bold text-gray-800 dark:text-gray-200"
                 href="{{ route('dashboard.indexDashboardCustomer') }}">
                 <img src="{{ asset('icon/store.png') }}" alt="Al's Store" width="50" class="mr-2">
-                {{ __('Store') }}
+                {{ __('Als Store') }}
             </a>
 
             <ul class="mt-6">
@@ -47,11 +48,219 @@
             @if (Auth::user()->roles == 'OWNER')
                 <li class="relative px-6 py-3">
                     @if (request()->routeis('dashboard.user*'))
+                        <button onclick="showMenu5(true)"
+                            class="inline-flex items-center justify-between w-full text-sm font-semibold bg-purple-500 text-white px-2 py-2 rounded transition-colors duration-150 hover:text-white hover:bg-purple-700 dark:hover:text-gray-200">
+                            <span class="inline-flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M13.5 16.875h3.375m0 0h3.375m-3.375 0V13.5m0 3.375v3.375M6 10.5h2.25a2.25 2.25 0 002.25-2.25V6a2.25 2.25 0 00-2.25-2.25H6A2.25 2.25 0 003.75 6v2.25A2.25 2.25 0 006 10.5zm0 9.75h2.25A2.25 2.25 0 0010.5 18v-2.25a2.25 2.25 0 00-2.25-2.25H6a2.25 2.25 0 00-2.25 2.25V18A2.25 2.25 0 006 20.25zm9.75-9.75H18a2.25 2.25 0 002.25-2.25V6A2.25 2.25 0 0018 3.75h-2.25A2.25 2.25 0 0013.5 6v2.25a2.25 2.25 0 002.25 2.25z" />
+                                </svg>
+                                <span class="ml-4">Landing Page</span>
+                            </span>
+                            <svg class="w-4 h-4" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
+                                id="icon5" class="transform" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd"
+                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                    clip-rule="evenodd" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                                </path>
+                            </svg>
+                        </button>
+                        <div id="menu5"
+                            class="flex justify-start my-2.5 flex-col w-full md:w-auto items-start pb-1 ">
+                            <ul x-transition:enter="transition-all ease-in-out duration-300"
+                                x-transition:enter-start="opacity-25 max-h-0"
+                                x-transition:enter-end="opacity-100 max-h-xl"
+                                class="p-2 mt-2 space-y-2 overflow-hidden w-full text-sm font-medium text-gray-500 rounded-md shadow-inner bg-gray-50 dark:text-gray-400 dark:bg-gray-900"
+                                aria-label="submenu">
+                                <li
+                                    class="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 ">
+                                    <x-jet-nav-link href="{{ route('dashboard.user.indexUserCustomer') }}"
+                                        :active="request()->routeIs('dashboard.user.indexUserCustomer')">
+                                        <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke-linecap="round"
+                                            stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"
+                                            stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z">
+                                            </path>
+                                        </svg>
+                                        <span class="ml-4">{{ __('Landing Page Home') }}</span>
+                                    </x-jet-nav-link>
+                                </li>
+                                <li
+                                    class="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 ">
+                                    <x-jet-nav-link href="{{ route('dashboard.user.indexUserCustomer') }}"
+                                        :active="request()->routeIs('dashboard.user.indexUserCustomer')">
+                                        <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke-linecap="round"
+                                            stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"
+                                            stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z">
+                                            </path>
+                                        </svg>
+                                        <span class="ml-4">{{ __('Landing Page About') }}</span>
+                                    </x-jet-nav-link>
+                                </li>
+                                <li
+                                    class="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 ">
+                                    <x-jet-nav-link href="{{ route('dashboard.user.indexUserCustomer') }}"
+                                        :active="request()->routeIs('dashboard.user.indexUserCustomer')">
+                                        <svg class="w-5 h-5" aria-hidden="true" fill="none"
+                                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z">
+                                            </path>
+                                        </svg>
+                                        <span class="ml-4">{{ __('Landing Page About Feature') }}</span>
+                                    </x-jet-nav-link>
+                                </li>
+                                <li
+                                    class="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 ">
+                                    <x-jet-nav-link href="{{ route('dashboard.user.indexUserCustomer') }}"
+                                        :active="request()->routeIs('dashboard.user.indexUserCustomer')">
+                                        <svg class="w-5 h-5" aria-hidden="true" fill="none"
+                                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z">
+                                            </path>
+                                        </svg>
+                                        <span class="ml-4">{{ __('Landing Page About Team') }}</span>
+                                    </x-jet-nav-link>
+                                </li>
+                                <li
+                                    class="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 ">
+                                    <x-jet-nav-link href="{{ route('dashboard.user.indexUserCustomer') }}"
+                                        :active="request()->routeIs('dashboard.user.indexUserCustomer')">
+                                        <svg class="w-5 h-5" aria-hidden="true" fill="none"
+                                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z">
+                                            </path>
+                                        </svg>
+                                        <span class="ml-4">{{ __('Landing Page Contact') }}</span>
+                                    </x-jet-nav-link>
+                                </li>
+                            </ul>
+                        </div>
+                    @else
+                        <button onclick="showMenu5(true)" {{-- class="inline-flex items-center  justify-between w-full text-sm font-semibold  px-2 py-2 rounded transition-colors duration-150 hover:text-gray-800  dark:hover:text-gray-200"> --}}
+                            class="inline-flex items-center focus:outline-none justify-between w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200">
+                            <span class="inline-flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M13.5 16.875h3.375m0 0h3.375m-3.375 0V13.5m0 3.375v3.375M6 10.5h2.25a2.25 2.25 0 002.25-2.25V6a2.25 2.25 0 00-2.25-2.25H6A2.25 2.25 0 003.75 6v2.25A2.25 2.25 0 006 10.5zm0 9.75h2.25A2.25 2.25 0 0010.5 18v-2.25a2.25 2.25 0 00-2.25-2.25H6a2.25 2.25 0 00-2.25 2.25V18A2.25 2.25 0 006 20.25zm9.75-9.75H18a2.25 2.25 0 002.25-2.25V6A2.25 2.25 0 0018 3.75h-2.25A2.25 2.25 0 0013.5 6v2.25a2.25 2.25 0 002.25 2.25z" />
+                                </svg>
+
+                                <span class="ml-4">Landing Page</span>
+                            </span>
+                            <svg class="w-4 h-4" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
+                                id="icon5" class="transform" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd"
+                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                    clip-rule="evenodd" stroke="currentColor" stroke-width="1.5"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                                </path>
+                            </svg>
+
+                        </button>
+                        <div id="menu5"
+                            class="flex justify-start flex-col w-full md:w-auto items-start pb-1 hidden">
+                            <ul x-transition:enter="transition-all ease-in-out duration-300"
+                                x-transition:enter-start="opacity-25 max-h-0"
+                                x-transition:enter-end="opacity-100 max-h-xl"
+                                class="p-2 mt-2 space-y-2 overflow-hidden w-full text-sm font-medium text-gray-500 rounded-md shadow-inner bg-gray-50 dark:text-gray-400 dark:bg-gray-900"
+                                aria-label="submenu">
+
+                                <li
+                                    class="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 ">
+                                    <x-jet-nav-link href="{{ route('dashboard.user.indexUserCustomer') }}"
+                                        :active="request()->routeIs('dashboard.user.indexUserCustomer')">
+                                        <svg class="w-5 h-5" aria-hidden="true" fill="none"
+                                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z">
+                                            </path>
+                                        </svg>
+                                        <span class="ml-4">{{ __('Landing Page Home') }}</span>
+                                    </x-jet-nav-link>
+                                </li>
+                                <li
+                                    class="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 ">
+                                    <x-jet-nav-link href="{{ route('dashboard.user.indexUserCustomer') }}"
+                                        :active="request()->routeIs('dashboard.user.indexUserCustomer')">
+                                        <svg class="w-5 h-5" aria-hidden="true" fill="none"
+                                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z">
+                                            </path>
+                                        </svg>
+                                        <span class="ml-4">{{ __('Landing Page About') }}</span>
+                                    </x-jet-nav-link>
+                                </li>
+                                <li
+                                    class="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 ">
+                                    <x-jet-nav-link href="{{ route('dashboard.user.indexUserCustomer') }}"
+                                        :active="request()->routeIs('dashboard.user.indexUserCustomer')">
+                                        <svg class="w-5 h-5" aria-hidden="true" fill="none"
+                                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z">
+                                            </path>
+                                        </svg>
+                                        <span class="ml-4">{{ __('Landing Page About Feature') }}</span>
+                                    </x-jet-nav-link>
+                                </li>
+                                <li
+                                    class="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 ">
+                                    <x-jet-nav-link href="{{ route('dashboard.user.indexUserCustomer') }}"
+                                        :active="request()->routeIs('dashboard.user.indexUserCustomer')">
+                                        <svg class="w-5 h-5" aria-hidden="true" fill="none"
+                                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z">
+                                            </path>
+                                        </svg>
+                                        <span class="ml-4">{{ __('Landing Page About Team') }}</span>
+                                    </x-jet-nav-link>
+                                </li>
+                                <li
+                                    class="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 ">
+                                    <x-jet-nav-link href="{{ route('dashboard.user.indexUserCustomer') }}"
+                                        :active="request()->routeIs('dashboard.user.indexUserCustomer')">
+                                        <svg class="w-5 h-5" aria-hidden="true" fill="none"
+                                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z">
+                                            </path>
+                                        </svg>
+                                        <span class="ml-4">{{ __('Landing Page Contact') }}</span>
+                                    </x-jet-nav-link>
+                                </li>
+                            </ul>
+                        </div>
+                    @endif
+                </li>
+
+                <li class="relative px-6 py-3">
+                    @if (request()->routeis('dashboard.user*'))
                         <button onclick="showMenu1(true)"
                             class="inline-flex items-center justify-between w-full text-sm font-semibold bg-purple-500 text-white px-2 py-2 rounded transition-colors duration-150 hover:text-white hover:bg-purple-700 dark:hover:text-gray-200">
                             <span class="inline-flex items-center">
                                 <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke-linecap="round"
-                                    stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+                                    stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"
+                                    stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z">
                                     </path>
@@ -63,8 +272,8 @@
                                 fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd"
                                     d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                    clip-rule="evenodd" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                    stroke-linejoin="round" />
+                                    clip-rule="evenodd" stroke="currentColor" stroke-width="1.5"
+                                    stroke-linecap="round" stroke-linejoin="round" />
                                 </path>
                             </svg>
                         </button>
@@ -78,9 +287,9 @@
                                 <li
                                     class="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 ">
                                     <x-jet-nav-link href="{{ route('dashboard.user.index') }}" :active="request()->routeIs('dashboard.user.index')">
-                                        <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke-linecap="round"
-                                            stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"
-                                            stroke="currentColor">
+                                        <svg class="w-5 h-5" aria-hidden="true" fill="none"
+                                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                 d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z">
                                             </path>
@@ -92,9 +301,9 @@
                                     class="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 ">
                                     <x-jet-nav-link href="{{ route('dashboard.user.indexUserAdmin') }}"
                                         :active="request()->routeIs('dashboard.user.indexUserAdmin*')">
-                                        <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke-linecap="round"
-                                            stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"
-                                            stroke="currentColor">
+                                        <svg class="w-5 h-5" aria-hidden="true" fill="none"
+                                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                 d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z">
                                             </path>
@@ -737,8 +946,8 @@
                                 <span class="ml-4">User</span>
                             </span>
                             <svg class="w-4 h-4" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
-                                id="icon1" class="transform" width="24" height="24" viewBox="0 0 24 24"
-                                fill="none" xmlns="http://www.w3.org/2000/svg">
+                                id="icon1" class="transform" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd"
                                     d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
                                     clip-rule="evenodd" stroke="currentColor" stroke-width="1.5"
@@ -811,8 +1020,8 @@
                                 <span class="ml-4">Transaction</span>
                             </span>
                             <svg class="w-4 h-4" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
-                                id="icon2" class="transform" width="24" height="24" viewBox="0 0 24 24"
-                                fill="none" xmlns="http://www.w3.org/2000/svg">
+                                id="icon2" class="transform" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd"
                                     d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
                                     clip-rule="evenodd" stroke="currentColor" stroke-width="1.5"
@@ -886,8 +1095,8 @@
                                 <span class="ml-4">Transaksi</span>
                             </span>
                             <svg class="w-4 h-4" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
-                                id="icon2" class="transform" width="24" height="24" viewBox="0 0 24 24"
-                                fill="none" xmlns="http://www.w3.org/2000/svg">
+                                id="icon2" class="transform" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd"
                                     d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
                                     clip-rule="evenodd" stroke="currentColor" stroke-width="1.5"
@@ -1182,20 +1391,7 @@
                                         <span class="ml-4">{{ __('Grafik Virtual Bisnis') }}</span>
                                     </x-jet-nav-link>
                                 </li>
-                                <li
-                                    class="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 ">
-                                    <x-jet-nav-link href="{{ route('dashboard.chart.chartUsers') }}"
-                                        :active="request()->routeis('dashboard.chart.chartUsers')">
-                                        <svg class="w-5 h-5" aria-hidden="true" fill="none"
-                                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z">
-                                            </path>
-                                        </svg>
-                                        <span class="ml-4">{{ __('Grafik Tahun Users') }}</span>
-                                    </x-jet-nav-link>
-                                </li>
+
                                 <li
                                     class="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 ">
                                     <x-jet-nav-link href="{{ route('dashboard.chart.chartTransactions') }}"

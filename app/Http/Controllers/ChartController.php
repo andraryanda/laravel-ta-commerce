@@ -64,27 +64,31 @@ class ChartController extends Controller
 
 
         // Memanggil chart
-        $numberOfMonths = 6;
-        $transactionPriceChart = new TransactionPriceChart;
-        $transactionCounts = $transactionPriceChart->getTransactionPriceData($numberOfMonths);
-        $transactionPriceChart->labels($transactionCounts['labels']);
-        $transactionPriceChart->dataset('Pending', 'bar', $transactionCounts['pendingCounts'])
-            ->backgroundColor('rgba(255, 159, 64, 0.2)');
-        $transactionPriceChart->dataset('Success', 'bar', $transactionCounts['successCounts'])
-            ->backgroundColor('rgba(54, 162, 235, 0.2)');
-        $transactionPriceChart->dataset('Cancelled', 'bar', $transactionCounts['cancelledCounts'])
-            ->backgroundColor('rgba(255, 99, 132, 0.2)');
-        $transactionPriceChart->options([
-            'scales' => [
-                'yAxes' => [
-                    [
-                        'ticks' => [
-                            'beginAtZero' => true,
-                        ],
-                    ],
+$numberOfMonths = 6;
+$transactionPriceChart = new TransactionPriceChart;
+$transactionCounts = $transactionPriceChart->getTransactionPriceData($numberOfMonths);
+$transactionPriceChart->labels($transactionCounts['labels']);
+$transactionPriceChart->dataset('Pending', 'line', $transactionCounts['pendingCounts'])
+    ->backgroundColor('rgba(255, 159, 64, 0.2)')
+    ->color('rgba(255, 159, 64, 1)');
+$transactionPriceChart->dataset('Success', 'line', $transactionCounts['successCounts'])
+    ->backgroundColor('rgba(54, 162, 235, 0.2)')
+    ->color('rgba(54, 162, 235, 1)');
+$transactionPriceChart->dataset('Cancelled', 'line', $transactionCounts['cancelledCounts'])
+    ->backgroundColor('rgba(255, 99, 132, 0.2)')
+    ->color('rgba(255, 99, 132, 1)');
+$transactionPriceChart->options([
+    'scales' => [
+        'yAxes' => [
+            [
+                'ticks' => [
+                    'beginAtZero' => true,
                 ],
             ],
-        ]);
+        ],
+    ],
+]);
+
 
         // Mengambil data penjualan terbanyak pada 10 produk
         $bestSellingProducts = TransactionItem::join('products', 'transaction_items.products_id', '=', 'products.id')
@@ -112,7 +116,8 @@ class ChartController extends Controller
             // Tambahkan label untuk setiap data produk
             ->label($bestSellingProducts->pluck('product_name')->toArray());
 
-        $users_count = User::count();
+        // $users_count = User::where('roles', [])->count();
+        $users_count = User::where('roles', '=', 'ADMIN')->orWhere('roles', '=', 'USER')->count();
         $total_admin_count = User::where('roles', '=', 'ADMIN')->count();
         $total_customer_count = User::where('roles', '=', 'USER')->count();
 
@@ -124,6 +129,30 @@ class ChartController extends Controller
         $categoryProduct_count = ProductCategory::count();
         $product_count = Product::count();
 
+// =======================================================================================================
+
+        // chart JS - transaction Produk
+        $transactions = TransactionItem::select('products_id')
+        ->selectRaw('COUNT(*) as count')
+        ->selectRaw("SUM(CASE WHEN transactions.status = 'SUCCESS' THEN 1 ELSE 0 END) as success_count")
+        ->selectRaw("SUM(CASE WHEN transactions.status = 'PENDING' THEN 1 ELSE 0 END) as pending_count")
+        ->selectRaw("SUM(CASE WHEN transactions.status = 'CANCELED' THEN 1 ELSE 0 END) as canceled_count")
+        ->leftJoin('transactions', 'transaction_items.transactions_id', '=', 'transactions.id')
+        ->whereNull('transaction_items.deleted_at')
+        ->groupBy('products_id')
+        ->get();
+
+    $productNames = Product::whereIn('id', $transactions->pluck('products_id'))->pluck('name');
+
+    $labels = $productNames->toArray();
+    $successData = $transactions->pluck('success_count')->toArray();
+    $pendingData = $transactions->pluck('pending_count')->toArray();
+    $canceledData = $transactions->pluck('canceled_count')->toArray();
+
+    // chart JS - transaction Produk (Harga)
+    $totalPendingSales = Transaction::where('status', 'PENDING')->sum('total_price');
+    $totalSuccessSales = Transaction::where('status', 'SUCCESS')->sum('total_price');
+    $totalCancelledSales = Transaction::where('status', 'CANCELLED')->sum('total_price');
 
         return view(
             'pages.dashboard.chart.index',
@@ -141,6 +170,8 @@ class ChartController extends Controller
                 'userRegistrationChart',
                 'productChart',
                 'transactionPriceChart',
+                'labels', 'successData', 'pendingData', 'canceledData',
+                'totalPendingSales', 'totalSuccessSales', 'totalCancelledSales',
 
             )
         );

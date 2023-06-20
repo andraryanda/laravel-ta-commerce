@@ -31,20 +31,20 @@ class CreateTransactionWifisTable extends Migration
             $table->foreign('transactions_id')
             ->references('id')
             ->on('transactions')
-            ->onDelete('restrict')
-            ->onUpdate('restrict');
+            ->onDelete('cascade')
+            ->onUpdate('cascade');
 
             $table->foreign('products_id')
             ->references('id')
             ->on('products')
-            ->onDelete('restrict')
-            ->onUpdate('restrict');
+            ->onDelete('cascade')
+            ->onUpdate('cascade');
 
             $table->foreign('users_id')
             ->references('id')
             ->on('users')
-            ->onDelete('restrict')
-            ->onUpdate('restrict');
+            ->onDelete('cascade')
+            ->onUpdate('cascade');
         });
     }
 

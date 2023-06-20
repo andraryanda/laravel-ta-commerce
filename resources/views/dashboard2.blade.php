@@ -200,19 +200,13 @@
             <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-2">Selamat datang,
                 {{ Auth::user()->name . ' || ' . Auth::user()->email }}!</h3>
             <p class="text-sm text-gray-600 dark:text-gray-300">Anda telah berhasil login ke halaman dashboard.</p>
-
-
-
-
-
-
-
         </div>
-
 
         <div class="w-full overflow-hidden rounded-lg shadow-xs mt-5">
 
             <div class="overflow-x-auto bg-white ">
+                <div class="flex justify-start space-x-2 my-3 mx-3">
+                </div>
                 <table id="crudTable" class="w-full row-border whitespace-no-wrap my-2 py-2">
                     <thead>
                         <tr
@@ -224,24 +218,49 @@
                             <th>Last Seen</th>
                         </tr>
                     </thead>
+
                     <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
-                        @foreach ($users as $user)
-                            <tr>
-                                <td class="px-4 py-2">{{ $loop->iteration }}</td>
-                                <td class="px-4 py-2">{{ $user->name }}</td>
-                                <td class="px-4 py-2">{{ $user->email }}</td>
-                                <td class="px-4 py-2">
-                                    @if (Cache::has('user-is-online-' . $user->id))
-                                        <span class="text-green-600">Online</span>
-                                    @else
-                                        <span class="text-gray-600">Offline</span>
-                                    @endif
-                                </td>
-                                <td class="px-4 py-2">
-                                    {{ \Carbon\Carbon::parse($user->last_seen)->diffForHumans() }}
-                                </td>
-                            </tr>
-                        @endforeach
+                        @if (Auth::user()->roles == 'OWNER')
+                            @foreach ($users as $user)
+                                <tr>
+                                    <td class="px-4 py-2">{{ $loop->iteration }}</td>
+                                    <td class="px-4 py-2">{{ $user->name }}</td>
+                                    <td class="px-4 py-2">{{ $user->email }}</td>
+                                    <td class="px-4 py-2">
+                                        @if (Cache::has('user-is-online-' . $user->id))
+                                            <span class="text-green-600">Online</span>
+                                        @else
+                                            <span class="text-gray-600">Offline</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        {{ \Carbon\Carbon::parse($user->last_seen)->diffForHumans() }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @elseif (Auth::user()->roles == 'ADMIN')
+                            @foreach ($users as $user)
+                                @if ($user->roles !== 'OWNER')
+                                    <tr>
+                                        <td class="px-4 py-2">{{ $loop->iteration }}</td>
+                                        <td class="px-4 py-2">{{ $user->name }}</td>
+                                        <td class="px-4 py-2">{{ $user->email }}</td>
+                                        <td class="px-4 py-2">
+                                            @if (Cache::has('user-is-online-' . $user->id))
+                                                <span class="text-green-600">Online</span>
+                                            @else
+                                                <span class="text-gray-600">Offline</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-4 py-2">
+                                            {{ \Carbon\Carbon::parse($user->last_seen)->diffForHumans() }}
+                                        </td>
+                                    </tr>
+                                @endif
+                            @endforeach
+                        @endif
+
+
                     </tbody>
                 </table>
             </div>
@@ -305,30 +324,82 @@
                 <h4 class="mb-4 font-semibold text-gray-800 dark:text-gray-300">
                     Users
                 </h4>
-                {!! $userRegistrationChart->container() !!}
+                <div style="height: 300px;">
+                    {!! $userRegistrationChart->container() !!}
+                </div>
             </div>
             <div class="min-w-0 p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
                 <h4 class="mb-4 font-semibold text-gray-800 dark:text-gray-300">
                     Transactions
                 </h4>
-                {!! $transactionChart->container() !!}
+                <div style="height: 300px;">
+                    <canvas id="transactionChart"></canvas>
+                </div>
             </div>
             <div class="min-w-0 p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
                 <h4 class="mb-4 font-semibold text-gray-800 dark:text-gray-300">
                     Data Penjualan Produk Terbanyak
                 </h4>
-                {!! $productChart->container() !!}
+                <div style="height: 300px;">
+                    {!! $productChart->container() !!}
+                </div>
             </div>
             <div class="min-w-0 p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
                 <h4 class="mb-4 font-semibold text-gray-800 dark:text-gray-300">
                     Data Penjualan Produk Per-Bulan
                 </h4>
-                {!! $transactionPriceChart->container() !!}
+                <div style="height: 300px;">
+                    {!! $transactionPriceChart->container() !!}
+                </div>
             </div>
         </div>
+
     </x-slot>
 
     @push('javascript')
+        {{-- <script src="{{ url('https://cdn.jsdelivr.net/npm/chart.js') }}"></script> --}}
+        {{-- <script src="{{ asset('chartJS_4-3-0/package/dist/chart.umd.js') }}"></script> --}}
+        <script>
+            const labels = @json($labels);
+            const successData = @json($successData);
+            const pendingData = @json($pendingData);
+            const canceledData = @json($canceledData);
+
+            const ctx = document.getElementById('transactionChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                            label: 'Success',
+                            data: successData,
+                            backgroundColor: '#28a745',
+                        },
+                        {
+                            label: 'Pending',
+                            data: pendingData,
+                            backgroundColor: '#ffc107',
+                        },
+                        {
+                            label: 'Cancelled',
+                            data: canceledData,
+                            backgroundColor: '#dc3545',
+                        },
+                    ],
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0,
+                            },
+                        },
+                    },
+                },
+            });
+        </script>
+
         <script>
             $(document).ready(function() {
                 $('#crudTable').DataTable();

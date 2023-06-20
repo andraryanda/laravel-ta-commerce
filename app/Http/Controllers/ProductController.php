@@ -252,6 +252,13 @@ class ProductController extends Controller
                 abort(404);
             }
 
+            // Hapus file gambar terkait di product_galleries
+            foreach ($product->galleries as $gallery) {
+                Storage::delete($gallery->url);
+                $gallery->delete();
+            }
+
+            // Hapus produk
             $product->delete();
 
             return redirect()->route('dashboard.product.index')->withSuccess('Product berhasil dihapus!');

@@ -45,19 +45,35 @@
                 class="w-full p-6 mx-auto sm:px-6 lg:px-8 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                 <label for="laporan" class="block font-medium text-sm text-gray-700"><strong>Pilih
                         Laporan:</strong></label>
-                <select name="laporan" id="laporan"
-                    class="select-search block w-full mt-1 rounded-md p-3 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                    <option value="" selected disabled>-- Pilih Status --</option>
-                    <option value="laporan-all-users">Laporan All Users</option>
-                    <option value="laporan-user-admin">Laporan User Admin</option>
-                    <option value="laporan-user-customer">Laporan User Customer</option>
-                    <option value="laporan-kategori">Laporan Kategori</option>
-                    <option value="laporan-produk">Laporan Produk</option>
-                    <option value="laporan-all-transaksi">Laporan All Transaksi</option>
-                    <option value="laporan-transaksi-success">Laporan Transaksi Success</option>
-                    <option value="laporan-transaksi-pending">Laporan Transaksi Pending</option>
-                    <option value="laporan-transaksi-cancelled">Laporan Transaksi Cancelled</option>
-                </select>
+                @if (Auth::user()->roles == 'OWNER')
+                    <select name="laporan" id="laporan"
+                        class="select-search block w-full mt-1 rounded-md p-3 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        <option value="" selected disabled>-- Pilih Status --</option>
+                        <option value="laporan-all-users">Laporan All Users</option>
+                        <option value="laporan-user-admin">Laporan User Admin</option>
+                        <option value="laporan-user-customer">Laporan User Customer</option>
+                        <option value="laporan-kategori">Laporan Kategori</option>
+                        <option value="laporan-produk">Laporan Produk</option>
+                        <option value="laporan-all-transaksi">Laporan All Transaksi</option>
+                        <option value="laporan-transaksi-success">Laporan Transaksi Success</option>
+                        <option value="laporan-transaksi-pending">Laporan Transaksi Pending</option>
+                        <option value="laporan-transaksi-cancelled">Laporan Transaksi Cancelled</option>
+                    </select>
+                @elseif (Auth::user()->roles == 'ADMIN')
+                    <select name="laporan" id="laporan"
+                        class="select-search block w-full mt-1 rounded-md p-3 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        <option value="" selected disabled>-- Pilih Status --</option>
+                        {{-- <option value="laporan-all-users">Laporan All Users</option> --}}
+                        {{-- <option value="laporan-user-admin">Laporan User Admin</option> --}}
+                        <option value="laporan-user-customer">Laporan User Customer</option>
+                        <option value="laporan-kategori">Laporan Kategori</option>
+                        <option value="laporan-produk">Laporan Produk</option>
+                        {{-- <option value="laporan-all-transaksi">Laporan All Transaksi</option> --}}
+                        <option value="laporan-transaksi-success">Laporan Transaksi Success</option>
+                        <option value="laporan-transaksi-pending">Laporan Transaksi Pending</option>
+                        <option value="laporan-transaksi-cancelled">Laporan Transaksi Cancelled</option>
+                    </select>
+                @endif
 
                 <div id="btn-container" class="mt-3 space-y-3">
                     <div class="flex">
@@ -101,7 +117,8 @@
                     <button type="button" id="btn-laporan-produk" title="Export Product" onclick="showLoading(this);"
                         class="text-gray-900 shadow-sm bg-yellow-300 hover:bg-yellow-100 border border-yellow-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 mr-2 mb-2">
                         <div class="flex items-center">
-                            <img src="{{ asset('icon/download.png') }}" alt="Export" width="25" class="mr-2">
+                            <img src="{{ asset('icon/download.png') }}" alt="Export" width="25"
+                                class="mr-2">
                             <p>Export Produk</p>
                         </div>
                     </button>

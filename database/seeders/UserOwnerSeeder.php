@@ -21,6 +21,7 @@ class UserOwnerSeeder extends Seeder
             'name' => 'Owner',
             'username' => 'owner',
             'phone' => '085314005779',
+            'alamat' => 'Jl. Raya Cikarang Cibarusah No. 27, Cikarang Utara, Bekasi, Jawa Barat 17530',
             'roles' => 'OWNER',
             'password' => Hash::make('password'),
         ])->markEmailAsVerified();

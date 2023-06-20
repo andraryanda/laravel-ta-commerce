@@ -338,6 +338,12 @@ class TransactionController extends Controller
                             <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/edit.png') . '" alt="show" loading="lazy" width="20" />
                             <p class="mt-1 text-xs">Edit</p>
                         </a>
+                        <button type="button" title="Delete"
+                            class="flex flex-col delete-button shadow-sm items-center justify-center w-20 h-12 border border-red-500 bg-red-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-red-500 focus:outline-none focus:shadow-outline"
+                            data-id="' . $encryptedId . '">
+                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/delete.png') . '" alt="delete" loading="lazy" width="20" />
+                            <p class="mt-1 text-xs">Delete</p>
+                        </button>
                     </div>
                    ';
                     } else {
@@ -368,6 +374,12 @@ class TransactionController extends Controller
                             <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/edit.png') . '" alt="show" loading="lazy" width="20" />
                             <p class="mt-1 text-xs">Edit</p>
                         </a>
+                        <button type="button" title="Delete"
+                            class="flex flex-col delete-button shadow-sm items-center justify-center w-20 h-12 border border-red-500 bg-red-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-red-500 focus:outline-none focus:shadow-outline"
+                            data-id="' . $encryptedId . '">
+                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/delete.png') . '" alt="delete" loading="lazy" width="20" />
+                            <p class="mt-1 text-xs">Delete</p>
+                        </button>
                     </div>
                    ';
                     }
@@ -1134,9 +1146,10 @@ class TransactionController extends Controller
             }
 
             // Verifikasi role pengguna
-            if (Auth::user()->roles != 'ADMIN' && $transaction->users_id != auth()->user()->id) {
+            if (Auth::user()->roles != 'ADMIN' && Auth::user()->roles != 'OWNER' && $transaction->users_id != auth()->user()->id) {
                 return redirect()->route('landingPage.index')->with('error', 'Anda tidak memiliki akses ke transaksi ini');
             }
+
 
             return view('pages.dashboard.transaction.show', compact('transaction'));
         } catch (DecryptException $e) {
@@ -1214,8 +1227,53 @@ class TransactionController extends Controller
      * @param  \App\Models\Transaction  $transaction
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(Transaction $transaction)
+    public function destroy($encryptedId)
     {
-        //
+        try {
+            $id = Crypt::decrypt($encryptedId);
+            $transaction = Transaction::find($id);
+
+            if (!$transaction) {
+                abort(404);
+            }
+
+            $transaction->delete();
+
+            // Hapus juga data pada tabel transaction_items yang terkait dengan transaksi ini
+            TransactionItem::where('transactions_id', $transaction->id)->delete();
+
+            return redirect()->route('dashboard.transaction.index')->withSuccess('Transaksi berhasil dihapus!');
+        } catch (\Exception $e) {
+            return redirect()->route('dashboard.transaction.index')->withError('Transaksi gagal dihapus!');
+        }
+
+        // try {
+        //     $transaction = Transaction::find($id);
+
+        //     if (!$transaction) {
+        //         abort(404);
+        //     }
+
+        //     $transaction->delete();
+
+        //     // Hapus juga data pada tabel transaction_items yang terkait dengan transaksi ini
+        //     TransactionItem::where('transactions_id', $transaction->id)->delete();
+
+        //     return redirect()->route('dashboard.transaction.index')->withSuccess('Transaksi berhasil dihapus!');
+        // } catch (\Exception $e) {
+        //     return redirect()->route('dashboard.transaction.index')->withError('Transaksi gagal dihapus!');
+        // }
+    }
+
+
+    public function getUserAddress($id)
+    {
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        return response()->json(['address' => $user->alamat]);
     }
 }

@@ -76,7 +76,8 @@
                                     @foreach ($users as $user)
                                         <option></option>
                                         <option value="{{ $user->id }}"
-                                            {{ old('users_id') == $user->id ? 'selected' : '' }}>{{ $user->name }}
+                                            {{ old('users_id') == $user->id ? 'selected' : '' }}
+                                            data-address="{{ $user->alamat }}">{{ $user->name }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -107,7 +108,7 @@
                             <div class="mb-4">
                                 <label for="address"
                                     class="block mb-2 text-sm font-medium text-gray-700 dark:text-white">Alamat</label>
-                                <textarea id="message" name="address" rows="4"
+                                <textarea id="address" name="address" rows="4"
                                     class="block p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     placeholder="Tuliskan Alamat..." required></textarea>
                             </div>
@@ -164,17 +165,22 @@
             </div>
 
             @push('style')
-                <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+                <link rel="stylesheet" href="{{ asset('select2/dist/css/select2.min.css') }}">
             @endpush
 
             @push('javascript')
-                <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+                <script src="{{ asset('select2/dist/js/select2.min.js') }}"></script>
 
                 <script>
                     $(document).ready(function() {
                         $('.select-users').select2({
                             placeholder: "Pilih Pengguna",
                             allowClear: true
+                        });
+                        $('#users_id').on('change', function() {
+                            var selectedOption = $(this).find('option:selected');
+                            var address = selectedOption.data('address');
+                            $('#address').val(address);
                         });
                     });
                 </script>
@@ -193,6 +199,33 @@
                         window.history.back();
                     }
                 </script>
+
+                <script>
+                    $(document).ready(function() {
+                        const selectUser = $('#users_id');
+                        const addressInput = $('#address');
+
+                        selectUser.on('change', function() {
+                            const userId = $(this).val();
+
+                            // Kirim permintaan AJAX ke endpoint untuk mengambil data alamat pengguna
+                            // Gantikan URL_API dengan URL endpoint Anda
+                            $.ajax({
+                                url: `/users/${userId}/address`,
+                                type: 'GET',
+                                success: function(response) {
+                                    // Mengisikan data alamat ke input alamat
+                                    addressInput.val(response.address);
+                                },
+                                error: function(error) {
+                                    console.error(error);
+                                }
+                            });
+                        });
+                    });
+                </script>
+
+
 
                 <script>
                     function disableButton(button) {

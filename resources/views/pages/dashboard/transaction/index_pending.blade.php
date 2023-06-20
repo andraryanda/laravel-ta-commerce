@@ -242,6 +242,7 @@
                 });
             </script>
 
+
         </x-slot>
 
         <div class="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4">
@@ -340,5 +341,66 @@
                 </table>
             </div>
         </div>
+
+
+        @push('javascript')
+            {{-- Delete --}}
+            <script>
+                $(document).ready(function() {
+                    $('body').on('click', '.delete-button', function() {
+                        var transaction_id = $(this).data("id");
+                        Swal.fire({
+                            title: 'Apakah anda yakin ingin menghapus transaksi produk ini?',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#3085d6',
+                            confirmButtonText: 'Hapus',
+                            cancelButtonText: 'Batal'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                $.ajax({
+                                    type: "DELETE",
+                                    url: "{{ route('dashboard.transaction.destroy', ':id') }}"
+                                        .replace(
+                                            ':id', transaction_id),
+                                    data: {
+                                        "_token": "{{ csrf_token() }}"
+                                    },
+                                    error: function(data) {
+                                        console.log('Error:', data);
+                                    }
+                                });
+                                setTimeout(function() {
+                                        location.reload();
+                                    },
+                                    1000
+                                ); // memberikan jeda selama 1000 milidetik atau 1 detik sebelum reload
+                                let timerInterval;
+                                Swal.fire({
+                                    title: 'Deleted!',
+                                    text: 'Your data has been deleted.',
+                                    icon: 'success',
+                                    timer: 1500,
+                                    timerProgressBar: true,
+                                    didOpen: () => {
+                                        Swal.showLoading();
+                                        timerInterval = setInterval(() => {}, 100);
+                                    },
+                                    willClose: () => {
+                                        clearInterval(timerInterval);
+                                        location.reload();
+                                    }
+                                }).then((result) => {
+                                    if (result.dismiss === Swal.DismissReason.timer) {
+                                        console.log('I was closed by the timer');
+                                    }
+                                });
+                            }
+                        });
+                    });
+                });
+            </script>
+        @endpush
     @endsection
 </x-layout.apps>

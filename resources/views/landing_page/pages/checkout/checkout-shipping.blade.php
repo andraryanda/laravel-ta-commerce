@@ -35,16 +35,31 @@
                         <div class="text-center mt-4">
                             <h5 class="font-weight-bold">Data Profile:</h5>
                         </div>
+                        <div class="form-group mt-3">
+                            <label for="name">Nama Pengguna</label>
+                            <input type="text" class="form-control" id="name" value="{{ Auth::user()->name }}"
+                                readonly required>
+                        </div>
+                        <div class="form-group mt-3">
+                            <label for="phone">Nomor Handphone</label>
+                            <input type="text" class="form-control" id="phone" value="{{ Auth::user()->phone }}"
+                                readonly required>
+                        </div>
+                        <div class="form-group mt-3">
+                            <label for="email">Email</label>
+                            <input type="text" class="form-control" id="email" value="{{ Auth::user()->email }}"
+                                readonly required>
+                        </div>
                         <div class="form-group">
                             <label for="address">Alamat</label>
-                            <input type="text" class="form-control" name="address" id="address" value="Karangampel"
-                                required>
+                            <textarea name="address" id="address" class="form-control" cols="30"
+                                rows="5"value="{{ Auth::user()->alamat }}">{{ Auth::user()->alamat }}</textarea>
                         </div>
 
                         <div class="d-none">
                             <div class="form-group">
-                                    <label for="total_price">Product ID</label>
-                                    <input type="text" class="form-control" name="products_id" id="products_id"
+                                <label for="total_price">Product ID</label>
+                                <input type="text" class="form-control" name="products_id" id="products_id"
                                     value="{{ $product->id }}" readonly required>
                             </div>
 
@@ -261,8 +276,7 @@
                     </button>
                     {{-- </form> --}}
                     {{-- Penutup Form --}}
-                    <button type="submit" name="bayar_manual"
-                        class="btn btn-success my-2 py-2 rounded-pill">
+                    <button type="submit" name="bayar_manual" class="btn btn-success my-2 py-2 rounded-pill">
                         <div class="d-flex justify-content-center align-items-center">
                             <img src="{{ asset('icon/whatsapp.png') }}" alt="whatsapp" width="30" class="mr-2">
                             <p class="text-white mb-0 font-weight-bold">Bayar Manual & Hubungi Admin Whatsapp</p>

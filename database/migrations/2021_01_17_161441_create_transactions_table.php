@@ -31,8 +31,8 @@ class CreateTransactionsTable extends Migration
             $table->foreign('users_id')
             ->references('id')
             ->on('users')
-            ->onDelete('restrict')
-            ->onUpdate('restrict');
+            ->onDelete('cascade')
+            ->onUpdate('cascade');
         });
     }
 

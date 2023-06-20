@@ -39,10 +39,10 @@
                             </div>
                         </div>
                     @endif
-                    <form class="w-full" action="{{ route('dashboard.user.update', $item->id) }}" method="post"
+                    <form class="w-full" action="{{ route('dashboard.user.update', encrypt($item->id)) }}" method="post"
                         enctype="multipart/form-data">
                         @csrf
-                        @method('put')
+                        @method('PUT')
                         <div class="flex flex-wrap -mx-3 mb-6">
                             <div class="w-full px-3">
                                 <label
@@ -79,6 +79,27 @@
                                     id="grid-last-name" type="text" placeholder="Username">
                             </div>
                         </div>
+
+                        <div class="flex flex-wrap -mx-3 mb-6">
+                            <div class="w-full px-3">
+                                <label
+                                    class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 dark:text-gray-200"
+                                    for="grid-last-name">
+                                    Phone
+                                </label>
+                                <input value="{{ old('phone') ?? $item->phone }}" name="phone"
+                                    class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                    id="grid-last-name" type="text" placeholder="Phone">
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="alamat"
+                                class="block mb-2 text-sm font-medium text-gray-700 dark:text-white">Alamat</label>
+                            <textarea id="alamat" name="alamat" rows="4"
+                                class="block p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                placeholder="Tuliskan Alamat..." value="{{ old('alamat') ?? $item->alamat }}" required>{{ $item->alamat }}</textarea>
+                        </div>
+
                         {{-- <div class="flex flex-wrap -mx-3 mb-6">
                         <div class="w-full px-3">
                             <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"

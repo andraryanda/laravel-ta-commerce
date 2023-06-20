@@ -34,20 +34,20 @@ class CreateTransactionWifiItemsTable extends Migration
             $table->foreign('transaction_wifi_id')
             ->references('id')
             ->on('transaction_wifis')
-            ->onDelete('restrict')
-            ->onUpdate('restrict');
+            ->onDelete('cascade')
+            ->onUpdate('cascade');
 
             $table->foreign('products_id')
             ->references('id')
             ->on('products')
-            ->onDelete('restrict')
-            ->onUpdate('restrict');
+            ->onDelete('cascade')
+            ->onUpdate('cascade');
 
             $table->foreign('users_id')
             ->references('id')
             ->on('users')
-            ->onDelete('restrict')
-            ->onUpdate('restrict');
+            ->onDelete('cascade')
+            ->onUpdate('cascade');
         });
     }
 

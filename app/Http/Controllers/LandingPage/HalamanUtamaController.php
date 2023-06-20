@@ -45,6 +45,8 @@ class HalamanUtamaController extends Controller
             $product->productGallery = ProductGallery::where('products_id', $product->id)->get();
         }
 
+
+
         return view('landing_page.pages.index', compact(
             'products',
             'total_product',

@@ -30,10 +30,10 @@
                 }
             </script>
 
-            <script src="{{ url('https://cdn.ckeditor.com/4.16.0/standard/ckeditor.js') }}"></script>
+            {{-- <script src="{{ url('https://cdn.ckeditor.com/4.16.0/standard/ckeditor.js') }}"></script>
             <script>
-                CKEDITOR.replace('description');
-            </script>
+                CKEDITOR.replace('address');
+            </script> --}}
         @endpush
 
         <div class="py-3">
@@ -62,7 +62,16 @@
                         method="post" enctype="multipart/form-data">
                         @csrf
                         @method('put')
-                        <div class="flex flex-wrap -mx-3 mb-6">
+                        <div class="flex flex-wrap mx-3 mb-6">
+                            <div class="w-full px-3">
+                                <div class="mb-4" id="address">
+                                    <label for="description"
+                                        class="block mb-2 text-sm font-medium text-gray-700 dark:text-white">Alamat:</label>
+                                    <textarea name="address" rows="4"
+                                        class="block p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                        placeholder="Tuliskan alamat..." value="{{ $item->address }}">{{ $item->address }}</textarea>
+                                </div>
+                            </div>
                             <div class="w-full px-3">
                                 <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                                     for="grid-last-name">
@@ -76,9 +85,6 @@
                                     <option value="PENDING">PENDING</option>
                                     <option value="SUCCESS">SUCCESS</option>
                                     <option value="CANCELLED">CANCELLED</option>
-                                    <option value="FAILED">FAILED</option>
-                                    <option value="SHIPPING">SHIPPING</option>
-                                    <option value="SHIPPED">SHIPPED</option>
                                 </select>
                             </div>
                         </div>

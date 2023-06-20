@@ -41,7 +41,7 @@
                             class="w-full">
                             @csrf
 
-                            <div class="">
+                            <div class="" hidden>
 
                                 <div class="mb-4">
                                     <label for="users_id" class="block mb-2 text-sm font-medium text-gray-700">Pilih

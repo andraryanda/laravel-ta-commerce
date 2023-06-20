@@ -48,6 +48,8 @@ class UserRequest extends FormRequest
                     return $fail('The ' . $attribute . ' field is invalid.');
                 }
             }],
+            'alamat' => 'nullable',
+            'phone' => 'nullable',
 
         ];
     }

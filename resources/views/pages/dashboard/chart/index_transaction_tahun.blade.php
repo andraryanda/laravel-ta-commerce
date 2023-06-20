@@ -17,7 +17,7 @@
                         onchange="this.form.submit()">
                         <option disabled>-- Pilih Tahun --</option>
                         @foreach ($availableYears as $availableYear)
-                            <option value="{{ $availableYear }}" {{ $currentYear == $availableYear ? 'selected' : '' }}>
+                            <option value="{{ $availableYear }}" {{ $year == $availableYear ? 'selected' : '' }}>
                                 {{ $availableYear }}</option>
                         @endforeach
                     </select>

@@ -239,6 +239,23 @@ class DashboardController extends Controller
         //         ->rawColumns(['user.name', 'status', 'action'])
         //         ->make();
         // }
+
+        $transactions = TransactionItem::select('products_id')
+        ->selectRaw('COUNT(*) as count')
+        ->selectRaw("SUM(CASE WHEN transactions.status = 'SUCCESS' THEN 1 ELSE 0 END) as success_count")
+        ->selectRaw("SUM(CASE WHEN transactions.status = 'PENDING' THEN 1 ELSE 0 END) as pending_count")
+        ->selectRaw("SUM(CASE WHEN transactions.status = 'CANCELED' THEN 1 ELSE 0 END) as canceled_count")
+        ->leftJoin('transactions', 'transaction_items.transactions_id', '=', 'transactions.id')
+        ->whereNull('transaction_items.deleted_at')
+        ->groupBy('products_id')
+        ->get();
+
+    $productNames = Product::whereIn('id', $transactions->pluck('products_id'))->pluck('name');
+
+    $labels = $productNames->toArray();
+    $successData = $transactions->pluck('success_count')->toArray();
+    $pendingData = $transactions->pluck('pending_count')->toArray();
+    $canceledData = $transactions->pluck('canceled_count')->toArray();
         return view(
             'dashboard2',
             compact(
@@ -252,6 +269,7 @@ class DashboardController extends Controller
                 'productChart',
                 'transactionPriceChart',
                 'users',
+                'labels', 'successData', 'pendingData', 'canceledData'
             )
         );
     }

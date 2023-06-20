@@ -9,7 +9,7 @@
     {{-- <title>{{ __('Als Store RT/RW NET') }}</title> --}}
 
     <link rel="shortcut icon" href="{{ asset('icon/store.png') }}">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/flowbite.min.css" rel="stylesheet" />
+    <link href="{{ url('https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/flowbite.min.css') }}" rel="stylesheet" />
     <link rel="stylesheet"
         href="{{ url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200') }}" />
     <link rel="stylesheet"
@@ -19,7 +19,8 @@
     <link href="{{ url('https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css') }}" rel="stylesheet">
     <link href="{{ url('https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css') }}"
         rel="stylesheet">
-    <link rel="stylesheet" href="{{ url('https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/sweetalert2/sweetalert2.min.css') }}">
+    {{-- <link rel="stylesheet" href="{{ url('https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css') }}"> --}}
 
 
 
@@ -174,10 +175,13 @@
     <script src="{{ url('https://code.jquery.com/jquery-3.6.0.min.js') }}"></script>
     <script src="{{ url('https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ url('https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js') }}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/flowbite.min.js"></script>
+    <script src="{{ url('https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/flowbite.min.js') }}"></script>
     <script src="{{ asset('assets/js/focus-trap.js') }}" defer></script>
-    <script src="{{ url('https://cdn.jsdelivr.net/npm/sweetalert2@11') }}"></script>
-    <script src="{{ url('https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js') }}"></script>
+    {{-- <script src="{{ url('https://cdn.jsdelivr.net/npm/sweetalert2@11') }}"></script> --}}
+    <script src="{{ asset('assets/sweetalert2/sweetalert2.all.min.js') }}"></script>
+    <script src="{{ asset('chartJS_4-3-0/package/dist/chart.umd.js') }}"></script>
+
+    {{-- <script src="{{ url('https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js') }}"></script> --}}
     <script src="{{ asset('assets/js/init-alpine.js') }}"></script>
 
 
@@ -223,6 +227,7 @@
                     @yield('chart')
                     @yield('notification')
                     @yield('report')
+                    @yield('profileUser')
                     {{-- Admin Penutup --}}
                     {{-- Customer --}}
                     @yield('transactionCustomer')
@@ -248,7 +253,7 @@
 
     const showMenu1 = (flag) => {
         if (flag) {
-            icon1.classList.toggle("rotate-180");
+            // icon1.classList.toggle("rotate-180");
             menu1.classList.toggle("hidden");
         }
     };
@@ -258,7 +263,7 @@
 
     const showMenu2 = (flag) => {
         if (flag) {
-            icon2.classList.toggle("rotate-180");
+            // icon2.classList.toggle("rotate-180");
             menu2.classList.toggle("hidden");
         }
     };
@@ -268,7 +273,7 @@
 
     const showMenu3 = (flag) => {
         if (flag) {
-            icon3.classList.toggle("rotate-180");
+            // icon3.classList.toggle("rotate-180");
             menu3.classList.toggle("hidden");
         }
     };
@@ -278,8 +283,18 @@
 
     const showMenu4 = (flag) => {
         if (flag) {
-            icon4.classList.toggle("rotate-180");
+            // icon4.classList.toggle("rotate-180");
             menu4.classList.toggle("hidden");
+        }
+    };
+
+    let icon5 = document.getElementById("icon5");
+    let menu5 = document.getElementById("menu5");
+
+    const showMenu5 = (flag) => {
+        if (flag) {
+            // icon5.classList.toggle("rotate-180");
+            menu5.classList.toggle("hidden");
         }
     };
 
@@ -324,6 +339,16 @@
         }
     };
 
+    let icon15 = document.getElementById("icon15");
+    let menu15 = document.getElementById("menu15");
+
+    const showMenu15 = (flag) => {
+        if (flag) {
+            icon15.classList.toggle("rotate-180");
+            menu15.classList.toggle("hidden");
+        }
+    };
+
 
     let Main = document.getElementById("Main");
     let open = document.getElementById("open");
@@ -352,6 +377,9 @@
         if (!event.target.closest("#menu4") && !event.target.closest("#icon4")) {
             showMenu4(false);
         }
+        if (!event.target.closest("#menu5") && !event.target.closest("#icon5")) {
+            showMenu5(false);
+        }
         // Mobile
         if (!event.target.closest("#menu11") && !event.target.closest("#icon11")) {
             showMenu11(false);
@@ -364,6 +392,9 @@
         }
         if (!event.target.closest("#menu14") && !event.target.closest("#icon14")) {
             showMenu14(false);
+        }
+        if (!event.target.closest("#menu15") && !event.target.closest("#icon15")) {
+            showMenu15(false);
         }
         // Uncomment the following code if you have other menus to close
         /*

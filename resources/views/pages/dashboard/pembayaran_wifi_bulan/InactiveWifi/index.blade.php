@@ -174,34 +174,6 @@
         <div class="w-full overflow-hidden rounded-lg shadow-xs">
             <div class=" overflow-x-auto bg-white ">
                 <div class="flex justify-start space-x-2 my-3 mx-3">
-                    <button type="button" onclick="window.location.href='{{ route('dashboard.bulan.create') }}'"
-                        title="Create"
-                        class="text-gray-900 shadow-sm bg-white hover:bg-green-100 border border-green-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 mr-2 mb-2">
-                        <div class="flex items-center">
-                            <img src="{{ asset('icon/create.png') }}" alt="Create" width="25" class="mr-2">
-                            <p>Create Transaction Wifi</p>
-                        </div>
-                    </button>
-                    <!-- Modal toggle -->
-                    <button data-modal-target="defaultModal" data-modal-toggle="defaultModal"
-                        class="text-gray-900 shadow-sm bg-white hover:bg-yellow-100 border border-yellow-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-yellow-600 dark:bg-gray-800 dark:border-yellow-700 dark:text-white dark:hover:bg-yellow-700 mr-2 mb-2"
-                        type="button" title="Import">
-                        <div class="flex items-center">
-                            <img src="{{ asset('icon/upload.png') }}" alt="Upload" width="25" class="mr-2">
-                            <p>Import Transaction Wifi</p>
-                        </div>
-                    </button>
-                </div>
-                <div class="flex justify-start space-x-2 my-3 mx-3">
-                    <button type="button"
-                        onclick="window.location.href='{{ route('dashboard.report.exportTransactionWifi') }}'"
-                        title="Export"
-                        class="text-gray-900 shadow-sm bg-white hover:bg-blue-100 border border-blue-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 mr-2 mb-2">
-                        <div class="flex items-center">
-                            <img src="{{ asset('icon/download.png') }}" alt="Export" width="25" class="mr-2">
-                            <p>Export Transaction Wifi</p>
-                        </div>
-                    </button>
                 </div>
                 <table id="crudTable" class="w-full row-border whitespace-no-wrap my-2 py-2">
                     <thead>

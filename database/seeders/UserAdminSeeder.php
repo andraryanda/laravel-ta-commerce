@@ -30,7 +30,8 @@ class UserAdminSeeder extends Seeder
         ], [
             'name' => 'Admin',
             'username' => 'admin',
-            'phone' => '',
+            'phone' => '08531400779',
+            'alamat' => 'Jl. Raya Cikarang Cibarusah No. 27, Cikarang Utara, Bekasi, Jawa Barat 17530',
             'roles' => 'ADMIN',
             'password' => Hash::make('password'),
         ])->markEmailAsVerified();
@@ -43,6 +44,7 @@ class UserAdminSeeder extends Seeder
                 'name' => 'Admin' . $item,
                 'username' => $faker->unique()->userName,
                 'phone' => $faker->phoneNumber,
+                'alamat' => $faker->address,
                 'roles' => 'ADMIN',
                 'password' => Hash::make('password'),
                 'remember_token' => Str::random(10),

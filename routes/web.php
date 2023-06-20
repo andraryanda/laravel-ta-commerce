@@ -12,6 +12,7 @@ use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\Auth\HomeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserChartController;
+use App\Http\Controllers\ProfileUserController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\SearchGlobalController;
 use App\Http\Controllers\MyTransactionController;
@@ -106,6 +107,10 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
         // Route::get('sendMessageCustomer', [HalamanUtamaController::class, 'sendMessage2'])->name('transaction.sendMessage2');
 
 
+        Route::resource('profileUser', ProfileUserController::class)->only([
+            'index','edit', 'update'
+        ]);
+
         Route::middleware(['customer'])->group(function () {
             Route::resource('transactionCustomer', TransactionCustomerController::class)->only([
                 'index', 'show'
@@ -135,8 +140,10 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
 
             Route::post('importCategory', [ProductCategoryController::class, 'importCategory'])->name('category.importCategory');
             Route::resource('transaction', TransactionController::class)->only([
-                'index', 'show', 'create', 'store', 'edit', 'update'
+                'index', 'show', 'create', 'store', 'edit', 'update', 'destroy'
             ]);
+            Route::get('users/{id}/address', [TransactionController::class, 'sengetUserAddressdMessage'])->name('transaction.getAddress');
+
             Route::get('sendMessage-{transaction}', [TransactionController::class, 'sendMessage'])->name('transaction.sendMessage');
             Route::get('transactionAllTransaction', [TransactionController::class, 'indexAllTransaction'])->name('transaction.indexAllTransaction');
             Route::get('transactionPending', [TransactionController::class, 'indexPending'])->name('transaction.indexPending');

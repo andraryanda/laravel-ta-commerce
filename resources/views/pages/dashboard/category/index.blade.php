@@ -228,6 +228,27 @@
                         </div>
                     </div>
                 </div>
+                @if (Session::get('success'))
+                    <div id="success-message"
+                        class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 my-2.5 rounded relative"
+                        role="alert">
+                        <strong class="font-bold">Success!</strong>
+                        <span class="block sm:inline">{{ Session::get('success') }}</span>
+                    </div>
+                    <script>
+                        $(document).ready(function() {
+                            // Hide the success message after 5 seconds
+                            setTimeout(function() {
+                                $("#success-message").fadeOut("slow");
+                            }, 10000);
+
+                            // Hide the success message when the close button is clicked
+                            function closeAlert() {
+                                $("#success-message").fadeOut("slow");
+                            }
+                        });
+                    </script>
+                @endif
 
                 @if ($errorMessage = Session::get('errorMessage'))
                     <div id="error-message"
@@ -294,6 +315,7 @@
                     });
                 });
             </script>
+
             <script>
                 $(document).ready(function() {
                     $('body').on('click', '.delete-button', function() {

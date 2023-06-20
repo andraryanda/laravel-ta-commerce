@@ -77,6 +77,151 @@
                 });
             </script>
 
+            {{-- total Transaction Produk --}}
+            <script>
+                const labels = @json($labels);
+                const successData = @json($successData);
+                const pendingData = @json($pendingData);
+                const canceledData = @json($canceledData);
+
+                const ctx = document.getElementById('transactionChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                                label: 'Success',
+                                data: successData,
+                                backgroundColor: '#28a745',
+                            },
+                            {
+                                label: 'Pending',
+                                data: pendingData,
+                                backgroundColor: '#ffc107',
+                            },
+                            {
+                                label: 'Cancelled',
+                                data: canceledData,
+                                backgroundColor: '#dc3545',
+                            },
+                        ],
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    precision: 0,
+                                },
+                            },
+                        },
+                    },
+                });
+            </script>
+            {{-- total transaction produk (Rp.Harga) --}}
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    var ctx = document.getElementById('transactionHargaChart').getContext('2d');
+                    var chart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Pending', 'Success', 'Cancelled'],
+                            datasets: [{
+                                label: 'Total Penjualan (dalam Rupiah)',
+                                data: [
+                                    {{ $totalPendingSales }},
+                                    {{ $totalSuccessSales }},
+                                    {{ $totalCancelledSales }}
+                                ],
+                                backgroundColor: [
+                                    'rgba(255, 206, 86, 0.8)',
+                                    'rgba(75, 192, 192, 0.8)',
+                                    'rgba(255, 99, 132, 0.8)'
+                                ],
+                                borderColor: [
+                                    'rgba(255, 206, 86, 1)',
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(255, 99, 132, 1)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        callback: function(value, index, values) {
+                                            return 'Rp' + value.toLocaleString();
+                                        }
+                                    }
+                                },
+                                x: {
+                                    grid: {
+                                        display: false
+                                    }
+                                }
+                            },
+                            plugins: {
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            var label = context.dataset.label || '';
+                                            if (label) {
+                                                label += ': ';
+                                            }
+                                            label += 'Rp' + context.parsed.y.toLocaleString();
+                                            return label;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                });
+            </script>
+            {{-- Data Penjualan Produk Perbulan --}}
+            <script>
+                var ctx = document.getElementById('transactionPerMonthChart').getContext('2d');
+                var transactionPerMonthChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: monthLabels,
+                        datasets: [{
+                                label: 'Total Success',
+                                data: successBulanTotal,
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Total Pending',
+                                data: pendingBulanTotal,
+                                backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                                borderColor: 'rgba(255, 206, 86, 1)',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Total Cancelled',
+                                data: cancelledBulanTotal,
+                                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                borderColor: 'rgba(255, 99, 132, 1)',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            </script>
+
             {{-- Chart --}}
             {!! $transactionChart->script() !!}
             {!! $userRegistrationChart->script() !!}
@@ -294,27 +439,40 @@
                 <h4 class="mb-4 font-semibold text-gray-800 dark:text-gray-300">
                     Users
                 </h4>
-                {!! $userRegistrationChart->container() !!}
+                <div style="height: 300px; overflow: hidden;">
+                    {!! $userRegistrationChart->container() !!}
+                </div>
             </div>
             <div class="min-w-0 p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
                 <h4 class="mb-4 font-semibold text-gray-800 dark:text-gray-300">
                     Transactions
                 </h4>
-                {!! $transactionChart->container() !!}
+                <div style="height: 300px; overflow: hidden;">
+                    <canvas id="transactionChart"></canvas>
+                </div>
+                <div style="height: 300px; overflow: hidden;">
+                    <canvas id="transactionHargaChart"></canvas>
+                </div>
             </div>
             <div class="min-w-0 p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
                 <h4 class="mb-4 font-semibold text-gray-800 dark:text-gray-300">
                     Data Penjualan Produk Terbanyak
                 </h4>
-                {!! $productChart->container() !!}
+                <div style="height: 300px; overflow: hidden;">
+                    {!! $productChart->container() !!}
+                </div>
             </div>
             <div class="min-w-0 p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
                 <h4 class="mb-4 font-semibold text-gray-800 dark:text-gray-300">
                     Data Penjualan Produk Per-Bulan
                 </h4>
-                {!! $transactionPriceChart->container() !!}
+                <div style="height: 300px; overflow: hidden;">
+                    {!! $transactionPriceChart->container() !!}
+
+                </div>
             </div>
         </div>
+
 
 
     </x-slot>

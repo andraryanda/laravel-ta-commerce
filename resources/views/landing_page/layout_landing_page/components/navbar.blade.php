@@ -147,7 +147,7 @@
              @if (Route::has('login'))
                  @auth
                      <li>
-                         @if (Auth::user()->roles == 'ADMIN')
+                         @if (Auth::user()->roles == 'ADMIN' || Auth::user()->roles == 'OWNER')
                              <a href="{{ url('/dashboard') }}" class="btn btn-primary btn-action rounded-pill"><span
                                      class="fa fa-home"></span>
                                  {{ __('Dashboard') }}
@@ -219,7 +219,7 @@
                              @if (Route::has('login'))
                                  @auth
                                      <li>
-                                         @if (Auth::user()->roles == 'ADMIN')
+                                         @if (Auth::user()->roles == 'ADMIN' || Auth::user()->roles == 'OWNER')
                                              <a href="{{ url('/dashboard') }}"
                                                  class="btn btn-primary btn-action rounded-pill"><span
                                                      class="fa fa-home"></span>

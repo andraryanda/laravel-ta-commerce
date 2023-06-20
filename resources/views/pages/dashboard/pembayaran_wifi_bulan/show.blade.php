@@ -208,10 +208,11 @@
                             </tr>
                             <tr>
                                 <th class="border px-6 py-4 text-right">Alamat</th>
-                                <td
+                                {{-- <td
                                     class="border px-6 py-4 {{ strlen($transaction->items->address) > 20 ? 'truncate' : '' }}">
                                     {{ $transaction->items->address }}
-                                </td>
+                                </td> --}}
+                                <td class="border px-6 py-4">{{ $transactionProduk->address }}</td>
                             </tr>
                             {{-- <tr>
                                 <th class="border px-6 py-4 text-right">Metode Pembayaran</th>
@@ -228,7 +229,7 @@
                                     @php
                                         $expiredDate = \Carbon\Carbon::parse($transaction->expired_wifi);
                                         $currentDate = \Carbon\Carbon::now()->timezone('Asia/Jakarta');
-                                        
+
                                         if ($currentDate->greaterThanOrEqualTo($expiredDate)) {
                                             $status = 'INACTIVE';
                                             $statusClass = 'text-red-700 bg-red-100';
@@ -272,7 +273,7 @@
                                 @php
                                     $expiredDate = \Carbon\Carbon::parse($transaction->expired_wifi);
                                     $currentDate = \Carbon\Carbon::now()->timezone('Asia/Jakarta');
-                                    
+
                                     if ($expiredDate->isPast()) {
                                         $status = 'INACTIVE';
                                         $statusClass = 'text-red-700 bg-red-100';
