@@ -34,6 +34,7 @@ use App\Http\Controllers\Search\PricingDashboardSearchController;
 use App\Http\Controllers\Search\PricingLandingPageSearchController;
 use App\Http\Controllers\Customer\TransactionWifiCustomerController;
 use App\Http\Controllers\LandingPageCustom\LandingPageHomeController;
+use App\Http\Controllers\LandingPageCustom\LandingPageAboutController;
 use App\Http\Controllers\LandingPageCustom\LandingPageContactController;
 use App\Http\Controllers\LandingPageCustom\LandingPageAboutTeamController;
 use App\Http\Controllers\LandingPageCustom\LandingPageAboutFeatureController;

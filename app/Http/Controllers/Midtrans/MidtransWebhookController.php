@@ -128,7 +128,7 @@ class MidtransWebhookController extends Controller
 
         // Buat array untuk data pembayaran
         $transaction_details = [
-            'order_id' => $transaction->id,
+            'order_id' => $transaction->id. '_' . time(),
             'gross_amount' => $transaction->total_price + $transaction->shipping_price,
         ];
 
@@ -325,7 +325,8 @@ class MidtransWebhookController extends Controller
 
 
         // Cek apakah transaksi ditemukan dalam database berdasarkan order_id
-        $transaction = Transaction::where('id', $request->order_id)->first();
+        // $transaction = Transaction::where('id', $request->order_id)->first();
+        $transaction = Transaction::where('id', $order_id_time)->first();
         // $transactionWifi = TransactionWifi::with(['wifi_items'])->where('id', $request->order_id)->first();
         $transactionWifi = TransactionWifi::with(['wifi_items'])->where('id', $order_id_time)->first();
 
@@ -386,7 +387,7 @@ class MidtransWebhookController extends Controller
                 $userId = $transaction->users_id;
 
                 // Logika pengalihan pengguna berdasarkan role dan nilai order_id
-                if ($user->roles == 'USER' && $transaction->id == $request->order_id && $transaction->users_id == $user->id) {
+                if ($user->roles == 'USER' && $transaction->id. '_' . time() == $request->order_id && $transaction->users_id == $user->id) {
                     // Jika pengguna bukan admin dan order_id == request->order_id dan users_id == id pengguna
                     return redirect()->route('dashboard.midtrans.showCustomer', encrypt($transactionId));
                 } else {
