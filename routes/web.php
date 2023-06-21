@@ -33,6 +33,7 @@ use App\Http\Controllers\Customer\TransactionCustomerController;
 use App\Http\Controllers\Search\PricingDashboardSearchController;
 use App\Http\Controllers\Search\PricingLandingPageSearchController;
 use App\Http\Controllers\Customer\TransactionWifiCustomerController;
+use App\Http\Controllers\LandingPageCustom\LandingPageHomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -108,7 +109,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
 
 
         Route::resource('profileUser', ProfileUserController::class)->only([
-            'index','edit', 'update'
+            'index', 'edit', 'update'
         ]);
 
         Route::middleware(['customer'])->group(function () {
@@ -120,7 +121,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
             ]);
 
             Route::resource('pembayaran/wifi/bulan-customer', TransactionWifiCustomerController::class)->only([
-                'index','create','store','show','edit','update'
+                'index', 'create', 'store', 'show', 'edit', 'update'
             ]);
 
 
@@ -129,11 +130,17 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
 
         Route::middleware(['admin'])->group(function () {
             Route::get('dashboard', [DashboardController::class, 'statusDashboard'])->name('dashboard.index');
+
+            Route::resource('landing-page-home/carousel', LandingPageHomeController::class)->shallow()->only([
+                'index', 'store', 'update', 'destroy'
+            ]);
+
             Route::resource('product', ProductController::class);
             Route::resource('category', ProductCategoryController::class);
             Route::resource('product.gallery', ProductGalleryController::class)->shallow()->only([
                 'index', 'create', 'store', 'destroy'
             ]);
+
 
 
             Route::post('gallery/import', [ProductGalleryController::class, 'importProductGallery'])->name('gallery.importProductGallery');
@@ -151,13 +158,13 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
             Route::get('transactionCancelled', [TransactionController::class, 'indexCancelled'])->name('transaction.indexCancelled');
 
             Route::resource('pembayaran/wifi/bulan', TransactionWifiController::class)->only([
-                'index','create','store','show','edit','update'
+                'index', 'create', 'store', 'show', 'edit', 'update'
             ]);
             Route::get('pembayaran/wifi/bulan-inactive', [TransactionWifiController::class, 'indexAdminInactive'])->name('bulan.indexAdminInactive');
             Route::get('sendWifiMessage-{transactionWifi}', [TransactionWifiController::class, 'sendWifiMessage'])->name('bulan.sendWifiMessage');
 
             Route::resource('pembayaran/wifi/bulan/item', TransactionWifiItemController::class)->only([
-                'show','store','edit','update'
+                'show', 'store', 'edit', 'update'
             ]);
             // Route::get('/transaction-wifi/{encryptedId}/edit', [TransactionWifiItemController::class, 'edit'])->name('transaction-wifi.edit');
             // Route::resource('transaction/pending', TransactionController::class)->only([

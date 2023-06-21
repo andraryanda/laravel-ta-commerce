@@ -546,9 +546,9 @@ class TransactionController extends Controller
         if (request()->ajax()) {
             $query = Transaction::with(['user'])->where('status', '=', 'CANCELLED')->orderByDesc('created_at');
             return DataTables::of($query)
-            ->editColumn('user.name', function ($item) {
-                if ($item->user->profile_photo_url) {
-                    return '
+                ->editColumn('user.name', function ($item) {
+                    if ($item->user->profile_photo_url) {
+                        return '
                         <td class="px-4 py-3">
                             <div class="flex items-center text-sm">
                                 <!-- Avatar with inset shadow -->
@@ -562,8 +562,8 @@ class TransactionController extends Controller
                             </div>
                         </td>
                     ';
-                } else {
-                    return '
+                    } else {
+                        return '
                         <td class="px-4 py-3">
                             <div class="flex items-center text-sm">
                                 <span class="inline-block h-8 w-8 rounded-full overflow-hidden bg-gray-100">
@@ -579,8 +579,8 @@ class TransactionController extends Controller
                             </div>
                         </td>
                     ';
-                }
-            })
+                    }
+                })
 
                 ->editColumn('status', function ($item) {
                     if ($item->status == 'SUCCESS') {
@@ -1033,36 +1033,37 @@ class TransactionController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create()
-{
-    try {
-        $users = User::where('roles', '=', 'USER')->get();
-        $products = Product::with('galleries')->with('category')->get();
+    {
+        try {
+            $users = User::where('roles', '=', 'USER')->get();
+            $products = Product::with('galleries')->with('category')->get();
 
-        $status_transaction = [
-            ['label' => 'PENDING', 'value' => 'PENDING'],
-            ['label' => 'SUCCESS', 'value' => 'SUCCESS'],
-            ['label' => 'CANCELLED', 'value' => 'CANCELLED'],
-        ];
+            $status_transaction = [
+                ['label' => 'PENDING', 'value' => 'PENDING'],
+                ['label' => 'SUCCESS', 'value' => 'SUCCESS'],
+                ['label' => 'CANCELLED', 'value' => 'CANCELLED'],
+            ];
 
-        // Pengecekan data
-        if ($users->isEmpty()) {
-            throw new \Exception('Tidak ada data pengguna (users)');
+            // Pengecekan data
+            if ($users->isEmpty()) {
+                throw new \Exception('Tidak ada data pengguna (users)');
+            }
+
+            if ($products->isEmpty()) {
+                throw new \Exception('Tidak ada data produk (products)');
+            }
+
+            return view('pages.dashboard.transaction.create', compact(
+                'products',
+                'users',
+                'status_transaction',
+            ));
+        } catch (\Exception $e) {
+            // Tangani kesalahan di sini
+            // Misalnya, tampilkan pesan kesalahan atau redirect ke halaman lain
+            return redirect()->back()->withError('Terjadi kesalahan: ' . $e->getMessage());
         }
-
-        if ($products->isEmpty()) {
-            throw new \Exception('Tidak ada data produk (products)');
-        }
-
-        return view('pages.dashboard.transaction.create', compact(
-            'products',
-            'users',
-        'status_transaction',));
-    } catch (\Exception $e) {
-        // Tangani kesalahan di sini
-        // Misalnya, tampilkan pesan kesalahan atau redirect ke halaman lain
-        return redirect()->back()->withError( 'Terjadi kesalahan: ' . $e->getMessage());
     }
-}
 
 
     /**
@@ -1071,7 +1072,7 @@ class TransactionController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(TransactionRequest $request)
+    public function store(Request $request)
     {
         $lastTransaction = Transaction::orderBy('incre_id', 'desc')->first();
 

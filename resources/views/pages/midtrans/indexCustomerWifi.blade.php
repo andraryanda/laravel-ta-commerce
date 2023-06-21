@@ -1,7 +1,7 @@
 <x-layout.apps>
     <x-slot name="header">
 
-        @if (Auth::user()->roles == 'ADMIN')
+        @if (Auth::user()->roles == 'ADMIN' || Auth::user()->roles == 'OWNER')
             <button onclick="window.location.href='{{ route('dashboard.bulan.index') }}'"
                 class="w-24 my-6 text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 shadow-lg shadow-purple-500/50 dark:shadow-lg dark:shadow-purple-800/80 font-medium rounded-lg text-sm px-3 py-2.5 text-center mr-2 mb-2">
                 <div class="flex items-center">
@@ -198,7 +198,34 @@
                             <tr>
                                 <th class="border px-6 py-4 text-right">Tanggal Expired Wifi</th>
                                 <td class="border px-6 py-4">
-                                    {{ \Carbon\Carbon::parse($transaction->expired_wifi)->timezone('Asia/Jakarta')->locale('id_ID')->isoFormat('dddd, D MMMM Y HH:mm:ss') }}
+                                    @php
+                                        $expiredDate = \Carbon\Carbon::parse($transaction->expired_wifi);
+                                        $currentDate = \Carbon\Carbon::now()->timezone('Asia/Jakarta');
+                                        
+                                        if ($currentDate->greaterThanOrEqualTo($expiredDate)) {
+                                            $status = 'INACTIVE';
+                                            $statusClass = 'text-red-700 bg-red-100';
+                                            $daysUntilExpired = 0; // Set jumlah hari menjadi 0 karena sudah lewat
+                                        } else {
+                                            $daysUntilExpired = $currentDate->diffInDays($expiredDate);
+                                            $status = 'ACTIVE';
+                                            if ($daysUntilExpired < 7) {
+                                                $statusClass = 'text-yellow-700 bg-yellow-100';
+                                            } else {
+                                                $statusClass = 'text-green-700 bg-green-100';
+                                            }
+                                        }
+                                    @endphp
+
+                                    {{ $expiredDate->timezone('Asia/Jakarta')->locale('id_ID')->isoFormat('dddd, D MMMM Y') }}
+                                    <br>
+                                    <span
+                                        class="px-2 py-1 font-semibold leading-tight {{ $statusClass }} rounded-full dark:bg-red-700 dark:text-red-100">
+                                        {{ $status }}
+                                        @if ($status == 'ACTIVE')
+                                            (Masa Wifi berakhir dalam {{ $daysUntilExpired }} hari)
+                                        @endif
+                                    </span>
                                 </td>
                             </tr>
                             <tr>
