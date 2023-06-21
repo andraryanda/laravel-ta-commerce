@@ -51,7 +51,7 @@ class MidtransWebhookController extends Controller
 
     public function paymentWifi($id)
     {
-        $transaction = TransactionWifi::with(['user','product'])->findOrFail($id);
+        $transaction = TransactionWifi::with(['user', 'product'])->findOrFail($id);
 
         // Set konfigurasi midtrans
         Config::$serverKey = env('MIDTRANS_SERVER_KEY');
@@ -330,189 +330,186 @@ class MidtransWebhookController extends Controller
         $transactionWifi = TransactionWifi::with(['wifi_items'])->where('id', $order_id_time)->first();
 
 
-
         // if (!$transaction) {
         //     return response()->json(['error' => 'Transaction not found'], 404);
         // }
 
-    if($transaction)
-    {
-        // Transksi Pembelian Produk
-        if ($request->status_code == 200) {
-            if ($request->transaction_status == 'settlement' || $request->transaction_status == 'capture') {
-                $transaction->status = 'SUCCESS';
-                $transaction->payment = 'Bank Transfer';
-            } elseif ($request->transaction_status == 'pending') {
-                $transaction->status = 'PENDING';
-            } elseif ($request->transaction_status == 'deny') {
-                $transaction->status = 'DENY';
-                // $transaction->payment = 'Bank Transfer';
-                // batalkan transaksi di Midtrans
-                \Midtrans\Transaction::cancel($request->order_id);
-            } elseif ($request->transaction_status == 'expire') {
-                $transaction->status = 'EXPIRED';
-                $transaction->payment = 'Bank Transfer';
-                // batalkan transaksi di Midtrans
-                \Midtrans\Transaction::cancel($request->order_id);
-            } elseif ($request->transaction_status == 'cancel') {
-                $transaction->status = 'CANCELLED';
-                $transaction->payment = 'Bank Transfer';
-                // batalkan transaksi di Midtrans
-                \Midtrans\Transaction::cancel($request->order_id);
-            } else {
-                $transaction->status = 'CANCELLED';
-                $transaction->payment = 'Bank Transfer';
-                // batalkan transaksi di Midtrans
-                \Midtrans\Transaction::cancel($request->order_id);
-            }
-        } else {
-            $transaction->status = 'CANCELLED';
-            $transaction->payment = 'Bank Transfer';
-            // batalkan transaksi di Midtrans
-            \Midtrans\Transaction::cancel($request->order_id);
-        }
-
-
-        $transaction->save();
-
-        // Get the transaction and user data
-        $transaction = Transaction::find($transaction->id);
-        $user = Auth::user();
-
-        // Send the email
-        Mail::to('andraryandra38@gmail.com')->send(new TransactionSuccessNotification($transaction, $user));
-
         if ($transaction) {
-            // Mengambil nilai id dan users_id dari model Transaction
-            $transactionId = $transaction->id;
-            $userId = $transaction->users_id;
-
-            // Logika pengalihan pengguna berdasarkan role dan nilai order_id
-            if ($user->roles == 'USER' && $transaction->id == $request->order_id && $transaction->users_id == $user->id) {
-                // Jika pengguna bukan admin dan order_id == request->order_id dan users_id == id pengguna
-                return redirect()->route('dashboard.midtrans.showCustomer', encrypt($transactionId));
+            // Transksi Pembelian Produk
+            if ($request->status_code == 200) {
+                if ($request->transaction_status == 'settlement' || $request->transaction_status == 'capture') {
+                    $transaction->status = 'SUCCESS';
+                    $transaction->payment = 'Bank Transfer';
+                } elseif ($request->transaction_status == 'pending') {
+                    $transaction->status = 'PENDING';
+                } elseif ($request->transaction_status == 'deny') {
+                    $transaction->status = 'DENY';
+                    // $transaction->payment = 'Bank Transfer';
+                    // batalkan transaksi di Midtrans
+                    \Midtrans\Transaction::cancel($request->order_id);
+                } elseif ($request->transaction_status == 'expire') {
+                    $transaction->status = 'EXPIRED';
+                    $transaction->payment = 'Bank Transfer';
+                    // batalkan transaksi di Midtrans
+                    \Midtrans\Transaction::cancel($request->order_id);
+                } elseif ($request->transaction_status == 'cancel') {
+                    $transaction->status = 'CANCELLED';
+                    $transaction->payment = 'Bank Transfer';
+                    // batalkan transaksi di Midtrans
+                    \Midtrans\Transaction::cancel($request->order_id);
+                } else {
+                    $transaction->status = 'CANCELLED';
+                    $transaction->payment = 'Bank Transfer';
+                    // batalkan transaksi di Midtrans
+                    \Midtrans\Transaction::cancel($request->order_id);
+                }
             } else {
-                // Jika pengguna tidak memiliki peran admin atau kondisi lainnya ADMIN
-                return redirect()->route('dashboard.midtrans.show', encrypt($transactionId));
+                $transaction->status = 'CANCELLED';
+                $transaction->payment = 'Bank Transfer';
+                // batalkan transaksi di Midtrans
+                \Midtrans\Transaction::cancel($request->order_id);
             }
-        } else {
-            // Logika jika data transaksi tidak ditemukan
-            // Misalnya menampilkan pesan error atau mengarahkan pengguna ke halaman lain
-            // ...
-            return redirect()->route('landingPage.index')->withError('Transaksi Problem');
-        }
-    } elseif ($transactionWifi) {
-    // Transaksi pembayaran wifi
-    if ($request->status_code == 200) {
-        if ($request->transaction_status == 'settlement' || $request->transaction_status == 'capture') {
-            $transactionWifi->status = 'ACTIVE';
+
+
+            $transaction->save();
+
+            // Get the transaction and user data
+            $transaction = Transaction::find($transaction->id);
+            $user = Auth::user();
+
+            // Send the email
+            Mail::to('andraryandra38@gmail.com')->send(new TransactionSuccessNotification($transaction, $user));
+
+            if ($transaction) {
+                // Mengambil nilai id dan users_id dari model Transaction
+                $transactionId = $transaction->id;
+                $userId = $transaction->users_id;
+
+                // Logika pengalihan pengguna berdasarkan role dan nilai order_id
+                if ($user->roles == 'USER' && $transaction->id == $request->order_id && $transaction->users_id == $user->id) {
+                    // Jika pengguna bukan admin dan order_id == request->order_id dan users_id == id pengguna
+                    return redirect()->route('dashboard.midtrans.showCustomer', encrypt($transactionId));
+                } else {
+                    // Jika pengguna tidak memiliki peran admin atau kondisi lainnya ADMIN
+                    return redirect()->route('dashboard.midtrans.show', encrypt($transactionId));
+                }
+            } else {
+                // Logika jika data transaksi tidak ditemukan
+                // Misalnya menampilkan pesan error atau mengarahkan pengguna ke halaman lain
+                // ...
+                return redirect()->route('landingPage.index')->withError('Transaksi Problem');
+            }
+        } elseif ($transactionWifi) {
+            // Transaksi pembayaran wifi
+            if ($request->status_code == 200) {
+                if ($request->transaction_status == 'settlement' || $request->transaction_status == 'capture') {
+                    $transactionWifi->status = 'ACTIVE';
 
                     // Menambahkan data pada tabel transaction_wifi_items
-            $lastTransaction = TransactionWifiItem::orderBy('incre_id', 'desc')->first();
-            $increId = $lastTransaction ? $lastTransaction->incre_id + 1 : 1;
+                    $lastTransaction = TransactionWifiItem::orderBy('incre_id', 'desc')->first();
+                    $increId = $lastTransaction ? $lastTransaction->incre_id + 1 : 1;
 
-            $transactionWifiItem = new TransactionWifiItem();
-            $transactionWifiItem->incre_id = $increId;
-            $transactionWifiItem->users_id = $transactionWifi->users_id;
-            $transactionWifiItem->products_id = $transactionWifi->products_id;
-            $transactionWifiItem->transaction_wifi_id = $transactionWifi->id;
-            $transactionWifiItem->order_id = $transactionWifi->id;
-            $transactionWifiItem->payment_status = 'PAID';
-            $transactionWifiItem->payment_transaction = $transactionWifi->total_price_wifi;
-            $transactionWifiItem->payment_method = 'BANK TRANSFER';
-            $transactionWifiItem->payment_bank = 'MIDTRANS';
-            $transactionWifiItem->description = 'Pembayaran Lunas Wifi - Otomatis dari Customer '. Carbon::now()->format('d-m-Y H:i:s');
-            $transactionWifiItem->created_at = now();
-            $transactionWifiItem->updated_at = now();
-            $transactionWifiItem->save();
+                    $transactionWifiItem = new TransactionWifiItem();
+                    $transactionWifiItem->incre_id = $increId;
+                    $transactionWifiItem->users_id = $transactionWifi->users_id;
+                    $transactionWifiItem->products_id = $transactionWifi->products_id;
+                    $transactionWifiItem->transaction_wifi_id = $transactionWifi->id;
+                    $transactionWifiItem->order_id = $transactionWifi->id;
+                    $transactionWifiItem->payment_status = 'PAID';
+                    $transactionWifiItem->payment_transaction = $transactionWifi->total_price_wifi;
+                    $transactionWifiItem->payment_method = 'BANK TRANSFER';
+                    $transactionWifiItem->payment_bank = 'MIDTRANS';
+                    $transactionWifiItem->description = 'Pembayaran Lunas Wifi - Otomatis dari Customer ' . Carbon::now()->format('d-m-Y H:i:s');
+                    $transactionWifiItem->created_at = now();
+                    $transactionWifiItem->updated_at = now();
+                    $transactionWifiItem->save();
 
-            // Menambahkan 1 bulan pada tanggal expired_wifi
-            $expiredWifi = Carbon::parse($transactionWifi->expired_wifi);
-            $newExpiredWifi = $expiredWifi->addMonth();
-            $transactionWifi->expired_wifi = $newExpiredWifi;
+                    // Menambahkan 1 bulan pada tanggal expired_wifi
+                    $expiredWifi = Carbon::parse($transactionWifi->expired_wifi);
+                    $newExpiredWifi = $expiredWifi->addMonth();
+                    $transactionWifi->expired_wifi = $newExpiredWifi;
+                    $transactionWifi->save();
+                } elseif ($request->transaction_status == 'pending') {
+                    $transactionWifi->status = 'INACTIVE';
+                    foreach ($transactionWifi->wifi_items as $wifi_item) {
+                        $wifi_item->payment_status = 'UNPAID';
+                        $wifi_item->save();
+                    }
+                } elseif ($request->transaction_status == 'deny') {
+                    $transactionWifi->status = 'INACTIVE';
+                    foreach ($transactionWifi->wifi_items as $wifi_item) {
+                        $wifi_item->payment_status = 'UNPAID';
+                        $wifi_item->save();
+                    }
+                    // batalkan transaksi di Midtrans
+                    \Midtrans\Transaction::cancel($request->order_id);
+                } elseif ($request->transaction_status == 'expire') {
+                    $transactionWifi->status = 'INACTIVE';
+                    foreach ($transactionWifi->wifi_items as $wifi_item) {
+                        $wifi_item->payment_status = 'UNPAID';
+                        $wifi_item->save();
+                    }
+                    // batalkan transaksi di Midtrans
+                    \Midtrans\Transaction::cancel($request->order_id);
+                } elseif ($request->transaction_status == 'cancel') {
+                    $transactionWifi->status = 'INACTIVE';
+                    foreach ($transactionWifi->wifi_items as $wifi_item) {
+                        $wifi_item->payment_status = 'UNPAID';
+                        $wifi_item->save();
+                    }
+                    // batalkan transaksi di Midtrans
+                    \Midtrans\Transaction::cancel($request->order_id);
+                } else {
+                    $transactionWifi->status = 'INACTIVE';
+                    foreach ($transactionWifi->wifi_items as $wifi_item) {
+                        $wifi_item->payment_status = 'UNPAID';
+                        $wifi_item->save();
+                    }
+                    // batalkan transaksi di Midtrans
+                    \Midtrans\Transaction::cancel($request->order_id);
+                }
+            } else {
+                $transactionWifi->status = 'INACTIVE';
+                foreach ($transactionWifi->wifi_items as $wifi_item) {
+                    $wifi_item->payment_status = 'UNPAID';
+                    $wifi_item->save();
+                }
+                // batalkan transaksi di Midtrans
+                \Midtrans\Transaction::cancel($request->order_id);
+            }
+
             $transactionWifi->save();
-        } elseif ($request->transaction_status == 'pending') {
-            $transactionWifi->status = 'INACTIVE';
-            foreach ($transactionWifi->wifi_items as $wifi_item) {
-                $wifi_item->payment_status = 'UNPAID';
-                $wifi_item->save();
+
+            // Get the transactionWifi and user data
+            $transactionWifi = TransactionWifi::find($transactionWifi->id);
+            $user = Auth::user();
+
+            // Send the email
+            // Mail::to('andraryandra38@gmail.com')->send(new TransactionWifiSuccessNotification($transactionWifi, $user));
+
+            if ($transactionWifi) {
+                // Mengambil nilai id dan users_id dari model Transaction
+                $transactionId = $transactionWifi->id;
+                $userId = $transactionWifi->users_id;
+
+                // Logika pengalihan pengguna berdasarkan role dan nilai order_id
+
+                // if ($user->roles == 'USER' && $transactionWifi->id == $request->order_id && $transactionWifi->users_id == $user->id) {
+                if ($user->roles == 'USER' && $transactionWifi->id . '_' . time() == $request->order_id && $transactionWifi->users_id == $user->id) { // Jika pengguna bukan admin dan order_id == request->order_id dan users_id == id pengguna
+                    return redirect()->route('dashboard.bulan.showCustomerWifi1', encrypt($transactionId));
+                    // return redirect()->route('dashboard.midtrans.showCustomerWifi', encrypt($transactionId));
+                    // return redirect()->route('dashboard.bulan-customer.index')->withSuccess('Pembayaran Berhasil Dilakukan');
+                } else {
+                    // Jika pengguna tidak memiliki peran admin atau ko  ndisi lainnya ADMIN
+                    return redirect()->route('dashboard.midtrans.showCustomerWifi', encrypt($transactionId));
+                }
+            } else {
+                // Logika jika data transaksi tidak ditemukan
+                // Misalnya menampilkan pesan error atau mengarahkan pengguna ke halaman lain
+                // ...
+                return redirect()->route('landingPage.index')->withError('Transaksi Problem');
             }
-        } elseif ($request->transaction_status == 'deny') {
-            $transactionWifi->status = 'INACTIVE';
-            foreach ($transactionWifi->wifi_items as $wifi_item) {
-                $wifi_item->payment_status = 'UNPAID';
-                $wifi_item->save();
-            }
-            // batalkan transaksi di Midtrans
-            \Midtrans\Transaction::cancel($request->order_id);
-        } elseif ($request->transaction_status == 'expire') {
-            $transactionWifi->status = 'INACTIVE';
-            foreach ($transactionWifi->wifi_items as $wifi_item) {
-                $wifi_item->payment_status = 'UNPAID';
-                $wifi_item->save();
-            }
-            // batalkan transaksi di Midtrans
-            \Midtrans\Transaction::cancel($request->order_id);
-        } elseif ($request->transaction_status == 'cancel') {
-            $transactionWifi->status = 'INACTIVE';
-            foreach ($transactionWifi->wifi_items as $wifi_item) {
-                $wifi_item->payment_status = 'UNPAID';
-                $wifi_item->save();
-            }
-            // batalkan transaksi di Midtrans
-            \Midtrans\Transaction::cancel($request->order_id);
-        } else {
-            $transactionWifi->status = 'INACTIVE';
-            foreach ($transactionWifi->wifi_items as $wifi_item) {
-                $wifi_item->payment_status = 'UNPAID';
-                $wifi_item->save();
-            }
-            // batalkan transaksi di Midtrans
-            \Midtrans\Transaction::cancel($request->order_id);
         }
-    } else {
-        $transactionWifi->status = 'INACTIVE';
-        foreach ($transactionWifi->wifi_items as $wifi_item) {
-            $wifi_item->payment_status = 'UNPAID';
-            $wifi_item->save();
-        }
-        // batalkan transaksi di Midtrans
-        \Midtrans\Transaction::cancel($request->order_id);
-    }
-
-    $transactionWifi->save();
-
-    // Get the transactionWifi and user data
-    $transactionWifi = TransactionWifi::find($transactionWifi->id);
-    $user = Auth::user();
-
-    // Send the email
-    // Mail::to('andraryandra38@gmail.com')->send(new TransactionWifiSuccessNotification($transactionWifi, $user));
-
-    if ($transactionWifi) {
-        // Mengambil nilai id dan users_id dari model Transaction
-        $transactionId = $transactionWifi->id;
-        $userId = $transactionWifi->users_id;
-
-        // Logika pengalihan pengguna berdasarkan role dan nilai order_id
-
-        // if ($user->roles == 'USER' && $transactionWifi->id == $request->order_id && $transactionWifi->users_id == $user->id) {
-            if ($user->roles == 'USER' && $transactionWifi->id . '_' . time() == $request->order_id && $transactionWifi->users_id == $user->id) {// Jika pengguna bukan admin dan order_id == request->order_id dan users_id == id pengguna
-            return redirect()->route('dashboard.bulan.showCustomerWifi1', encrypt($transactionId));
-            // return redirect()->route('dashboard.midtrans.showCustomerWifi', encrypt($transactionId));
-            // return redirect()->route('dashboard.bulan-customer.index')->withSuccess('Pembayaran Berhasil Dilakukan');
-        } else {
-            // Jika pengguna tidak memiliki peran admin atau ko  ndisi lainnya ADMIN
-            return redirect()->route('dashboard.midtrans.showCustomerWifi', encrypt($transactionId));
-        }
-    } else {
-        // Logika jika data transaksi tidak ditemukan
-        // Misalnya menampilkan pesan error atau mengarahkan pengguna ke halaman lain
-        // ...
-        return redirect()->route('landingPage.index')->withError('Transaksi Problem');
-    }
-
-    }
 
         // return redirect()->route('dashboard.midtrans.show', encrypt($transaction->id));
     }
@@ -646,7 +643,7 @@ class MidtransWebhookController extends Controller
                             return '
                             <td class="px-4 py-3 text-xs">
                                 <span class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
-                                    ' . 'Sudah Dibayar'.'
+                                    ' . 'Sudah Dibayar' . '
                                 </span>
                             </td>
                         ';
@@ -654,7 +651,7 @@ class MidtransWebhookController extends Controller
                             return '
                             <td class="px-4 py-3 text-xs">
                                 <span class="px-2 py-1 font-semibold leading-tight text-yellow-700 bg-yellow-100 rounded-full dark:bg-yellow-700 dark:text-yellow-100">
-                                    ' .'Belum Dibayar'.'
+                                    ' . 'Belum Dibayar' . '
                                 </span>
                             </td>
                         ';
@@ -691,8 +688,8 @@ class MidtransWebhookController extends Controller
                         ';
                         }
                     })
-                ->rawColumns(['payment_status','description'])
-                ->make();
+                    ->rawColumns(['payment_status', 'description'])
+                    ->make();
             }
 
             return view('pages.midtrans.index2', compact('transaction'));
@@ -723,7 +720,7 @@ class MidtransWebhookController extends Controller
                             return '
                             <td class="px-4 py-3 text-xs">
                                 <span class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
-                                    ' . 'Sudah Dibayar'.'
+                                    ' . 'Sudah Dibayar' . '
                                 </span>
                             </td>
                         ';
@@ -731,7 +728,7 @@ class MidtransWebhookController extends Controller
                             return '
                             <td class="px-4 py-3 text-xs">
                                 <span class="px-2 py-1 font-semibold leading-tight text-yellow-700 bg-yellow-100 rounded-full dark:bg-yellow-700 dark:text-yellow-100">
-                                    ' . 'Belum Dibayar'.'
+                                    ' . 'Belum Dibayar' . '
                                 </span>
                             </td>
                         ';
@@ -768,8 +765,8 @@ class MidtransWebhookController extends Controller
                         ';
                         }
                     })
-                ->rawColumns(['payment_status','description'])
-                ->make();
+                    ->rawColumns(['payment_status', 'description'])
+                    ->make();
             }
 
             return view('pages.midtrans.indexCustomerWifi', compact('transaction'));
@@ -777,7 +774,6 @@ class MidtransWebhookController extends Controller
             return redirect()->route('landingPage.index')->with('error', 'Terjadi kesalahan dalam menampilkan transaksi');
         }
     }
-
 }
 
 

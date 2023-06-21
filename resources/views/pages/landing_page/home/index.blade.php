@@ -334,22 +334,33 @@
         @push('javascript')
             <script>
                 $('body').on('click', '.edit-button', function() {
-                    var home_id = $(this).data('id');
-                    $.ajax({
-                        url: "{{ route('dashboard.carousel.edit', ['carousel' => ':id']) }}".replace(':id',
-                            home_id),
-                        cache: false,
-                        type: "GET",
-                        success: function(response) {
-                            window.location.href =
-                                "{{ route('dashboard.carousel.edit', ['carousel' => ':id']) }}".replace(':id',
-                                    home_id) + '?_=' + new Date().getTime();
-                        },
-                        error: function() {
-                            console.log('Error: Failed to open edit page.');
-                        }
-                    });
-                });
+                            var home_id = $(this).data('id');
+                            $.ajax({
+                                <<
+                                << << < HEAD
+                                url: "{{ route('dashboard.carousel.edit', ['carousel' => ':id']) }}".replace(':id', ===
+                                    === =
+                                    url: "{{ route('dashboard.category.edit', ['category' => ':id']) }}".replace(
+                                        ':id', >>>
+                                        >>> > 47 bad6332685d5e1e5821f75052ee106b072f71b home_id),
+                                    cache: false,
+                                    type: "GET",
+                                    success: function(response) {
+                                        window.location.href = <<
+                                            << << <
+                                            HEAD "{{ route('dashboard.carousel.edit', ['carousel' => ':id']) }}"
+                                            .replace(':id', ===
+                                                === =
+                                                "{{ route('dashboard.category.edit', ['category' => ':id']) }}"
+                                                .replace(':id', >>>
+                                                    >>> > 47 bad6332685d5e1e5821f75052ee106b072f71b home_id) + '?_=' +
+                                                new Date().getTime();
+                                            },
+                                            error: function() {
+                                                console.log('Error: Failed to open edit page.');
+                                            }
+                                    });
+                            });
             </script>
 
             <script>
