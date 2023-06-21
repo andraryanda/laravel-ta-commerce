@@ -33,6 +33,11 @@ use App\Http\Controllers\Customer\TransactionCustomerController;
 use App\Http\Controllers\Search\PricingDashboardSearchController;
 use App\Http\Controllers\Search\PricingLandingPageSearchController;
 use App\Http\Controllers\Customer\TransactionWifiCustomerController;
+use App\Http\Controllers\LandingPageCustom\LandingPageHomeController;
+use App\Http\Controllers\LandingPageCustom\LandingPageAboutController;
+use App\Http\Controllers\LandingPageCustom\LandingPageContactController;
+use App\Http\Controllers\LandingPageCustom\LandingPageAboutTeamController;
+use App\Http\Controllers\LandingPageCustom\LandingPageAboutFeatureController;
 
 /*
 |--------------------------------------------------------------------------
@@ -129,6 +134,28 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
 
         Route::middleware(['admin'])->group(function () {
             Route::get('dashboard', [DashboardController::class, 'statusDashboard'])->name('dashboard.index');
+
+            Route::resource('landing-page-home/carousel', LandingPageHomeController::class)->shallow()->only([
+                'index', 'store', 'update', 'edit', 'destroy'
+            ]);
+
+            Route::resource('landing-page-about/about-utama', LandingPageAboutController::class)->shallow()->only([
+                'index', 'store', 'update', 'edit', 'destroy'
+            ]);
+
+            Route::resource('landing-page-about/about-team', LandingPageAboutTeamController::class)->shallow()->only([
+                'index', 'store', 'update', 'edit', 'destroy'
+            ]);
+
+            Route::resource('landing-page-about/about-feature', LandingPageAboutFeatureController::class)->shallow()->only([
+                'index', 'store', 'update', 'edit', 'destroy'
+            ]);
+
+            Route::resource('landing-page-contact/contact', LandingPageContactController::class)->shallow()->only([
+                'index', 'store', 'update', 'edit', 'destroy'
+            ]);
+
+
             Route::resource('product', ProductController::class);
             Route::resource('category', ProductCategoryController::class);
             Route::resource('product.gallery', ProductGalleryController::class)->shallow()->only([

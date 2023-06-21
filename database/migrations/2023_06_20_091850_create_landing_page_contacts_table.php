@@ -17,8 +17,8 @@ class CreateLandingPageContactsTable extends Migration
             $table->id();
 
             $table->string('title_contact');
-            $table->string('description_contact');
-            $table->string('address_contact');
+            $table->longText('description_contact');
+            $table->longText('address_contact');
             $table->string('phone_contact');
             $table->string('email_contact');
 
