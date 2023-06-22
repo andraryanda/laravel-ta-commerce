@@ -94,7 +94,8 @@ class TransactionController extends Controller
         }
 
         NotificationTransaction::create([
-            'transactions_id' => $transaction->incre_id
+            // 'transactions_id' => $transaction->incre_id
+            'transactions_id' => $transaction->id
         ]);
 
         // Get the transaction and user data

@@ -66,21 +66,29 @@ class LandingPageContactController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
-            "title_contact" => "required",
-            "description_contact" => "required",
-            "address_contact" => "required",
-            "phone_contact" => "required",
-            "email_contact" => "required",
-        ],
-        [
-        'title_contact.required' => 'Title Contact harus diisi.',
-        'description_contact.required' => 'Description Contact harus diisi.',
-        'address_contact.required' => 'Address Contact harus diisi.',
-        'phone_contact.required' => 'Phone Contact harus diisi.',
-        'email_contact.required' => 'Email Contact harus diisi.',
+        $existingContact = LandingPageContact::first();
 
-        ]);
+        if ($existingContact) {
+            return redirect()->route('dashboard.contact.index')->withErrors('Data Contact sudah tersedia.');
+        }
+
+        $this->validate(
+            $request,
+            [
+                "title_contact" => "required",
+                "description_contact" => "required",
+                "address_contact" => "required",
+                "phone_contact" => "required",
+                "email_contact" => "required",
+            ],
+            [
+                'title_contact.required' => 'Title Contact harus diisi.',
+                'description_contact.required' => 'Description Contact harus diisi.',
+                'address_contact.required' => 'Address Contact harus diisi.',
+                'phone_contact.required' => 'Phone Contact harus diisi.',
+                'email_contact.required' => 'Email Contact harus diisi.',
+            ]
+        );
 
         $landingPageContact = new LandingPageContact();
         $landingPageContact->title_contact = $request->title_contact;
@@ -91,10 +99,9 @@ class LandingPageContactController extends Controller
 
         $landingPageContact->save();
 
-        // dd($landingPageContact);
-
         return redirect()->route('dashboard.contact.index')->withSuccess('Data Contact berhasil disimpan.');
     }
+
     /**
      * Display the specified resource.
      *
@@ -122,22 +129,25 @@ class LandingPageContactController extends Controller
 
     public function update(Request $request, $id)
     {
-        $this->validate($request, [
-            "title_contact" => "required",
-            "description_contact" => "required",
-            "address_contact" => "required",
-            "phone_contact" => "required",
-            "email_contact" => "required",
-        ],
-    [
-        'title_contact.required' => 'Title Contact harus diisi.',
-        'description_contact.required' => 'Description Contact harus diisi.',
-        'address_contact.required' => 'Address Contact harus diisi.',
-        'phone_contact.required' => 'Phone Contact harus diisi.',
-        'email_contact.required' => 'Email Contact harus diisi.',
+        $this->validate(
+            $request,
+            [
+                "title_contact" => "required",
+                "description_contact" => "required",
+                "address_contact" => "required",
+                "phone_contact" => "required",
+                "email_contact" => "required",
+            ],
+            [
+                'title_contact.required' => 'Title Contact harus diisi.',
+                'description_contact.required' => 'Description Contact harus diisi.',
+                'address_contact.required' => 'Address Contact harus diisi.',
+                'phone_contact.required' => 'Phone Contact harus diisi.',
+                'email_contact.required' => 'Email Contact harus diisi.',
 
 
-    ]);
+            ]
+        );
 
         $landingPageContact = LandingPageContact::findOrFail($id);
         $landingPageContact->title_contact = $request->title_contact;
@@ -158,5 +168,4 @@ class LandingPageContactController extends Controller
 
         return redirect()->route('dashboard.contact.index')->withSuccess('Data Contact berhasil dihapus.');
     }
-
 }

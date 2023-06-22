@@ -22,29 +22,29 @@ class CreateTransactionWifisTable extends Migration
             $table->uuid('transactions_id');
 
             $table->decimal('total_price_wifi', 12, 2);
-            $table->string('status');
+            $table->string('status', 15);
             $table->date('expired_wifi');
 
             $table->softDeletes();
             $table->timestamps();
 
             $table->foreign('transactions_id')
-            ->references('id')
-            ->on('transactions')
-            ->onDelete('cascade')
-            ->onUpdate('cascade');
+                ->references('id')
+                ->on('transactions')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
 
             $table->foreign('products_id')
-            ->references('id')
-            ->on('products')
-            ->onDelete('cascade')
-            ->onUpdate('cascade');
+                ->references('id')
+                ->on('products')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
 
             $table->foreign('users_id')
-            ->references('id')
-            ->on('users')
-            ->onDelete('cascade')
-            ->onUpdate('cascade');
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
         });
     }
 

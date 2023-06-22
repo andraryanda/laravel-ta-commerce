@@ -16,12 +16,12 @@ class CreateProductsTable extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
 
-            $table->string('name');
+            $table->string('name', 45);
             $table->decimal('price', 12, 2);
             $table->longText('description');
 
-            $table->string('tags')->nullable();
-            $table->string('status_product')->nullable();
+            $table->string('tags', 100)->nullable();
+            $table->string('status_product', 20)->nullable();
 
             // $table->bigInteger('categories_id');
             $table->unsignedBigInteger('categories_id');
@@ -31,10 +31,10 @@ class CreateProductsTable extends Migration
 
 
             $table->foreign('categories_id')
-            ->references('id')
-            ->on('product_categories')
-            ->onDelete('restrict')
-            ->onUpdate('restrict');
+                ->references('id')
+                ->on('product_categories')
+                ->onDelete('restrict')
+                ->onUpdate('restrict');
 
             // $table->foreign('categories_id')
             // ->references('id')

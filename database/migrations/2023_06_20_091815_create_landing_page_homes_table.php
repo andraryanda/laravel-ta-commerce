@@ -16,8 +16,8 @@ class CreateLandingPageHomesTable extends Migration
         Schema::create('landing_page_homes', function (Blueprint $table) {
             $table->id();
 
-            $table->string('header_title_carousel');
-            $table->string('title_carousel');
+            $table->string('header_title_carousel', 50);
+            $table->string('title_carousel', 50);
             $table->string('image_carousel');
 
             $table->timestamps();

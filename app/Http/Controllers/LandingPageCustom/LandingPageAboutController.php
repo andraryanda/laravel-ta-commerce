@@ -71,8 +71,13 @@ class LandingPageAboutController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
+        $existingAbout = LandingPageAbout::first();
 
+        if ($existingAbout) {
+            return back()->withErrors('Data About sudah tersedia.');
+        }
+
+        $this->validate($request, [
             "title_about" => "required",
             "description_about" => "required",
             "image_about" => "required|image|mimes:png,jpg,jpeg",
@@ -92,6 +97,7 @@ class LandingPageAboutController extends Controller
 
         return back()->withSuccess('Gambar About berhasil disimpan.');
     }
+
 
     /**
      * Display the specified resource.
@@ -162,5 +168,4 @@ class LandingPageAboutController extends Controller
 
         return back()->withSuccess('Data About berhasil dihapus.');
     }
-
 }

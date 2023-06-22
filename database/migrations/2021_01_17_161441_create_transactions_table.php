@@ -22,17 +22,17 @@ class CreateTransactionsTable extends Migration
             $table->text('address')->nullable();
             $table->decimal('total_price', 12, 2);
             $table->float('shipping_price')->default(0);
-            $table->string('status')->default('PENDING');
-            $table->string('payment')->default('MANUAL');
+            $table->string('status', 20)->default('PENDING');
+            $table->string('payment', 20)->default('MANUAL');
 
             $table->softDeletes();
             $table->timestamps();
 
             $table->foreign('users_id')
-            ->references('id')
-            ->on('users')
-            ->onDelete('cascade')
-            ->onUpdate('cascade');
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
         });
     }
 

@@ -16,8 +16,8 @@ class CreateLandingPageAboutFeaturesTable extends Migration
         Schema::create('landing_page_about_features', function (Blueprint $table) {
             $table->id();
 
-            $table->string('title_about_feature');
-            $table->string('description_about_feature');
+            $table->string('title_about_feature', 45);
+            $table->longText('description_about_feature');
             $table->string('image_about_feature');
 
             $table->timestamps();

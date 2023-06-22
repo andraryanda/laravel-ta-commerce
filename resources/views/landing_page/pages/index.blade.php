@@ -3,42 +3,64 @@
     <!-- Hero Section Begin -->
     <section class="hero-section">
         <div class="hero__slider owl-carousel">
-            <div class="hero__item set-bg" data-setbg="{{ asset('landing_page/img/hero/hero-1.jpg') }}">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="hero__text">
-                                <h5>Starting At Only $ 2.8/month</h5>
-                                <h2>Welcome to the best<br /> Network WiFi</h2>
-                                <a href="#" class="primary-btn">Get started now</a>
+            @forelse ($landingPageHome as $item)
+                <div class="hero__item set-bg" data-setbg="{{ Storage::url($item->image_carousel) }}">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="hero__text">
+                                    <h5>{{ $item->header_title_carousel }}</h5>
+                                    <h2>{{ $item->title_carousel }}</h2>
+                                    <a href="{{ route('landingPage.pricing') }}" class="primary-btn">Get started now</a>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="hero__img">
-                                <img src="{{ asset('landing_page/img/hero/hero-right.png') }}" alt="">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="hero__item set-bg" data-setbg="{{ asset('landing_page/img/hero/hero-1.jpg') }}">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="hero__text">
-                                <h5>Starting At Only $ 2.8/month</h5>
-                                <h2>Welcome to the best<br /> Toko Kami Networking</h2>
-                                <a href="#" class="primary-btn">Get started now</a>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="hero__img">
-                                <img src="{{ asset('landing_page/img/hero/hero-right.png') }}" alt="">
+                            <div class="col-lg-6">
+                                <div class="hero__img">
+                                    <img src="{{ asset('landing_page/img/hero/hero-right.png') }}"
+                                        alt="{{ $item->id }}">
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            @empty
+                <div class="hero__item set-bg" data-setbg="{{ asset('landing_page/img/hero/hero-1.jpg') }}">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="hero__text">
+                                    <h5>Starting At Only $ 2.8/month</h5>
+                                    <h2>Welcome to the best<br /> Network WiFi</h2>
+                                    <a href="#" class="primary-btn">Get started now</a>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="hero__img">
+                                    <img src="{{ asset('landing_page/img/hero/hero-right.png') }}" alt="">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero__item set-bg" data-setbg="{{ asset('landing_page/img/hero/hero-1.jpg') }}">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="hero__text">
+                                    <h5>Starting At Only $ 2.8/month</h5>
+                                    <h2>Welcome to the best<br /> Toko Kami Networking</h2>
+                                    <a href="#" class="primary-btn">Get started now</a>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="hero__img">
+                                    <img src="{{ asset('landing_page/img/hero/hero-right.png') }}" alt="">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endforelse
         </div>
     </section>
     <!-- Hero Section End -->
@@ -157,8 +179,8 @@
                     @forelse ($products as $product)
                         <div class="col-12  col-md-4 col-sm-12 col-xs-12">
                             <div class="card " style="width: 300px; margin: 10px;">
-                                <img src="{{ $product->productGallery->first()->url ?? 'Not Found!' }}" class="card-img-top"
-                                    alt="{{ $product->name }}">
+                                <img src="{{ $product->productGallery->first()->url ?? 'Not Found!' }}"
+                                    class="card-img-top" alt="{{ $product->name }}">
                                 <div class="card-body">
                                     <h5 class="card-title font-weight-bold">{{ $product->name }}</h5>
                                 </div>

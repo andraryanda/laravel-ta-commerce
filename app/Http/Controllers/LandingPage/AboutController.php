@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\LandingPage;
 
+use App\Models\User;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Models\LandingPage\LandingPageAbout;
 
 class AboutController extends Controller
 {
@@ -23,8 +25,15 @@ class AboutController extends Controller
             }
         }
 
+        $users_count = User::where('roles', 'USER')->count();
+
+        $landingPageAbout = LandingPageAbout::get();
+
+
         return view('landing_page.pages.about', [
             'total_pending_count' => $total_pending_count,
+            'landingPageAbout' => $landingPageAbout,
+            'users_count'
         ]);
     }
 }

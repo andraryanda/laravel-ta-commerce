@@ -16,8 +16,8 @@ class CreateLandingPageAboutsTable extends Migration
         Schema::create('landing_page_abouts', function (Blueprint $table) {
             $table->id();
 
-            $table->string('title_about');
-            $table->string('description_about');
+            $table->string('title_about', 50);
+            $table->longText('description_about');
             $table->string('image_about');
 
             $table->timestamps();

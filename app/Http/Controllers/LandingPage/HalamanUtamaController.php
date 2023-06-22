@@ -12,55 +12,58 @@ use App\Models\TransactionItem;
 use App\Helpers\ResponseFormatter;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\TransactionRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Crypt;
 use App\Models\NotificationTransaction;
+use App\Http\Requests\TransactionRequest;
+use App\Models\LandingPage\LandingPageHome;
 use App\Notifications\TransactionNotification;
 
 class HalamanUtamaController extends Controller
 {
     public function index()
-{
-    try {
-        $users_customer_count = User::where('roles', '=', 'USER')->count();
-        $new_transaction = Transaction::count();
-        $total_product = Product::count();
-        $total_amount_success = Transaction::where('status', '=', 'SUCCESS')->sum('total_price');
+    {
+        try {
+            $users_customer_count = User::where('roles', '=', 'USER')->count();
+            $new_transaction = Transaction::count();
+            $total_product = Product::count();
+            $total_amount_success = Transaction::where('status', '=', 'SUCCESS')->sum('total_price');
 
-        $total_pending_count = 0;
-        if (Auth::check()) {
-            $user = Auth::user();
-            if ($user->roles == "ADMIN") {
-                $total_pending_count = Transaction::where('status', '=', 'PENDING')->count();
-            } else {
-                $total_pending_count = Transaction::where('status', '=', 'PENDING')->where('users_id', '=', $user->id)->count();
+            $total_pending_count = 0;
+            if (Auth::check()) {
+                $user = Auth::user();
+                if ($user->roles == "ADMIN") {
+                    $total_pending_count = Transaction::where('status', '=', 'PENDING')->count();
+                } else {
+                    $total_pending_count = Transaction::where('status', '=', 'PENDING')->where('users_id', '=', $user->id)->count();
+                }
             }
+
+            $products = Product::paginate(4);
+            foreach ($products as $product) {
+                // Menambahkan data ProductGallery ke setiap produk
+                $product->productGallery = ProductGallery::where('products_id', $product->id)->get();
+            }
+
+            $landingPageHome = LandingPageHome::get();
+
+
+            return view('landing_page.pages.index', compact(
+                'products',
+                'total_product',
+                'users_customer_count',
+                'new_transaction',
+                'total_amount_success',
+                'total_pending_count',
+                'landingPageHome'
+            ));
+        } catch (\Exception $e) {
+            // Tangani kesalahan di sini
+            // Misalnya, tampilkan pesan kesalahan atau redirect ke halaman lain
+            return redirect()->back()->withError('Terjadi kesalahan: ' . $e->getMessage());
         }
-
-        $products = Product::paginate(4);
-        foreach ($products as $product) {
-            // Menambahkan data ProductGallery ke setiap produk
-            $product->productGallery = ProductGallery::where('products_id', $product->id)->get();
-        }
-
-
-
-        return view('landing_page.pages.index', compact(
-            'products',
-            'total_product',
-            'users_customer_count',
-            'new_transaction',
-            'total_amount_success',
-            'total_pending_count',
-        ));
-    } catch (\Exception $e) {
-        // Tangani kesalahan di sini
-        // Misalnya, tampilkan pesan kesalahan atau redirect ke halaman lain
-        return redirect()->back()->withError( 'Terjadi kesalahan: ' . $e->getMessage());
     }
-}
 
 
     public function checkout(Request $request)
@@ -128,7 +131,7 @@ class HalamanUtamaController extends Controller
     public function sendMessageCustomerTransaction(Transaction $transaction)
     {
         // Nomor Handphone Admin
-        $phone_number = '+62'.'85314005779';
+        $phone_number = '+62' . '85314005779';
 
         $transaction_id = $transaction->id;
 
