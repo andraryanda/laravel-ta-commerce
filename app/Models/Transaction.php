@@ -12,9 +12,14 @@ class Transaction extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'users_id', 'address', 'payment', 'total_price', 'shipping_price', 'status',
-        // 'id',
+        'users_id',
+        'address',
+        'payment',
+        'total_price',
+        'shipping_price',
+        'status',
         'incre_id',
+        'snap_token',
     ];
 
     // public $incrementing = false;

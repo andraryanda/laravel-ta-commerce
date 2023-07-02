@@ -24,10 +24,6 @@
                     <h4 class="green mb-3 text-center">{{ 'Rp ' . number_format($product->price, 0, ',', '.') }}</h4>
                 </div>
 
-
-
-
-
                 <div class="bg-white my-3 p-2 d-flex flex-column" style="border-radius:14px">
                     {{-- Open Form --}}
                     <form action="{{ route('landingPage.checkout') }}" method="post">
