@@ -33,7 +33,7 @@ class AboutController extends Controller
         return view('landing_page.pages.about', [
             'total_pending_count' => $total_pending_count,
             'landingPageAbout' => $landingPageAbout,
-            'users_count'
+            'users_count' => $users_count
         ]);
     }
 }
