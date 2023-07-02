@@ -163,7 +163,6 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
             ]);
 
 
-
             Route::post('gallery/import', [ProductGalleryController::class, 'importProductGallery'])->name('gallery.importProductGallery');
 
             Route::post('importCategory', [ProductCategoryController::class, 'importCategory'])->name('category.importCategory');

@@ -128,7 +128,7 @@ class MidtransWebhookController extends Controller
 
         // Buat array untuk data pembayaran
         $transaction_details = [
-            'order_id' => $transaction->id. '_' . time(),
+            'order_id' => $transaction->id . '_' . time(),
             'gross_amount' => $transaction->total_price + $transaction->shipping_price,
         ];
 
@@ -387,7 +387,7 @@ class MidtransWebhookController extends Controller
                 $userId = $transaction->users_id;
 
                 // Logika pengalihan pengguna berdasarkan role dan nilai order_id
-                if ($user->roles == 'USER' && $transaction->id. '_' . time() == $request->order_id && $transaction->users_id == $user->id) {
+                if ($user->roles == 'USER' && $transaction->id . '_' . time() == $request->order_id && $transaction->users_id == $user->id) {
                     // Jika pengguna bukan admin dan order_id == request->order_id dan users_id == id pengguna
                     return redirect()->route('dashboard.midtrans.showCustomer', encrypt($transactionId));
                 } else {
@@ -415,7 +415,7 @@ class MidtransWebhookController extends Controller
                     $transactionWifiItem->users_id = $transactionWifi->users_id;
                     $transactionWifiItem->products_id = $transactionWifi->products_id;
                     $transactionWifiItem->transaction_wifi_id = $transactionWifi->id;
-                    $transactionWifiItem->order_id = $transactionWifi->id;
+                    // $transactionWifiItem->order_id = $transactionWifi->id;
                     $transactionWifiItem->payment_status = 'PAID';
                     $transactionWifiItem->payment_transaction = $transactionWifi->total_price_wifi;
                     $transactionWifiItem->payment_method = 'BANK TRANSFER';
