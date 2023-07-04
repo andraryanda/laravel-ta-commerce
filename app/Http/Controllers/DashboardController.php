@@ -89,17 +89,18 @@ class DashboardController extends Controller
 
         // Mengambil data penjualan terbanyak pada 10 produk
         $bestSellingProducts = TransactionItem::join('products', 'transaction_items.products_id', '=', 'products.id')
-            ->select('products.name as product_name', DB::raw('SUM(transaction_items.quantity) as total_quantity'))
+            ->select(DB::raw('GROUP_CONCAT(products.name) as product_names'), DB::raw('SUM(transaction_items.quantity) as total_quantity'))
+            ->whereNull('transaction_items.deleted_at')
             ->groupBy('transaction_items.products_id')
             ->orderBy('total_quantity', 'desc')
             ->limit(5)
             ->get();
 
         // Inisialisasi chart
-        $productChart = new ProductChart;
+        $productChart = new ProductChart();
 
         // Set label untuk chart
-        $productChart->labels($bestSellingProducts->pluck('product_name')->toArray());
+        $productChart->labels($bestSellingProducts->pluck('product_names')->toArray());
 
         // Set data untuk jumlah produk yang terjual
         $productChart->dataset('Total Quantity Sold', 'bar', $bestSellingProducts->pluck('total_quantity')->toArray())
@@ -110,8 +111,7 @@ class DashboardController extends Controller
                 'rgba(75, 192, 192, 0.2)',
                 'rgba(153, 102, 255, 0.2)',
             ])
-            // Tambahkan label untuk setiap data produk
-            ->label($bestSellingProducts->pluck('product_name')->toArray());
+            ->label($bestSellingProducts->pluck('product_names')->toArray());
 
         $users_customer_count = User::where('roles', '=', 'USER')->count();
         $new_transaction = Transaction::count();

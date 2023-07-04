@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Crypt;
 use App\Models\NotificationTransaction;
 use App\Http\Requests\TransactionRequest;
+use Illuminate\Support\Facades\Validator;
 use App\Models\LandingPage\LandingPageHome;
 use App\Notifications\TransactionNotification;
 
@@ -33,7 +34,7 @@ class HalamanUtamaController extends Controller
             $total_pending_count = 0;
             if (Auth::check()) {
                 $user = Auth::user();
-                if ($user->roles == "ADMIN") {
+                if ($user->roles == "ADMIN" || $user->roles == "OWNER") {
                     $total_pending_count = Transaction::where('status', '=', 'PENDING')->count();
                 } else {
                     $total_pending_count = Transaction::where('status', '=', 'PENDING')->where('users_id', '=', $user->id)->count();
@@ -66,9 +67,69 @@ class HalamanUtamaController extends Controller
     }
 
 
+    // public function checkout(Request $request)
+    // {
+
+    //     $request->validate([
+    //         'products_id' => 'required|exists:products,id', // Validasi product_id
+    //         'total_price' => 'required',
+    //         'shipping_price' => 'required',
+    //         'status' => 'required|in:PENDING,SUCCESS,CANCELLED,FAILED,SHIPPING,SHIPPED',
+    //     ]);
+
+    //     $lastTransaction = Transaction::orderBy('incre_id', 'desc')->first();
+
+    //     $increId = $lastTransaction ? $lastTransaction->incre_id + 1 : 1;
+
+    //     DB::beginTransaction();
+
+    //     try {
+    //         $transaction = Transaction::create([
+    //             'id' => Transaction::generateTransactionId(),
+    //             'incre_id' => $increId,
+    //             'users_id' => Auth::user()->id,
+    //             'address' => $request->address,
+    //             'total_price' => $request->total_price,
+    //             'shipping_price' => $request->shipping_price,
+    //             'status' => $request->status,
+    //         ]);
+
+    //         TransactionItem::create([
+    //             'id' => Transaction::generateTransactionId(),
+    //             'incre_id' => $increId,
+    //             'users_id' => Auth::user()->id,
+    //             'products_id' => $request->products_id,
+    //             'transactions_id' => $transaction->id,
+    //             'quantity' => $request->quantity,
+    //         ]);
+
+    //         NotificationTransaction::create([
+    //             // 'transactions_id' => $transaction->incre_id
+    //             'transactions_id' => $transaction->id
+    //         ]);
+
+    //         DB::commit();
+
+    //         $transaction = Transaction::find($transaction->id);
+    //         $user = Auth::user();
+
+    //         Mail::to('andraryandra38@gmail.com')->send(new TransactionNotification($transaction, $user));
+
+    //         if ($request->has('bayar_sekarang')) {
+    //             return redirect()->route('dashboard.payment', ['id' => $transaction->id])->withSuccess('Transaksi berhasil ditambahkan!');
+    //         } else if ($request->has('bayar_manual')) {
+    //             return redirect()->route('dashboard.transaction.sendMessageCustomerTransaction', ['transaction' => $transaction->id])->withSuccess('Transaksi berhasil ditambahkan!');
+    //         }
+
+    //         // return redirect()->route('dashboard.transaction.indexPending')->withSuccess('Transaksi berhasil dibuat.');
+    //     } catch (\Exception $e) {
+    //         DB::rollback();
+    //         return redirect()->back()->withError(['message' => 'Terjadi kesalahan saat membuat transaksi.']);
+    //     }
+    // }
+
     public function checkout(Request $request)
     {
-
         $request->validate([
             'products_id' => 'required|exists:products,id', // Validasi product_id
             'total_price' => 'required',
@@ -83,12 +144,14 @@ class HalamanUtamaController extends Controller
         DB::beginTransaction();
 
         try {
+            $product = Product::find($request->products_id);
+
             $transaction = Transaction::create([
                 'id' => Transaction::generateTransactionId(),
                 'incre_id' => $increId,
                 'users_id' => Auth::user()->id,
                 'address' => $request->address,
-                'total_price' => $request->total_price,
+                'total_price' => $product->price * $request->quantity, // Mengalikan harga dengan jumlah produk
                 'shipping_price' => $request->shipping_price,
                 'status' => $request->status,
             ]);
@@ -96,7 +159,7 @@ class HalamanUtamaController extends Controller
             TransactionItem::create([
                 'id' => Transaction::generateTransactionId(),
                 'incre_id' => $increId,
-                'users_id' => Auth::user()->id,
+                'users_id' => $transaction->users_id,
                 'products_id' => $request->products_id,
                 'transactions_id' => $transaction->id,
                 'quantity' => $request->quantity,
@@ -184,7 +247,7 @@ class HalamanUtamaController extends Controller
         $product = Product::with('galleries')->with('category')->findOrFail($id);
         if (Auth::check()) {
             $user = Auth::user();
-            if ($user->roles == "ADMIN") {
+            if ($user->roles == "ADMIN" || $user->roles == "OWNER") {
                 $total_pending_count = Transaction::where('status', '=', 'PENDING')->count();
             } else {
                 $total_pending_count = Transaction::where('status', '=', 'PENDING')->where('users_id', '=', $user->id)->count();

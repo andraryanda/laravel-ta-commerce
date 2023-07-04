@@ -1,26 +1,26 @@
 function data() {
     function getThemeFromLocalStorage() {
         // if user already changed the theme, use it
-        if (window.localStorage.getItem("dark")) {
-            return JSON.parse(window.localStorage.getItem("dark"));
+        if (window.localStorage.getItem("light")) {
+            return JSON.parse(window.localStorage.getItem("light"));
         }
 
         // else return their preferences
         return (
             !!window.matchMedia &&
-            window.matchMedia("(prefers-color-scheme: dark)").matches
+            window.matchMedia("(prefers-color-scheme: light)").matches
         );
     }
 
     function setThemeToLocalStorage(value) {
-        window.localStorage.setItem("dark", value);
+        window.localStorage.setItem("light", value);
     }
 
     return {
-        dark: getThemeFromLocalStorage(),
+        light: getThemeFromLocalStorage(),
         toggleTheme() {
-            this.dark = !this.dark;
-            setThemeToLocalStorage(this.dark);
+            this.light = !this.light;
+            setThemeToLocalStorage(this.light);
         },
         isSideMenuOpen: false,
         toggleSideMenu() {

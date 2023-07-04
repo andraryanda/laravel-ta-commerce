@@ -81,7 +81,8 @@
                             <div class="form-group">
                                 <label for="items">Item</label>
                                 <input type="hidden" name="items[]" id="items" value="">
-                                <input type="number" class="form-control" name="quantity" id="quantity" readonly>
+                                <input type="number" class="form-control" name="quantity" id="quantity" value="1"
+                                    readonly>
                             </div>
                         </div>
                 </div>
@@ -262,16 +263,18 @@
                             Klik Disini Sekarang Metode pembayaran Otomatis
                         </div>
                     </div>
-                    <button type="submit" name="bayar_sekarang" class=" btn mt-4 btn-primary btn-block rounded-pill">
+
+                    <button type="submit" name="bayar_sekarang" class="btn mt-4 btn-primary btn-block rounded-pill"
+                        onclick="return disableButton(this, document.getElementsByName('bayar_manual')[0]);">
                         <div class="d-flex justify-content-center align-items-center">
                             <img src="{{ asset('icon/credit-card.png') }}" alt="Bayar" width="30"
                                 class="mr-2">
                             <p class="text-white mb-0 font-weight-bold">Bayar sekarang!</p>
                         </div>
                     </button>
-                    {{-- </form> --}}
-                    {{-- Penutup Form --}}
-                    <button type="submit" name="bayar_manual" class="btn btn-success my-2 py-2 rounded-pill">
+
+                    <button type="submit" name="bayar_manual" class="btn btn-success my-2 py-2 rounded-pill"
+                        onclick="return disableButton(this, document.getElementsByName('bayar_sekarang')[0]);">
                         <div class="d-flex justify-content-center align-items-center">
                             <img src="{{ asset('icon/whatsapp.png') }}" alt="whatsapp" width="30" class="mr-2">
                             <p class="text-white mb-0 font-weight-bold">Bayar Manual & Hubungi Admin Whatsapp</p>
@@ -371,6 +374,39 @@
                     // Menyimpan data produk pada input hidden
                     document.getElementById('items').value = JSON.stringify(products);
                 }
+            }
+        </script>
+        <script>
+            function disableButton(button, otherButton) {
+                if (button.getAttribute('data-disabled') === 'true') {
+                    showAlert('Tunggu hingga proses selesai!');
+                    return false;
+                }
+
+                button.setAttribute('data-disabled', 'true');
+                button.querySelector('p').innerText = 'Tunggu...';
+                otherButton.setAttribute('disabled', 'true');
+
+                // Mengembalikan status tombol setelah simulasi waktu proses
+                setTimeout(function() {
+                    button.setAttribute('data-disabled', 'false');
+                    button.querySelector('p').innerText = 'Bayar sekarang!';
+                    otherButton.removeAttribute('disabled');
+                }, 5000); // Contoh: 5 detik
+
+                return true;
+            }
+
+            function showAlert(message) {
+                var alertElement = document.createElement('div');
+                alertElement.classList.add('alert');
+                alertElement.innerText = message;
+
+                document.body.appendChild(alertElement);
+
+                setTimeout(function() {
+                    alertElement.style.display = 'none';
+                }, 5000); // Contoh: 5 detik
             }
         </script>
     @endpush

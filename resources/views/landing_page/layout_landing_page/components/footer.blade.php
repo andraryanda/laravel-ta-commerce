@@ -42,17 +42,16 @@
                     <div class="footer__text-widget">
                         <h5>Company</h5>
                         <ul>
-                            <li><a href="#">Company</a></li>
-                            <li><a href="#">About Us</a></li>
-                            <li><a href="#">Press & Media</a></li>
-                            <li><a href="#">News / Blogs</a></li>
-                            <li><a href="#">Careers</a></li>
+                            <li><a href="{{ route('landingPage.index') }}">Home</a></li>
+                            <li><a href="{{ route('landingPage.about') }}">About Us</a></li>
+                            <li><a href="{{ route('landingPage.pricing') }}">Produk</a></li>
+                            <li><a href="{{ route('landingPage.contact') }}">Contact</a></li>
                         </ul>
                     </div>
                 </div>
                 <div class="col-lg-2 col-md-6 col-sm-6">
                     <div class="footer__text-widget">
-                        <h5>Hosting</h5>
+                        <h5>Produk List 5</h5>
                         <ul>
                             <li><a href="#">Web Hosting</a></li>
                             <li><a href="#">Reseller Hosting</a></li>

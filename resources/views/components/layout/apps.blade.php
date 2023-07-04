@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html :class="{ 'theme-dark': dark }" x-data="data()" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html x-data="data()" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+{{-- :class="{ 'theme-dark': dark }" --}}
 
 <head>
     <meta charset="UTF-8" />

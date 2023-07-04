@@ -105,7 +105,11 @@
          <span class="fa fa-times-circle-o"></span>
      </div>
      <div class="offcanvas__logo">
-         <a href="{{ route('landingPage.index') }}"><img src="{{ asset('landing_page/img/logo.png') }}" alt=""></a>
+         <a href="{{ route('landingPage.index') }}">
+             <h3 class="text-light font-weight-bold">Als Store</h3>
+
+             {{-- <img src="{{ asset('landing_page/img/logo.png') }}" alt=""> --}}
+         </a>
      </div>
      <nav class="offcanvas__menu mobile-menu">
          <ul>
@@ -113,18 +117,8 @@
                      href="{{ route('landingPage.index') }}">Home</a></li>
              <li class="{{ Request::routeIs('landingPage.about') ? 'active' : '' }}"><a
                      href="{{ route('landingPage.about') }}">About</a></li>
-             <li class="{{ Request::routeIs('landingPage.hosting') ? 'active' : '' }}"><a
-                     href="{{ route('landingPage.hosting') }}">Hosting</a></li>
-             <li class="{{ Request::routeIs('landingPage.pricing') ? 'active' : '' }}"><a href="#">Pages</a>
-                 <ul class="dropdown">
-                     <li class="{{ Request::routeIs('landingPage.pricing') ? 'bg-primary col-md-12' : '' }}">
-                         <a href="{{ route('landingPage.pricing') }}"
-                             class="{{ Request::routeIs('landingPage.pricing') ? 'text-white' : '' }}">Pricing</a>
-                     </li>
-                     <li><a href="./blog-details.html">Blog Details</a></li>
-                 </ul>
-             </li>
-             <li><a href="./blog.html">News</a></li>
+             <li class="{{ Request::routeIs('landingPage.pricing') ? 'active' : '' }}"><a
+                     href="{{ route('landingPage.pricing') }}">Produk</a></li>
              <li class="{{ Request::routeIs('landingPage.contact') ? 'active' : '' }}"><a
                      href="{{ route('landingPage.contact') }}">Contact</a></li>
          </ul>
@@ -133,16 +127,42 @@
      <div class="offcanvas__auth">
          <ul>
              <li>
-                 <a href="{{ route('dashboard.transactionCustomer.index') }}">
-                     <span class="fa fa-shopping-cart ml-2" style="font-size: 1.2em;"></span>
-                     {{ __('Keranjang Shopping') }}
-                     @if (Auth::user())
-                         <span
-                             class="absolute -top-2 left-4 rounded-full bg-danger p-0.5 px-1 ml-2 text-sm text-red-50 font-weight-bold">
-                             {{ $total_pending_count ?? '' }}
-                         </span>
+                 @if (Auth::check())
+                     @if (Auth::user()->roles == 'ADMIN' || Auth::user()->roles == 'OWNER')
+                         <a href="{{ route('dashboard.transaction.indexPending') }}">
+                             <span class="fa fa-shopping-cart ml-2" style="font-size: 1.2em;"></span>
+                             {{ __('Keranjang Shopping') }}
+                             @if (!empty($total_pending_count))
+                                 <span
+                                     class="absolute -top-2 left-4 rounded-full bg-danger p-0.5 px-1 ml-2 text-sm text-red-50 font-weight-bold">
+                                     {{ $total_pending_count }}
+                                 </span>
+                             @endif
+                         </a>
+                     @else
+                         <a href="{{ route('dashboard.transactionCustomer.index') }}">
+                             <span class="fa fa-shopping-cart ml-2" style="font-size: 1.2em;"></span>
+                             {{ __('Keranjang Shopping') }}
+                             @if (!empty($total_pending_count))
+                                 <span
+                                     class="absolute -top-2 left-4 rounded-full bg-danger p-0.5 px-1 ml-2 text-sm text-red-50 font-weight-bold">
+                                     {{ $total_pending_count }}
+                                 </span>
+                             @endif
+                         </a>
                      @endif
-                 </a>
+                 @else
+                     <a href="{{ route('dashboard.transactionCustomer.index') }}">
+                         <span class="fa fa-shopping-cart ml-2" style="font-size: 1.2em;"></span>
+                         {{ __('Keranjang Shopping') }}
+                         @if (!empty($total_pending_count))
+                             <span
+                                 class="absolute -top-2 left-4 rounded-full bg-danger p-0.5 px-1 ml-2 text-sm text-red-50 font-weight-bold">
+                                 {{ $total_pending_count }}
+                             </span>
+                         @endif
+                     </a>
+                 @endif
              </li>
              @if (Route::has('login'))
                  @auth
@@ -181,8 +201,8 @@
      </div>
      <div class="offcanvas__info">
          <ul>
-             <li><span class="icon_phone"></span> +1 123-456-7890</li>
-             <li><span class="fa fa-envelope"></span> Support@gmail.com</li>
+             <li><span class="icon_phone"></span> +62 85314005779</li>
+             <li><span class="fa fa-envelope"></span> alstoreWifi@gmail.com</li>
          </ul>
      </div>
  </div>
@@ -196,8 +216,8 @@
                  <div class="col-lg-6 col-md-6">
                      <div class="header__info-left">
                          <ul>
-                             <li><span class="icon_phone"></span> +1 123-456-7890</li>
-                             <li><span class="fa fa-envelope"></span> Support@gmail.com</li>
+                             <li><span class="icon_phone"></span> +62 85314005779</li>
+                             <li><span class="fa fa-envelope"></span> alstoreWifi@gmail.com</li>
                          </ul>
                      </div>
                  </div>
@@ -205,16 +225,43 @@
                      <div class="header__info-right">
                          <ul>
                              <li>
-                                 <a href="{{ route('dashboard.transactionCustomer.index') }}">
-                                     <span class="fa fa-shopping-cart ml-2" style="font-size: 1.2em;"></span>
-                                     {{ __('Keranjang Shopping') }}
-                                     @if (Auth::user())
-                                         <span
-                                             class="absolute -top-2 left-4 rounded-full bg-danger p-0.5 px-1 ml-2 text-sm text-red-50 font-weight-bold">
-                                             {{ $total_pending_count ?? '' }}
-                                         </span>
+                                 @if (Auth::check())
+                                     @if (Auth::user()->roles == 'ADMIN' || Auth::user()->roles == 'OWNER')
+                                         <a href="{{ route('dashboard.transaction.indexPending') }}">
+                                             <span class="fa fa-shopping-cart ml-2" style="font-size: 1.2em;"></span>
+                                             {{ __('Keranjang Shopping') }}
+                                             @if (!empty($total_pending_count))
+                                                 <span
+                                                     class="absolute -top-2 left-4 rounded-full bg-danger p-0.5 px-1 ml-2 text-sm text-red-50 font-weight-bold">
+                                                     {{ $total_pending_count }}
+                                                 </span>
+                                             @endif
+                                         </a>
+                                     @else
+                                         <a href="{{ route('dashboard.transactionCustomer.index') }}">
+                                             <span class="fa fa-shopping-cart ml-2" style="font-size: 1.2em;"></span>
+                                             {{ __('Keranjang Shopping') }}
+                                             @if (!empty($total_pending_count))
+                                                 <span
+                                                     class="absolute -top-2 left-4 rounded-full bg-danger p-0.5 px-1 ml-2 text-sm text-red-50 font-weight-bold">
+                                                     {{ $total_pending_count }}
+                                                 </span>
+                                             @endif
+                                         </a>
                                      @endif
-                                 </a>
+                                 @else
+                                     <a href="{{ route('dashboard.transactionCustomer.index') }}">
+                                         <span class="fa fa-shopping-cart ml-2" style="font-size: 1.2em;"></span>
+                                         {{ __('Keranjang Shopping') }}
+                                         @if (!empty($total_pending_count))
+                                             <span
+                                                 class="absolute -top-2 left-4 rounded-full bg-danger p-0.5 px-1 ml-2 text-sm text-red-50 font-weight-bold">
+                                                 {{ $total_pending_count }}
+                                             </span>
+                                         @endif
+                                     </a>
+                                 @endif
+
                              </li>
                              @if (Route::has('login'))
                                  @auth
@@ -262,8 +309,10 @@
          <div class="row">
              <div class="col-lg-3 col-md-3">
                  <div class="header__logo">
-                     <a href="{{ route('landingPage.index') }}"><img src="{{ asset('landing_page/img/logo.png') }}"
-                             alt=""></a>
+                     <a href="{{ route('landingPage.index') }}" class="">
+                         <h3 class="text-light font-weight-bold">Als Store</h3>
+                         {{-- <img src="{{ asset('landing_page/img/logo.png') }}" alt=""> --}}
+                     </a>
                  </div>
              </div>
              <div class="col-lg-9 col-md-9">
@@ -273,20 +322,8 @@
                                  href="{{ route('landingPage.index') }}">Home</a></li>
                          <li class="{{ Request::routeIs('landingPage.about') ? 'active' : '' }}"><a
                                  href="{{ route('landingPage.about') }}">About</a></li>
-                         <li class="{{ Request::routeIs('landingPage.hosting') ? 'active' : '' }}"><a
-                                 href="{{ route('landingPage.hosting') }}">Hosting</a></li>
                          <li class="{{ Request::routeIs('landingPage.pricing') ? 'active' : '' }}"><a
-                                 href="#">Pages</a>
-                             <ul class="dropdown">
-                                 <li
-                                     class="{{ Request::routeIs('landingPage.pricing') ? 'bg-primary col-md-12' : '' }}">
-                                     <a href="{{ route('landingPage.pricing') }}"
-                                         class="{{ Request::routeIs('landingPage.pricing') ? 'text-white' : '' }}">Pricing</a>
-                                 </li>
-                                 <li><a href="./blog-details.html">Blog Details</a></li>
-                             </ul>
-                         </li>
-                         <li><a href="./blog.html">News</a></li>
+                                 href="{{ route('landingPage.pricing') }}">Produk</a></li>
                          <li class="{{ Request::routeIs('landingPage.contact') ? 'active' : '' }}"><a
                                  href="{{ route('landingPage.contact') }}">Contact</a></li>
                      </ul>
