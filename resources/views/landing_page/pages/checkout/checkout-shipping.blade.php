@@ -81,8 +81,7 @@
                             <div class="form-group">
                                 <label for="items">Item</label>
                                 <input type="hidden" name="items[]" id="items" value="">
-                                <input type="number" class="form-control" name="quantity" id="quantity" max="1"
-                                    value="1" readonly>
+                                <input type="number" class="form-control" name="quantity" id="quantity" readonly>
                             </div>
                         </div>
                 </div>

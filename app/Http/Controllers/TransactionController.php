@@ -315,40 +315,74 @@ class TransactionController extends Controller
                 ->editColumn('action', function ($item) {
                     $encryptedId = Crypt::encrypt($item->id);
                     $status = $item->status;
+                    $userRole = Auth::user()->roles; // Menyimpan peran pengguna saat ini
+
                     if ($status == 'SUCCESS' || $status == 'CANCELLED') {
+                        // Tampilkan tombol-tombol yang sesuai untuk semua peran
                         return '
-                    <div class="flex justify-start items-center space-x-3.5">
-                        <a href="' . route('dashboard.transaction.sendMessage', $item->id) . '" title="WhatsApp" target="_blank"
-                            class="inline-flex flex-col items-center justify-center w-20 h-12 bg-green-400 text-white rounded-md border border-green-500 transition duration-500 ease select-none hover:bg-green-500 focus:outline-none focus:shadow-outline">
-                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/whatsapp.png') . '" alt="whatsapp" loading="lazy" width="20" />
-                            <p class="mt-1 text-xs">WhatsApp</p>
-                        </a>
-                        <a href="' . route('dashboard.report.exportPDF', $encryptedId) . '" title="Kwitansi"
-                            class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-indigo-500 bg-indigo-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-indigo-500 focus:outline-none focus:shadow-outline">
-                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/printer.png') . '" alt="printer" loading="lazy" width="20" />
-                            <p class="mt-1 text-xs">Kwitansi</p>
-                        </a>
-                        <a href="' . route('dashboard.transaction.show', $encryptedId) . '" title="Show"
-                            class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-blue-500 bg-blue-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-blue-500 focus:outline-none focus:shadow-outline">
-                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/show.png') . '" alt="show" loading="lazy" width="20" />
-                            <p class="mt-1 text-xs">Lihat</p>
-                        </a>
-                        <a href="' . route('dashboard.transaction.edit', $encryptedId) . '" title="Edit"
-                            class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-yellow-500 bg-yellow-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-yellow-500 focus:outline-none focus:shadow-outline">
-                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/edit.png') . '" alt="show" loading="lazy" width="20" />
-                            <p class="mt-1 text-xs">Edit</p>
-                        </a>
-                        <button type="button" title="Delete"
-                            class="flex flex-col delete-button shadow-sm items-center justify-center w-20 h-12 border border-red-500 bg-red-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-red-500 focus:outline-none focus:shadow-outline"
-                            data-id="' . $encryptedId . '">
-                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/delete.png') . '" alt="delete" loading="lazy" width="20" />
-                            <p class="mt-1 text-xs">Delete</p>
-                        </button>
-                    </div>
-                   ';
+                        <div class="flex justify-start items-center space-x-3.5">
+                            <a href="' . route('dashboard.transaction.sendMessage', $item->id) . '" title="WhatsApp" target="_blank"
+                                class="inline-flex flex-col items-center justify-center w-20 h-12 bg-green-400 text-white rounded-md border border-green-500 transition duration-500 ease select-none hover:bg-green-500 focus:outline-none focus:shadow-outline">
+                                <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/whatsapp.png') . '" alt="whatsapp" loading="lazy" width="20" />
+                                <p class="mt-1 text-xs">WhatsApp</p>
+                            </a>
+                            <a href="' . route('dashboard.report.exportPDF', $encryptedId) . '" title="Kwitansi"
+                                class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-indigo-500 bg-indigo-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-indigo-500 focus:outline-none focus:shadow-outline">
+                                <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/printer.png') . '" alt="printer" loading="lazy" width="20" />
+                                <p class="mt-1 text-xs">Kwitansi</p>
+                            </a>
+                            <a href="' . route('dashboard.transaction.show', $encryptedId) . '" title="Show"
+                                class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-blue-500 bg-blue-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-blue-500 focus:outline-none focus:shadow-outline">
+                                <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/show.png') . '" alt="show" loading="lazy" width="20" />
+                                <p class="mt-1 text-xs">Lihat</p>
+                            </a>
+                            <a href="' . route('dashboard.transaction.edit', $encryptedId) . '" title="Edit"
+                                class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-yellow-500 bg-yellow-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-yellow-500 focus:outline-none focus:shadow-outline">
+                                <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/edit.png') . '" alt="show" loading="lazy" width="20" />
+                                <p class="mt-1 text-xs">Edit</p>
+                            </a>';
                     } else {
+                        // Tampilkan tombol Bayar jika peran adalah OWNER
+                        if ($userRole == 'OWNER') {
+                            return '
+                            <div class="flex justify-start items-center space-x-3.5">
+                                <a href="' . route('dashboard.transaction.sendMessage', $item->id) . '" title="WhatsApp" target="_blank"
+                                    class="inline-flex flex-col items-center justify-center w-20 h-12 bg-green-400 text-white rounded-md border border-green-500 transition duration-500 ease select-none hover:bg-green-500 focus:outline-none focus:shadow-outline">
+                                    <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/whatsapp.png') . '" alt="whatsapp" loading="lazy" width="20" />
+                                    <p class="mt-1 text-xs">WhatsApp</p>
+                                </a>
+                                <a href="' . route('dashboard.report.exportPDF', $encryptedId) . '" title="Kwitansi"
+                                    class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-indigo-500 bg-indigo-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-indigo-500 focus:outline-none focus:shadow-outline">
+                                    <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/printer.png') . '" alt="printer" loading="lazy" width="20" />
+                                    <p class="mt-1 text-xs">Kwitansi</p>
+                                </a>
+                                <a href="' . route('dashboard.payment', $item->id) . '" target="_blank" title="Bayar"
+                                    class="flex flex-col shadow-sm items-center justify-center w-20 h-12 border border-purple-500 bg-purple-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-purple-500 focus:outline-none focus:shadow-outline">
+                                    <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/credit-card.png') . '" alt="Bayar" loading="lazy" width="20" />
+                                    <p class="mt-1 text-xs">Bayar</p>
+                                </a>
+                                <a href="' . route('dashboard.transaction.show', $encryptedId) . '" title="Show"
+                                    class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-blue-500 bg-blue-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-blue-500 focus:outline-none focus:shadow-outline">
+                                    <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/show.png') . '" alt="show" loading="lazy" width="20" />
+                                    <p class="mt-1 text-xs">Lihat</p>
+                                </a>
+                                <a href="' . route('dashboard.transaction.edit', $encryptedId) . '" title="Edit"
+                                    class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-yellow-500 bg-yellow-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-yellow-500 focus:outline-none focus:shadow-outline">
+                                    <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/edit.png') . '" alt="show" loading="lazy" width="20" />
+                                    <p class="mt-1 text-xs">Edit</p>
+                                </a>
+                                <button type="button" title="Delete"
+                                    class="flex flex-col delete-button shadow-sm items-center justify-center w-20 h-12 border border-red-500 bg-red-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-red-500 focus:outline-none focus:shadow-outline"
+                                    data-id="' . $encryptedId . '">
+                                    <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/delete.png') . '" alt="delete" loading="lazy" width="20" />
+                                    <p class="mt-1 text-xs">Delete</p>
+                                </button>
+                            </div>
+                            ';
+                        }
+
                         return '
-                    <div class="flex justify-start items-center space-x-3.5">
+                        <div class="flex justify-start items-center space-x-3.5">
                         <a href="' . route('dashboard.transaction.sendMessage', $item->id) . '" title="WhatsApp" target="_blank"
                             class="inline-flex flex-col items-center justify-center w-20 h-12 bg-green-400 text-white rounded-md border border-green-500 transition duration-500 ease select-none hover:bg-green-500 focus:outline-none focus:shadow-outline">
                             <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/whatsapp.png') . '" alt="whatsapp" loading="lazy" width="20" />
@@ -358,11 +392,6 @@ class TransactionController extends Controller
                             class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-indigo-500 bg-indigo-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-indigo-500 focus:outline-none focus:shadow-outline">
                             <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/printer.png') . '" alt="printer" loading="lazy" width="20" />
                             <p class="mt-1 text-xs">Kwitansi</p>
-                        </a>
-                        <a href="' . route('dashboard.payment', $item->id) . '" target="_blank" title="Bayar"
-                            class="flex flex-col shadow-sm items-center justify-center w-20 h-12 border border-purple-500 bg-purple-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-purple-500 focus:outline-none focus:shadow-outline">
-                            <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/credit-card.png') . '" alt="Bayar" loading="lazy" width="20" />
-                            <p class="mt-1 text-xs">Bayar</p>
                         </a>
                         <a href="' . route('dashboard.transaction.show', $encryptedId) . '" title="Show"
                             class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-blue-500 bg-blue-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-blue-500 focus:outline-none focus:shadow-outline">
@@ -381,9 +410,11 @@ class TransactionController extends Controller
                             <p class="mt-1 text-xs">Delete</p>
                         </button>
                     </div>
-                   ';
+                        ';
                     }
                 })
+
+
                 // ->editColumn('total_price', function ($item) {
                 //     return number_format($item->total_price).'.00';
                 // })
@@ -1074,19 +1105,46 @@ class TransactionController extends Controller
      */
     public function store(Request $request)
     {
-        $lastTransaction = Transaction::orderBy('incre_id', 'desc')->first();
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'users_id' => 'required',
+                'address' => 'required',
+                'shipping_price' => 'required|numeric',
+                'status' => 'required',
+                'products_id' => 'required',
+                'quantity' => 'required|integer',
+            ],
+            [
+                'users_id.required' => 'Pengguna harus diisi.',
+                'address.required' => 'Alamat harus diisi.',
+                'shipping_price.required' => 'Ongkos kirim harus diisi.',
+                'shipping_price.numeric' => 'Ongkos kirim harus berupa angka.',
+                'status.required' => 'Status harus diisi.',
+                'products_id.required' => 'Produk harus diisi.',
+                'quantity.required' => 'Jumlah harus diisi.',
+                'quantity.integer' => 'Jumlah harus berupa angka.',
+            ]
+        );
 
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $lastTransaction = Transaction::orderBy('incre_id', 'desc')->first();
         $increId = $lastTransaction ? $lastTransaction->incre_id + 1 : 1;
 
         DB::beginTransaction();
 
         try {
+            $product = Product::find($request->products_id);
+
             $transaction = Transaction::create([
                 'id' => Transaction::generateTransactionId(),
                 'incre_id' => $increId,
                 'users_id' => $request->users_id,
                 'address' => $request->address,
-                'total_price' => $request->total_price,
+                'total_price' => $product->price * $request->quantity, // Mengalikan harga dengan jumlah produk
                 'shipping_price' => $request->shipping_price,
                 'status' => $request->status,
             ]);
@@ -1101,7 +1159,6 @@ class TransactionController extends Controller
             ]);
 
             NotificationTransaction::create([
-                // 'transactions_id' => $transaction->incre_id
                 'transactions_id' => $transaction->id
             ]);
 
@@ -1118,6 +1175,7 @@ class TransactionController extends Controller
             return redirect()->back()->withErrors(['message' => 'Terjadi kesalahan saat membuat transaksi.']);
         }
     }
+
 
 
     /**
