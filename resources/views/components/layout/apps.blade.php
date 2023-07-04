@@ -228,6 +228,7 @@
                     @yield('notification')
                     @yield('report')
                     @yield('profileUser')
+                    @yield('bank')
                     {{-- Admin Penutup --}}
                     {{-- Customer --}}
                     @yield('transactionCustomer')

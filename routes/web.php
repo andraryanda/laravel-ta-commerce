@@ -3,6 +3,7 @@
 use App\Models\ProductGallery;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ChartController;
 use App\Http\Controllers\ReportController;
@@ -38,6 +39,8 @@ use App\Http\Controllers\LandingPageCustom\LandingPageAboutController;
 use App\Http\Controllers\LandingPageCustom\LandingPageContactController;
 use App\Http\Controllers\LandingPageCustom\LandingPageAboutTeamController;
 use App\Http\Controllers\LandingPageCustom\LandingPageAboutFeatureController;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\File;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,11 +53,10 @@ use App\Http\Controllers\LandingPageCustom\LandingPageAboutFeatureController;
 |
 */
 
-// Route::get('/dashboard2', function() {
-//     return view('dashboard2');
+// Route::get('/storage_link', function () {
+//     Artisan::call('storage:link');
 // });
 
-// Route::get('/dashboard2', [DashboardController::class, 'statusDashboard']);
 
 Route::get('redirects', [HomeController::class, 'index'])->name('redirects');
 

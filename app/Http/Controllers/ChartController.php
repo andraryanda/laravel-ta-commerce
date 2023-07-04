@@ -64,45 +64,57 @@ class ChartController extends Controller
 
 
         // Memanggil chart
-$numberOfMonths = 6;
-$transactionPriceChart = new TransactionPriceChart;
-$transactionCounts = $transactionPriceChart->getTransactionPriceData($numberOfMonths);
-$transactionPriceChart->labels($transactionCounts['labels']);
-$transactionPriceChart->dataset('Pending', 'line', $transactionCounts['pendingCounts'])
-    ->backgroundColor('rgba(255, 159, 64, 0.2)')
-    ->color('rgba(255, 159, 64, 1)');
-$transactionPriceChart->dataset('Success', 'line', $transactionCounts['successCounts'])
-    ->backgroundColor('rgba(54, 162, 235, 0.2)')
-    ->color('rgba(54, 162, 235, 1)');
-$transactionPriceChart->dataset('Cancelled', 'line', $transactionCounts['cancelledCounts'])
-    ->backgroundColor('rgba(255, 99, 132, 0.2)')
-    ->color('rgba(255, 99, 132, 1)');
-$transactionPriceChart->options([
-    'scales' => [
-        'yAxes' => [
-            [
-                'ticks' => [
-                    'beginAtZero' => true,
+        $numberOfMonths = 6;
+        $transactionPriceChart = new TransactionPriceChart;
+        $transactionCounts = $transactionPriceChart->getTransactionPriceData($numberOfMonths);
+        $transactionPriceChart->labels($transactionCounts['labels']);
+        $transactionPriceChart->dataset('Pending', 'line', $transactionCounts['pendingCounts'])
+            ->backgroundColor('rgba(255, 159, 64, 0.2)')
+            ->color('rgba(255, 159, 64, 1)');
+        $transactionPriceChart->dataset('Success', 'line', $transactionCounts['successCounts'])
+            ->backgroundColor('rgba(54, 162, 235, 0.2)')
+            ->color('rgba(54, 162, 235, 1)');
+        $transactionPriceChart->dataset('Cancelled', 'line', $transactionCounts['cancelledCounts'])
+            ->backgroundColor('rgba(255, 99, 132, 0.2)')
+            ->color('rgba(255, 99, 132, 1)');
+        $transactionPriceChart->options([
+            'scales' => [
+                'yAxes' => [
+                    [
+                        'ticks' => [
+                            'beginAtZero' => true,
+                        ],
+                    ],
                 ],
             ],
-        ],
-    ],
-]);
+        ]);
 
 
         // Mengambil data penjualan terbanyak pada 10 produk
         $bestSellingProducts = TransactionItem::join('products', 'transaction_items.products_id', '=', 'products.id')
-            ->select('products.name as product_name', DB::raw('SUM(transaction_items.quantity) as total_quantity'))
+            ->select(DB::raw('GROUP_CONCAT(products.name) as product_names'), DB::raw('SUM(transaction_items.quantity) as total_quantity'))
+            ->whereNull('transaction_items.deleted_at')
             ->groupBy('transaction_items.products_id')
             ->orderBy('total_quantity', 'desc')
             ->limit(5)
             ->get();
 
         // Inisialisasi chart
-        $productChart = new ProductChart;
+        $productChart = new ProductChart();
 
         // Set label untuk chart
-        $productChart->labels($bestSellingProducts->pluck('product_name')->toArray());
+        $productChart->labels($bestSellingProducts->pluck('product_names')->toArray());
+
+        // Set data untuk jumlah produk yang terjual
+        $productChart->dataset('Total Quantity Sold', 'bar', $bestSellingProducts->pluck('total_quantity')->toArray())
+            ->backgroundColor([
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+            ])
+            ->label($bestSellingProducts->pluck('product_names')->toArray());
 
         // Set data untuk jumlah produk yang terjual
         $productChart->dataset('Total Quantity Sold', 'bar', $bestSellingProducts->pluck('total_quantity')->toArray())
@@ -129,30 +141,30 @@ $transactionPriceChart->options([
         $categoryProduct_count = ProductCategory::count();
         $product_count = Product::count();
 
-// =======================================================================================================
+        // =======================================================================================================
 
         // chart JS - transaction Produk
         $transactions = TransactionItem::select('products_id')
-        ->selectRaw('COUNT(*) as count')
-        ->selectRaw("SUM(CASE WHEN transactions.status = 'SUCCESS' THEN 1 ELSE 0 END) as success_count")
-        ->selectRaw("SUM(CASE WHEN transactions.status = 'PENDING' THEN 1 ELSE 0 END) as pending_count")
-        ->selectRaw("SUM(CASE WHEN transactions.status = 'CANCELED' THEN 1 ELSE 0 END) as canceled_count")
-        ->leftJoin('transactions', 'transaction_items.transactions_id', '=', 'transactions.id')
-        ->whereNull('transaction_items.deleted_at')
-        ->groupBy('products_id')
-        ->get();
+            ->selectRaw('COUNT(*) as count')
+            ->selectRaw("SUM(CASE WHEN transactions.status = 'SUCCESS' THEN 1 ELSE 0 END) as success_count")
+            ->selectRaw("SUM(CASE WHEN transactions.status = 'PENDING' THEN 1 ELSE 0 END) as pending_count")
+            ->selectRaw("SUM(CASE WHEN transactions.status = 'CANCELED' THEN 1 ELSE 0 END) as canceled_count")
+            ->leftJoin('transactions', 'transaction_items.transactions_id', '=', 'transactions.id')
+            ->whereNull('transaction_items.deleted_at')
+            ->groupBy('products_id')
+            ->get();
 
-    $productNames = Product::whereIn('id', $transactions->pluck('products_id'))->pluck('name');
+        $productNames = Product::whereIn('id', $transactions->pluck('products_id'))->pluck('name');
 
-    $labels = $productNames->toArray();
-    $successData = $transactions->pluck('success_count')->toArray();
-    $pendingData = $transactions->pluck('pending_count')->toArray();
-    $canceledData = $transactions->pluck('canceled_count')->toArray();
+        $labels = $productNames->toArray();
+        $successData = $transactions->pluck('success_count')->toArray();
+        $pendingData = $transactions->pluck('pending_count')->toArray();
+        $canceledData = $transactions->pluck('canceled_count')->toArray();
 
-    // chart JS - transaction Produk (Harga)
-    $totalPendingSales = Transaction::where('status', 'PENDING')->sum('total_price');
-    $totalSuccessSales = Transaction::where('status', 'SUCCESS')->sum('total_price');
-    $totalCancelledSales = Transaction::where('status', 'CANCELLED')->sum('total_price');
+        // chart JS - transaction Produk (Harga)
+        $totalPendingSales = Transaction::where('status', 'PENDING')->sum('total_price');
+        $totalSuccessSales = Transaction::where('status', 'SUCCESS')->sum('total_price');
+        $totalCancelledSales = Transaction::where('status', 'CANCELLED')->sum('total_price');
 
         return view(
             'pages.dashboard.chart.index',
@@ -170,8 +182,13 @@ $transactionPriceChart->options([
                 'userRegistrationChart',
                 'productChart',
                 'transactionPriceChart',
-                'labels', 'successData', 'pendingData', 'canceledData',
-                'totalPendingSales', 'totalSuccessSales', 'totalCancelledSales',
+                'labels',
+                'successData',
+                'pendingData',
+                'canceledData',
+                'totalPendingSales',
+                'totalSuccessSales',
+                'totalCancelledSales',
 
             )
         );

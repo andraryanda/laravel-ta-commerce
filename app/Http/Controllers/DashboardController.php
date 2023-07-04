@@ -33,14 +33,6 @@ class DashboardController extends Controller
     public function statusDashboard()
     {
 
-
-
-        // $numberOfMonths = 6;
-        // $userRegistrationChart = new UserRegistrationChart;
-        // $userRegistrationChart->labels($userRegistrationChart->getUserRegistrationData($numberOfMonths)['labels']);
-        // $userRegistrationChart->dataset('Users Registered', 'line', $userRegistrationChart->getUserRegistrationData($numberOfMonths)['data'])
-        //     ->backgroundColor('rgba(54, 162, 235, 0.2)');
-
         // Memanggil chart
         $numberOfMonths = 6;
         $userRegistrationChart = new UserRegistrationChart;
@@ -128,134 +120,23 @@ class DashboardController extends Controller
         $list_transaction = Transaction::orderBy('total_price', 'desc')->get();
 
         $users = User::orderby('last_seen', 'desc')->get();
-        // foreach ($users as $user) {
-        //     if (Cache::has('user-is-online-' . $user->id))
-        //         echo $user->name . " is online. Last seen: " . Carbon::parse($user->last_seen)->diffForHumans() . " <br>";
-        //     else
-        //         echo $user->name . " is offline. Last seen: " . Carbon::parse($user->last_seen)->diffForHumans() . " <br>";
-        // }
-
-        // if (request()->ajax()) {
-        //     // $query = Transaction::with(['user'])->orderByDesc('created_at');
-        //     $query = Transaction::with(['user'])->orderByDesc('created_at');
-
-        //     return DataTables::of($query)
-        //         ->addColumn('user.name', function ($item) {
-        //             return '
-        //                 <td class="px-4 py-3">
-        //                     <div class="flex items-center text-sm">
-        //                         <!-- Avatar with inset shadow -->
-        //                         <div class="relative hidden w-8 h-8 mr-3 rounded-full md:block">
-        //                             ' . (Jetstream::managesProfilePhotos() ?
-        //                 (Auth::user()->profile_photo_url ? '
-        //                                     <img class="object-cover w-full h-full rounded-full"
-        //                                         src="' . Auth::user()->profile_photo_url . '"
-        //                                         alt="' . $item->user->name . '" loading="lazy" />' : '
-        //                                     <img class="object-cover w-full h-full rounded-full"
-        //                                         src="' . asset('img/default-avatar.jpg') . '"
-        //                                         alt="' . $item->user->name . '" loading="lazy" />'
-        //                 ) : '
-        //                                 <span class="inline-block h-8 w-8 rounded-full overflow-hidden bg-gray-100">
-        //                                     <svg class="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
-        //                                         <path
-        //                                             d="M12 14.75c2.67 0 8 1.34 8 4v1.25H4v-1.25c0-2.66 5.33-4 8-4zm0-9.5c-2.22 0-4 1.78-4 4s1.78 4 4 4 4-1.78 4-4-1.78-4-4-4zm0 6c-1.11 0-2-.89-2-2s.89-2 2-2 2 .89 2 2-.89 2-2 2z" />
-        //                                     </svg>
-        //                                 </span>
-        //                             ') . '
-        //                             <div class="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></div>
-        //                         </div>
-        //                         <div>
-        //                             <p class="font-semibold">' . $item->user->name . '</p>
-        //                             <p class="text-xs text-gray-600 dark:text-gray-400">@' . $item->user->username . '</p>
-        //                         </div>
-        //                     </div>
-        //                 </td>
-        //             ';
-        //         })
-
-        //         ->addColumn('status', function ($item) {
-        //             if ($item->status == 'SUCCESS') {
-        //                 return '
-        //                     <td class="px-4 py-3 text-xs">
-        //                         <span class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
-        //                             ' . $item->status . '
-        //                         </span>
-        //                     </td>
-        //                 ';
-        //             } elseif ($item->status == 'PENDING') {
-        //                 return '
-        //                     <td class="px-4 py-3 text-xs">
-        //                         <span class="px-2 py-1 font-semibold leading-tight text-yellow-700 bg-yellow-100 rounded-full dark:bg-yellow-700 dark:text-yellow-100">
-        //                             ' . $item->status . '
-        //                         </span>
-        //                     </td>
-        //                 ';
-        //             } elseif ($item->status == 'CANCELLED') {
-        //                 return '
-        //                     <td class="px-4 py-3 text-xs">
-        //                         <span class="px-2 py-1 font-semibold leading-tight text-red-700 bg-red-100 rounded-full dark:bg-red-700 dark:text-red-100">
-        //                             ' . $item->status . '
-        //                         </span>
-        //                     </td>
-        //                 ';
-        //             } else {
-        //                 return '
-        //                     <td class="px-4 py-3 text-xs">
-        //                         Not Found!
-        //                     </td>
-        //                 ';
-        //             }
-        //         })
-
-        //         ->addColumn('action', function ($item) {
-        //             $encryptedId = Crypt::encrypt($item->id);
-
-        //             return '
-        //             <div class="flex justify-start items-center space-x-3.5">
-        //                 <a href="' . route('dashboard.transaction.sendMessage', $item->id) . '" title="WhatsApp" target="_blank"
-        //                     class="inline-flex flex-col items-center justify-center w-20 h-12 bg-green-400 text-white rounded-md border border-green-500 transition duration-500 ease select-none hover:bg-green-500 focus:outline-none focus:shadow-outline">
-        //                     <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/whatsapp.png') . '" alt="whatsapp" loading="lazy" width="20" />
-        //                     <p class="mt-1 text-xs">WhatsApp</p>
-        //                 </a>
-        //                 <a href="' . route('dashboard.report.exportPDF', $encryptedId) . '" title="Kwitansi"
-        //                     class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-indigo-500 bg-indigo-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-indigo-500 focus:outline-none focus:shadow-outline">
-        //                     <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/printer.png') . '" alt="printer" loading="lazy" width="20" />
-        //                     <p class="mt-1 text-xs">Kwitansi</p>
-        //                 </a>
-        //                 <a href="' . route('dashboard.transaction.show', $encryptedId) . '" title="Show"
-        //                     class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-blue-500 bg-blue-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-blue-500 focus:outline-none focus:shadow-outline">
-        //                     <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/show.png') . '" alt="show" loading="lazy" width="20" />
-        //                     <p class="mt-1 text-xs">Lihat</p>
-        //                 </a>
-        //             </div>
-
-
-
-        //             ';
-        //         })
-        //         // ->editColumn('total_price', function ($item) {
-        //         //     return number_format($item->total_price).'.00';
-        //         // })
-        //         ->rawColumns(['user.name', 'status', 'action'])
-        //         ->make();
-        // }
 
         $transactions = TransactionItem::select('products_id')
-        ->selectRaw('COUNT(*) as count')
-        ->selectRaw("SUM(CASE WHEN transactions.status = 'SUCCESS' THEN 1 ELSE 0 END) as success_count")
-        ->selectRaw("SUM(CASE WHEN transactions.status = 'PENDING' THEN 1 ELSE 0 END) as pending_count")
-        ->selectRaw("SUM(CASE WHEN transactions.status = 'CANCELED' THEN 1 ELSE 0 END) as canceled_count")
-        ->leftJoin('transactions', 'transaction_items.transactions_id', '=', 'transactions.id')
-        ->whereNull('transaction_items.deleted_at')
-        ->groupBy('products_id')
-        ->get();
+            ->selectRaw('COUNT(*) as count')
+            ->selectRaw("SUM(CASE WHEN transactions.status = 'SUCCESS' THEN 1 ELSE 0 END) as success_count")
+            ->selectRaw("SUM(CASE WHEN transactions.status = 'PENDING' THEN 1 ELSE 0 END) as pending_count")
+            ->selectRaw("SUM(CASE WHEN transactions.status = 'CANCELED' THEN 1 ELSE 0 END) as canceled_count")
+            ->leftJoin('transactions', 'transaction_items.transactions_id', '=', 'transactions.id')
+            ->whereNull('transaction_items.deleted_at')
+            ->groupBy('products_id')
+            ->get();
 
-    $productNames = Product::whereIn('id', $transactions->pluck('products_id'))->pluck('name');
+        $productNames = Product::whereIn('id', $transactions->pluck('products_id'))->pluck('name');
 
-    $labels = $productNames->toArray();
-    $successData = $transactions->pluck('success_count')->toArray();
-    $pendingData = $transactions->pluck('pending_count')->toArray();
-    $canceledData = $transactions->pluck('canceled_count')->toArray();
+        $labels = $productNames->toArray();
+        $successData = $transactions->pluck('success_count')->toArray();
+        $pendingData = $transactions->pluck('pending_count')->toArray();
+        $canceledData = $transactions->pluck('canceled_count')->toArray();
         return view(
             'dashboard2',
             compact(
@@ -269,7 +150,10 @@ class DashboardController extends Controller
                 'productChart',
                 'transactionPriceChart',
                 'users',
-                'labels', 'successData', 'pendingData', 'canceledData'
+                'labels',
+                'successData',
+                'pendingData',
+                'canceledData'
             )
         );
     }
@@ -295,13 +179,4 @@ class DashboardController extends Controller
     {
         return view('dashboardAdmin');
     }
-
-    // public function UserChart()
-    // {
-    //     $usersChart = new UserChart;
-    //     $usersChart->labels(['Jan', 'Feb', 'Mar']);
-    //     $usersChart->dataset('Users by trimester', 'line', [10, 25, 13]);
-    //     return view('')
-    // }
-
 }
