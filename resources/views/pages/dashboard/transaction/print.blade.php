@@ -26,7 +26,8 @@
         }
 
         .header .logo {
-            width: 200px;
+            width: 100%;
+            height: 50px;
         }
 
         .header h1 {
@@ -121,11 +122,32 @@
 </head>
 
 <body>
+
     <div class="container">
         <div class="header">
-            <div class="logo">
-                <h1>Al's Store</h1>
+            <div class="logo" style="overflow: hidden;">
+                @php
+                    $imagePath = asset('icon/store.png');
+                    $imageData = '';
+                    $imageType = '';
+                    
+                    $allowedExtensions = ['png', 'jpg', 'jpeg']; // Ekstensi file gambar yang diizinkan
+                    
+                    // Mendapatkan ekstensi file gambar
+                    $extension = pathinfo($imagePath, PATHINFO_EXTENSION);
+                    
+                    // Memeriksa apakah ekstensi file gambar diizinkan
+                    if (in_array($extension, $allowedExtensions)) {
+                        $imageData = base64_encode(file_get_contents($imagePath));
+                        $imageType = 'image/' . $extension;
+                    }
+                @endphp
+
+                <img src="data:{{ $imageType }};base64,{{ $imageData }}" alt="logo"
+                    style="float: left; margin-right: 10px;" width="50">
+                <h1 style="margin: 0;">Al's Store</h1>
             </div>
+            <br>
             <h2>Invoice</h2>
         </div>
         <div class="info">

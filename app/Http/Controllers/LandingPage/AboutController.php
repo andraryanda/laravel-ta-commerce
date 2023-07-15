@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\LandingPage;
 
 use App\Models\User;
+use App\Models\Product;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\LandingPage\LandingPageAbout;
+use App\Models\LandingPage\LandingPageAboutTeam;
+use App\Models\LandingPage\LandingPageAboutFeature;
 
 class AboutController extends Controller
 {
@@ -25,15 +28,27 @@ class AboutController extends Controller
             }
         }
 
-        $users_count = User::where('roles', 'USER')->count();
+        $users_customer_count = User::where('roles', '=', 'USER')->count();
+        $new_transaction = Transaction::count();
+        $total_product = Product::count();
+        $total_amount_success = Transaction::where('status', '=', 'SUCCESS')->sum('total_price');
 
         $landingPageAbout = LandingPageAbout::get();
+        $landingPageAboutFeature = LandingPageAboutFeature::get();
+        $landingPageAboutTeam = LandingPageAboutTeam::get();
+
 
 
         return view('landing_page.pages.about', [
             'total_pending_count' => $total_pending_count,
             'landingPageAbout' => $landingPageAbout,
-            'users_count' => $users_count
+            'landingPageAboutFeature' => $landingPageAboutFeature,
+            'landingPageAboutTeam' => $landingPageAboutTeam,
+            'users_customer_count' => $users_customer_count,
+            'new_transaction' => $new_transaction,
+            'total_product' => $total_product,
+            'total_amount_success' => $total_amount_success
+
         ]);
     }
 }

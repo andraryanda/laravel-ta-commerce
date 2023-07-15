@@ -280,7 +280,7 @@
                 </li>
 
                 <li class="relative px-6 py-3">
-                    @if (request()->routeis('dashboard.user*'))
+                    @if (request()->routeis(['dashboard.user*', 'dashboard.user.edit*']))
                         <button onclick="showMenu1(true)"
                             class="inline-flex items-center justify-between w-full text-sm font-semibold bg-purple-500 text-white px-2 py-2 rounded transition-colors duration-150 hover:text-white hover:bg-purple-700 dark:hover:text-gray-200">
                             <span class="inline-flex items-center">
@@ -312,7 +312,7 @@
                                 aria-label="submenu">
                                 <li
                                     class="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 ">
-                                    <x-jet-nav-link href="{{ route('dashboard.user.index') }}" :active="request()->routeIs('dashboard.user.index')">
+                                    <x-jet-nav-link href="{{ route('dashboard.user.index') }}" :active="request()->routeIs(['dashboard.user.index', 'dashboard.user.edit*'])">
                                         <svg class="w-5 h-5" aria-hidden="true" fill="none"
                                             stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             viewBox="0 0 24 24" stroke="currentColor">
@@ -385,7 +385,7 @@
                                 aria-label="submenu">
                                 <li
                                     class="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 ">
-                                    <x-jet-nav-link href="{{ route('dashboard.user.index') }}" :active="request()->routeIs('dashboard.user.index')">
+                                    <x-jet-nav-link href="{{ route('dashboard.user.index') }}" :active="request()->routeIs(['dashboard.user.index'])">
                                         <svg class="w-5 h-5" aria-hidden="true" fill="none"
                                             stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             viewBox="0 0 24 24" stroke="currentColor">
@@ -452,7 +452,7 @@
                     </x-jet-nav-link>
                 </li>
                 <li class="relative px-6 py-3">
-                    @if (request()->routeIs('dashboard.transaction.index*'))
+                    @if (request()->routeIs(['dashboard.transaction.index*', 'dashboard.transaction.show*', 'dashboard.transaction.edit*']))
                         <button onclick="showMenu2(true)"
                             class="inline-flex items-center justify-between w-full text-sm font-semibold bg-purple-500 text-white px-2 py-2 rounded transition-colors duration-150 hover:text-white hover:bg-purple-700 dark:hover:text-gray-200">
                             <span class="inline-flex items-center">
@@ -485,7 +485,11 @@
                                 <li
                                     class="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 ">
                                     <x-jet-nav-link href="{{ route('dashboard.transaction.indexAllTransaction') }}"
-                                        :active="request()->routeIs('dashboard.transaction.indexAllTransaction')">
+                                        :active="request()->routeIs([
+                                            'dashboard.transaction.indexAllTransaction',
+                                            'dashboard.transaction.show*',
+                                            'dashboard.transaction.edit*',
+                                        ])">
                                         <svg class="w-5 h-5" aria-hidden="true" fill="none"
                                             stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             viewBox="0 0 24 24" stroke="currentColor">
@@ -1020,7 +1024,7 @@
                     </x-jet-nav-link>
                 </li>
                 <li class="relative px-6 py-3">
-                    @if (request()->routeIs('dashboard.transaction.index*'))
+                    @if (request()->routeIs(['dashboard.transaction.index*']))
                         <button onclick="showMenu2(true)"
                             class="inline-flex items-center justify-between w-full text-sm font-semibold bg-purple-500 text-white px-2 py-2 rounded transition-colors duration-150 hover:text-white hover:bg-purple-700 dark:hover:text-gray-200">
                             <span class="inline-flex items-center">

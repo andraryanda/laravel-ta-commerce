@@ -169,7 +169,7 @@
         @endpush
 
 
-        <div class="py-2">
+        <div class="py-2 container">
             {{-- <div class="max-w-7xl mx-auto sm:px-6 lg:px-8"> --}}
             <h2 class="font-semibold text-lg text-gray-800 leading-tight mb-5">Transaction Details</h2>
             <div class="bg-white overflow-hidden shadow sm:rounded-lg mb-10">

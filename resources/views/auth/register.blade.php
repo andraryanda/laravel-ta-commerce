@@ -82,27 +82,30 @@
                 class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
                 <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
                     <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                        Create and account
+                        Create an account
                     </h1>
 
                     <x-jet-validation-errors class="mb-3" />
 
                     <form class="space-y-4 md:space-y-6" method="POST" action="{{ route('register') }}">
                         @csrf
-                        <div>
-                            <label for="name"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your name</label>
-                            <input type="text" name="name" id="name"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                placeholder="Tuliskan name" required="">
-                        </div>
-                        <div>
-                            <label for="username"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your
-                                username</label>
-                            <input type="text" name="username" id="username"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                placeholder="Tuliskan username" required="">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="name"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your
+                                    name</label>
+                                <input type="text" name="name" id="name"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    placeholder="Tuliskan name" required="">
+                            </div>
+                            <div>
+                                <label for="username"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your
+                                    username</label>
+                                <input type="text" name="username" id="username"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    placeholder="Tuliskan username" required="">
+                            </div>
                         </div>
                         <div>
                             <label for="email"
@@ -118,6 +121,8 @@
                                 class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required="">
                         </div>
+
+
                         <div>
                             <label for="confirmation-password"
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirm
@@ -127,7 +132,6 @@
                                 class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required autocomplete="new-password" />
                         </div>
-
 
                         @if (Laravel\Jetstream\Jetstream::hasTermsAndPrivacyPolicyFeature())
                             <div class="mt-4">
@@ -161,14 +165,14 @@
                             an account</button>
                         <p class="text-sm font-light text-gray-500 dark:text-gray-400">
                             Already have an account? <a href="{{ route('login') }}"
-                                class="font-medium text-blue-600 hover:underline dark:text-blue-500">Login
-                                here</a>
+                                class="font-medium text-blue-600 hover:underline dark:text-blue-500">Login here</a>
                         </p>
                     </form>
                 </div>
             </div>
         </div>
     </section>
+
 
     {{-- </x-jet-authentication-card> --}}
 </x-guest-layout>

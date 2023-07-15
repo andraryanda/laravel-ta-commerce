@@ -68,26 +68,31 @@
                 <div class="about__achievement">
                     <div class="about__achieve__item">
                         <span class="fa fa-user-o"></span>
-                        <h4 class="achieve-counter">{{ $users_count }}</h4>
+                        <h4 class="achieve-counter">{{ $users_customer_count }}</h4>
                         <p>Clients</p>
                     </div>
                     <div class="about__achieve__item">
-                        <span class="fa fa-edit"></span>
-                        <h4 class="achieve-counter">2468</h4>
-                        <p>Domains</p>
+                        <span class="fa fa-wifi"></span>
+                        <h4 class="achieve-counter">{{ $new_transaction }}</h4>
+                        <p>Total Transaksi</p>
                     </div>
                     <div class="about__achieve__item">
-                        <span class="fa fa-clone"></span>
-                        <h4 class="achieve-counter">2468</h4>
-                        <p>Server</p>
+                        <span class="fa fa-check-circle"></span>
+                        <h4 class="achieve-counter">{{ $total_amount_success }}</h4>
+                        <p>Transaksi Sukses</p>
                     </div>
+
+                </div>
+                <div class="about__achievement">
+
                     <div class="about__achieve__item">
-                        <span class="fa fa-cog"></span>
-                        <h4 class="achieve-counter">2468</h4>
+                        <span class="fa fa-dropbox"></span>
+                        <h4 class="achieve-counter">{{ $total_product }}</h4>
                         <p>Installs</p>
                     </div>
                 </div>
-                <a href="#" class="primary-btn">Get started now</a>
+
+                <a href="{{ route('landingPage.pricing') }}" class="primary-btn">Get started now</a>
             </div>
         </div>
         </div>
@@ -140,53 +145,82 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="section-title">
-                        <h3>Our Hosting Features</h3>
+                        <h3>Fitur Alstore WiFi</h3>
                     </div>
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-4 col-md-6 col-sm-6">
-                    <div class="feature__item">
-                        <span class="fa fa-cloud-upload"></span>
-                        <h5>Auto update</h5>
-                        <p>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                @forelse ($landingPageAboutFeature as $item)
+                    <div class="col-lg-4 col-md-6 col-sm-6">
+                        <div class="feature__item">
+                            {{-- <span class="fa fa-wifi"></span> --}}
+                            <img src="{{ Storage::url($item->image_about_feature) }}" alt="{{ $item->id }}"
+                                class="rounded-circle" width="150">
+                            <h5>{{ $item->title_about_feature }}</h5>
+                            <p>{{ $item->description_about_feature }}</p>
+                        </div>
                     </div>
-                </div>
-                <div class="col-lg-4 col-md-6 col-sm-6">
-                    <div class="feature__item">
-                        <span class="fa fa-sliders"></span>
-                        <h5>Optimized software</h5>
-                        <p>Quis ipsum suspendisse ultrices gravida. Risus commodo viverra maecenas.</p>
+                @empty
+
+                    <div class="col-lg-4 col-md-6 col-sm-6">
+                        <div class="feature__item">
+                            <span class="fa fa-wifi"></span>
+                            <h5>Kecepatan Internet Tinggi</h5>
+                            <p>Nikmati kecepatan internet tinggi dengan Alstore WiFi. Dapatkan pengalaman menjelajah
+                                internet
+                                yang lancar dan streaming video HD tanpa buffering.</p>
+                        </div>
                     </div>
-                </div>
-                <div class="col-lg-4 col-md-6 col-sm-6">
-                    <div class="feature__item">
-                        <span class="fa fa-database"></span>
-                        <h5>Daily backups</h5>
-                        <p>Ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.</p>
+                    <div class="col-lg-4 col-md-6 col-sm-6">
+                        <div class="feature__item">
+                            <span class="fa fa-wrench"></span>
+                            <h5>Pemasangan Mudah</h5>
+                            <p>Alstore WiFi dapat dipasang dengan mudah di perumahan Anda. Tim kami akan memastikan
+                                pemasangan
+                                yang cepat dan efisien, sehingga Anda dapat segera menikmati koneksi internet yang handal.
+                            </p>
+                        </div>
                     </div>
-                </div>
-                <div class="col-lg-4 col-md-6 col-sm-6">
-                    <div class="feature__item">
-                        <span class="fa fa-globe"></span>
-                        <h5>Wide networking</h5>
-                        <p>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                    <div class="col-lg-4 col-md-6 col-sm-6">
+                        <div class="feature__item">
+                            <span class="fa fa-lock"></span>
+                            <h5>Keamanan Terjamin</h5>
+                            <p>Keamanan adalah prioritas kami. Alstore WiFi dilengkapi dengan fitur keamanan tingkat lanjut,
+                                termasuk enkripsi data, proteksi terhadap serangan siber, dan pengamanan jaringan yang
+                                ketat.
+                            </p>
+                        </div>
                     </div>
-                </div>
-                <div class="col-lg-4 col-md-6 col-sm-6">
-                    <div class="feature__item">
-                        <span class="fa fa-shield"></span>
-                        <h5>Protected</h5>
-                        <p>Quis ipsum suspendisse ultrices gravida. Risus commodo viverra maecenas.</p>
+                    <div class="col-lg-4 col-md-6 col-sm-6">
+                        <div class="feature__item">
+                            <span class="fa fa-users"></span>
+                            <h5>Koneksi Stabil untuk Banyak Pengguna</h5>
+                            <p>Alstore WiFi dirancang untuk memberikan koneksi yang stabil dan konsisten, bahkan saat
+                                digunakan
+                                oleh banyak pengguna sekaligus. Nikmati konektivitas yang lancar tanpa terganggu oleh beban
+                                penggunaan yang tinggi.</p>
+                        </div>
                     </div>
-                </div>
-                <div class="col-lg-4 col-md-6 col-sm-6">
-                    <div class="feature__item">
-                        <span class="fa fa-headphones"></span>
-                        <h5>Free support</h5>
-                        <p>Ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.</p>
+                    <div class="col-lg-4 col-md-6 col-sm-6">
+                        <div class="feature__item">
+                            <span class="fa fa-globe"></span>
+                            <h5>Cakupan Luas</h5>
+                            <p>Dengan Alstore WiFi, Anda dapat menikmati cakupan jaringan yang luas di seluruh perumahan
+                                Anda.
+                                Tidak perlu khawatir tentang sinyal lemah atau kehilangan koneksi di beberapa area.</p>
+                        </div>
                     </div>
-                </div>
+                    <div class="col-lg-4 col-md-6 col-sm-6">
+                        <div class="feature__item">
+                            <span class="fa fa-life-ring"></span>
+                            <h5>Dukungan Pelanggan 24/7</h5>
+                            <p>Kami menyediakan dukungan pelanggan yang siap membantu Anda 24 jam sehari, 7 hari seminggu.
+                                Tim
+                                kami akan dengan senang hati menjawab pertanyaan dan menyelesaikan masalah terkait layanan
+                                Alstore WiFi.</p>
+                        </div>
+                    </div>
+                @endforelse
             </div>
         </div>
     </section>
@@ -198,95 +232,90 @@
             <div class="row">
                 <div class="col-lg-8 col-md-8">
                     <div class="section-title normal-title">
-                        <h3>Meet our team</h3>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-4">
-                    <div class="team__btn">
-                        <a href="#" class="primary-btn">View all</a>
+                        <h3>Tim Als Store</h3>
                     </div>
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-6 col-md-6">
-                    <div class="team__item">
-                        <div class="team__pic">
-                            <img src="{{ asset('landing_page/img/team/team-1.jpg') }}" alt="">
-                        </div>
-                        <div class="team__text">
-                            <h5>Sabrina Carpenter</h5>
-                            <span>Chief executive officer</span>
-                            <p>Consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
-                                aliqua.</p>
-                            <div class="team__social">
-                                <a href="#" class="facebook"><i class="fa fa-facebook"></i></a>
-                                <a href="#" class="twitter"><i class="fa fa-twitter"></i></a>
-                                <a href="#" class="youtube"><i class="fa fa-youtube-play"></i></a>
-                                <a href="#" class="instagram"><i class="fa fa-instagram"></i></a>
+                @forelse ($landingPageAboutTeam as $item)
+                    <div class="col-lg-6 col-md-6">
+                        <div class="team__item">
+                            <div class="team__pic">
+                                <img src="{{ Storage::url($item->image_people_team) }}" alt="{{ $item->id }}"
+                                    width="100">
+                            </div>
+                            <div class="team__text">
+                                <h5>{{ $item->name_people_team }}</h5>
+                                <span>{{ $item->job_people_team }}</span>
+                                <p>{{ $item->description_people_team }}</p>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-6 col-md-6">
-                    <div class="team__item">
-                        <div class="team__pic">
-                            <img src="{{ asset('landing_page/img/team/team-2.jpg') }}" alt="">
-                        </div>
-                        <div class="team__text">
-                            <h5>Sabrina Carpenter</h5>
-                            <span>Software engineer</span>
-                            <p>Consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
-                                aliqua.</p>
-                            <div class="team__social">
-                                <a href="#" class="facebook"><i class="fa fa-facebook"></i></a>
-                                <a href="#" class="twitter"><i class="fa fa-twitter"></i></a>
-                                <a href="#" class="youtube"><i class="fa fa-youtube-play"></i></a>
-                                <a href="#" class="instagram"><i class="fa fa-instagram"></i></a>
+                @empty
+
+                    <div class="col-lg-6 col-md-6">
+                        <div class="team__item">
+                            <div class="team__pic">
+                                <img src="{{ asset('landing_page/img/team/team-1.jpg') }}" alt="">
+                            </div>
+                            <div class="team__text">
+                                <h5>Andi Susanto</h5>
+                                <span>Pemilik</span>
+                                <p>Merupakan pemilik dari Als Store. Bertanggung jawab dalam pengelolaan bisnis dan
+                                    pengambilan
+                                    keputusan strategis.</p>
+
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-6 col-md-6">
-                    <div class="team__item">
-                        <div class="team__pic">
-                            <img src="{{ asset('landing_page/img/team/team-3.jpg') }}" alt="">
-                        </div>
-                        <div class="team__text">
-                            <h5>Sabrina Carpenter</h5>
-                            <span>Support representative</span>
-                            <p>Consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
-                                aliqua.</p>
-                            <div class="team__social">
-                                <a href="#" class="facebook"><i class="fa fa-facebook"></i></a>
-                                <a href="#" class="twitter"><i class="fa fa-twitter"></i></a>
-                                <a href="#" class="youtube"><i class="fa fa-youtube-play"></i></a>
-                                <a href="#" class="instagram"><i class="fa fa-instagram"></i></a>
+                    <div class="col-lg-6 col-md-6">
+                        <div class="team__item">
+                            <div class="team__pic">
+                                <img src="{{ asset('landing_page/img/team/team-4.jpg') }}" alt="">
+                            </div>
+                            <div class="team__text">
+                                <h5>Putri Purnama</h5>
+                                <span>Admin</span>
+                                <p>Bertugas dalam administrasi dan pengelolaan harian Als Store. Menangani tugas-tugas
+                                    administratif dan koordinasi dengan tim lainnya.</p>
+
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-6 col-md-6">
-                    <div class="team__item">
-                        <div class="team__pic">
-                            <img src="{{ asset('landing_page/img/team/team-4.jpg') }}" alt="">
-                        </div>
-                        <div class="team__text">
-                            <h5>Sabrina Carpenter</h5>
-                            <span>Product director</span>
-                            <p>Consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
-                                aliqua.</p>
-                            <div class="team__social">
-                                <a href="#" class="facebook"><i class="fa fa-facebook"></i></a>
-                                <a href="#" class="twitter"><i class="fa fa-twitter"></i></a>
-                                <a href="#" class="youtube"><i class="fa fa-youtube-play"></i></a>
-                                <a href="#" class="instagram"><i class="fa fa-instagram"></i></a>
+                    <div class="col-lg-6 col-md-6">
+                        <div class="team__item">
+                            <div class="team__pic">
+                                <img src="{{ asset('landing_page/img/team/team-3.jpg') }}" alt="">
+                            </div>
+                            <div class="team__text">
+                                <h5>Dani Setiawan</h5>
+                                <span>Teknisi</span>
+                                <p>Bertanggung jawab dalam perawatan dan pemeliharaan infrastruktur jaringan Als Store.
+                                    Menangani instalasi dan troubleshooting teknis.</p>
+
                             </div>
                         </div>
                     </div>
-                </div>
+                    <div class="col-lg-6 col-md-6">
+                        <div class="team__item">
+                            <div class="team__pic">
+                                <img src="{{ asset('landing_page/img/team/team-2.jpg') }}" alt="">
+                            </div>
+                            <div class="team__text">
+                                <h5>Aulia Rahman</h5>
+                                <span>Teknisi</span>
+                                <p>Bertugas dalam merancang dan mengembangkan desain visual untuk Als Store. Menangani
+                                    tampilan
+                                    dan pengalaman pengguna.</p>
+
+                            </div>
+                        </div>
+                    </div>
+                @endforelse
             </div>
         </div>
     </section>
+
     <!-- Team Section End -->
 
     <!-- Testimonial Section Begin -->
@@ -295,7 +324,7 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="section-title">
-                        <h3>Our Client say</h3>
+                        <h3>Ulasan Pelanggan Kami</h3>
                     </div>
                 </div>
             </div>
@@ -304,10 +333,12 @@
                     <div class="col-lg-4">
                         <div class="testimonial__item">
                             <img src="{{ asset('landing_page/img/testimonial/testimonial-1.jpg') }}" alt="">
-                            <h5>Billie Eilish</h5>
-                            <span>Designer</span>
-                            <p>Ipsum dolor sit amet, consectetur adipiscing elit, eiusmod tempor incididunt ut labuore
-                                et dolore magna aliqua.</p>
+                            <h5>Andi Susanto</h5>
+                            <span>Pelanggan</span>
+                            <p>Saya sangat senang menggunakan layanan Alstore WiFi. Koneksi yang stabil dan cepat membuat
+                                pengalaman internet di rumah saya menjadi lebih baik. Tim dukungan pelanggan juga sangat
+                                responsif dan membantu dengan setiap pertanyaan yang saya miliki. Sangat merekomendasikan
+                                Alstore WiFi kepada semua orang!</p>
                             <div class="testimonial__rating">
                                 <i class="fa fa-star"></i>
                                 <i class="fa fa-star"></i>
@@ -320,10 +351,12 @@
                     <div class="col-lg-4">
                         <div class="testimonial__item">
                             <img src="{{ asset('landing_page/img/testimonial/testimonial-2.jpg') }}" alt="">
-                            <h5>Billie Eilish</h5>
-                            <span>Designer</span>
-                            <p>Ipsum dolor sit amet, consectetur adipiscing elit, eiusmod tempor incididunt ut labuore
-                                et dolore magna aliqua.</p>
+                            <h5>Siti Rahayu</h5>
+                            <span>Pelanggan</span>
+                            <p>Alstore WiFi adalah pilihan terbaik untuk koneksi internet di perumahan. Kualitas layanan
+                                yang luar biasa dan harga yang terjangkau. Saya sangat puas dengan kecepatan internet yang
+                                stabil dan customer service yang ramah. Tidak ada lagi masalah buffering saat streaming film
+                                favorit saya!</p>
                             <div class="testimonial__rating">
                                 <i class="fa fa-star"></i>
                                 <i class="fa fa-star"></i>
@@ -336,42 +369,11 @@
                     <div class="col-lg-4">
                         <div class="testimonial__item">
                             <img src="{{ asset('landing_page/img/testimonial/testimonial-3.jpg') }}" alt="">
-                            <h5>Billie Eilish</h5>
-                            <span>Designer</span>
-                            <p>Ipsum dolor sit amet, consectetur adipiscing elit, eiusmod tempor incididunt ut labuore
-                                et dolore magna aliqua.</p>
-                            <div class="testimonial__rating">
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="testimonial__item">
-                            <img src="{{ asset('landing_page/img/testimonial/testimonial-1.jpg') }}" alt="">
-                            <h5>Billie Eilish</h5>
-                            <span>Designer</span>
-                            <p>Ipsum dolor sit amet, consectetur adipiscing elit, eiusmod tempor incididunt ut labuore
-                                et dolore magna aliqua.</p>
-                            <div class="testimonial__rating">
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="testimonial__item">
-                            <img src="{{ asset('landing_page/img/testimonial/testimonial-2.jpg') }}" alt="">
-                            <h5>Billie Eilish</h5>
-                            <span>Designer</span>
-                            <p>Ipsum dolor sit amet, consectetur adipiscing elit, eiusmod tempor incididunt ut labuore
-                                et dolore magna aliqua.</p>
+                            <h5>Budi Santoso</h5>
+                            <span>Pelanggan</span>
+                            <p>Saya sangat terkesan dengan kehandalan dan kecepatan koneksi Alstore WiFi. Tidak ada lagi
+                                gangguan atau lambatnya internet di perumahan kami. Tim teknis juga sangat profesional dan
+                                memberikan layanan yang memuaskan. Terima kasih Alstore WiFi!</p>
                             <div class="testimonial__rating">
                                 <i class="fa fa-star"></i>
                                 <i class="fa fa-star"></i>
@@ -385,5 +387,7 @@
             </div>
         </div>
     </section>
+
+
     <!-- Testimonial Section End -->
 @endsection

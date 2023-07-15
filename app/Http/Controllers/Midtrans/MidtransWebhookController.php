@@ -380,20 +380,25 @@ class MidtransWebhookController extends Controller
 
             // Send the email
             Mail::to('andraryandra38@gmail.com')->send(new TransactionSuccessNotification($transaction, $user));
+            Mail::to($transaction->user->email)->send(new TransactionSuccessNotification($transaction, $user));
 
             if ($transaction) {
                 // Mengambil nilai id dan users_id dari model Transaction
                 $transactionId = $transaction->id;
                 $userId = $transaction->users_id;
 
+                return redirect()->route('midtrans.transaction-success');
+
                 // Logika pengalihan pengguna berdasarkan role dan nilai order_id
-                if ($user->roles == 'USER' && $transaction->id . '_' . time() == $request->order_id && $transaction->users_id == $user->id) {
-                    // Jika pengguna bukan admin dan order_id == request->order_id dan users_id == id pengguna
-                    return redirect()->route('dashboard.midtrans.showCustomer', encrypt($transactionId));
-                } else {
-                    // Jika pengguna tidak memiliki peran admin atau kondisi lainnya ADMIN
-                    return redirect()->route('dashboard.midtrans.show', encrypt($transactionId));
-                }
+                // if ($user->roles == 'USER' && $transaction->id . '_' . time() == $request->order_id && $transaction->users_id == $user->id) {
+                //     // Jika pengguna bukan admin dan order_id == request->order_id dan users_id == id pengguna
+                //     // return redirect()->route('dashboard.midtrans.showCustomer', encrypt($transactionId));
+                //     // return redirect()->route('midtrans.transaction-success');
+                // } else {
+                //     // Jika pengguna tidak memiliki peran admin atau kondisi lainnya ADMIN
+                //     // return redirect()->route('dashboard.midtrans.show', encrypt($transactionId));
+                //     // return redirect()->route('midtrans.transaction-success');
+                // }
             } else {
                 // Logika jika data transaksi tidak ditemukan
                 // Misalnya menampilkan pesan error atau mengarahkan pengguna ke halaman lain
@@ -494,16 +499,17 @@ class MidtransWebhookController extends Controller
                 $userId = $transactionWifi->users_id;
 
                 // Logika pengalihan pengguna berdasarkan role dan nilai order_id
+                return redirect()->route('midtrans.transaction-success');
 
                 // if ($user->roles == 'USER' && $transactionWifi->id == $request->order_id && $transactionWifi->users_id == $user->id) {
-                if ($user->roles == 'USER' && $transactionWifi->id . '_' . time() == $request->order_id && $transactionWifi->users_id == $user->id) { // Jika pengguna bukan admin dan order_id == request->order_id dan users_id == id pengguna
-                    return redirect()->route('dashboard.bulan.showCustomerWifi1', encrypt($transactionId));
-                    // return redirect()->route('dashboard.midtrans.showCustomerWifi', encrypt($transactionId));
-                    // return redirect()->route('dashboard.bulan-customer.index')->withSuccess('Pembayaran Berhasil Dilakukan');
-                } else {
-                    // Jika pengguna tidak memiliki peran admin atau ko  ndisi lainnya ADMIN
-                    return redirect()->route('dashboard.midtrans.showCustomerWifi', encrypt($transactionId));
-                }
+                // if ($user->roles == 'USER' && $transactionWifi->id . '_' . time() == $request->order_id && $transactionWifi->users_id == $user->id) { // Jika pengguna bukan admin dan order_id == request->order_id dan users_id == id pengguna
+                //     return redirect()->route('dashboard.bulan.showCustomerWifi1', encrypt($transactionId));
+                //     // return redirect()->route('dashboard.midtrans.showCustomerWifi', encrypt($transactionId));
+                //     // return redirect()->route('dashboard.bulan-customer.index')->withSuccess('Pembayaran Berhasil Dilakukan');
+                // } else {
+                //     // Jika pengguna tidak memiliki peran admin atau ko  ndisi lainnya ADMIN
+                //     return redirect()->route('dashboard.midtrans.showCustomerWifi', encrypt($transactionId));
+                // }
             } else {
                 // Logika jika data transaksi tidak ditemukan
                 // Misalnya menampilkan pesan error atau mengarahkan pengguna ke halaman lain

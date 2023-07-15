@@ -6,6 +6,7 @@ use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Models\LandingPage\LandingPageContact;
 
 class ContactController extends Controller
 {
@@ -22,8 +23,12 @@ class ContactController extends Controller
                 $total_pending_count = Transaction::where('status', '=', 'PENDING')->where('users_id', '=', $user->id)->count();
             }
         }
+
+        $landingPageContact = LandingPageContact::get();
+
         return view('landing_page.pages.contact', [
             'total_pending_count' => $total_pending_count,
+            'landingPageContact' => $landingPageContact
         ]);
     }
 }

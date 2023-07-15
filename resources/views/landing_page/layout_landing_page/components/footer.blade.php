@@ -4,15 +4,15 @@
             <div class="row">
                 <div class="col-lg-6 col-md-6">
                     <div class="footer__top-call">
-                        <h5>Need Help? Call us</h5>
+                        <h5>Butuh Bantuan? Hubungi kami segera!</h5>
                         <h2>+1 175 946 2316 096</h2>
                     </div>
                 </div>
                 <div class="col-lg-6 col-md-6">
                     <div class="footer__top-auth">
-                        <h5>Join Now And Have Free Month Of Deluxe Hosting</h5>
-                        <a href="#" class="primary-btn">Log in</a>
-                        <a href="#" class="primary-btn sign-up">Sign Up</a>
+                        <h5>Mari bergabung dengan kami</h5>
+                        <a href="{{ route('login') }}" class="primary-btn">Log in</a>
+                        <a href="{{ route('register') }}" class="primary-btn sign-up">Sign Up</a>
                     </div>
                 </div>
             </div>

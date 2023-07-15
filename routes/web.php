@@ -73,9 +73,12 @@ Route::get('/', [HalamanUtamaController::class, 'index'])->name('landingPage.ind
 Route::get('about', [AboutController::class, 'index'])->name('landingPage.about');
 Route::get('hosting', [HostingController::class, 'index'])->name('landingPage.hosting');
 Route::get('contact', [ContactController::class, 'index'])->name('landingPage.contact');
-Route::get('pages/pricing', [PricingController::class, 'index'])->name('landingPage.pricing');
+Route::get('produk', [PricingController::class, 'index'])->name('landingPage.pricing');
 Route::get('/searchProductLandingPageCustomer', [PricingLandingPageSearchController::class, 'searchProductLandingPageCustomer'])->name('landingPage.pricingCustomer.searchProductLandingPageCustomer');
 
+Route::get('notify/transaction-success', function () {
+    return view('pages.midtrans.transaction-success');
+})->name('midtrans.transaction-success');
 
 Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::get('dashboard', [DashboardController::class, 'statusDashboard'])->name('dashboard.index')->middleware('admin');
@@ -90,6 +93,8 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
 
         // Midtrans
         // Transaksi Pembelian Produk
+
+
         Route::get('dashboard/payment/cancel/{id}', [MidtransWebhookController::class, 'cancelPayment'])->name('midtrans.cancel');
 
         Route::get('transaction/{id}/payment', [MidtransWebhookController::class, 'payment'])->name('payment');
