@@ -5,7 +5,7 @@
             <a class="ml-6 flex items-center text-lg font-bold text-gray-800 dark:text-gray-200"
                 href="{{ route('dashboard.index') }}">
                 <img src="{{ asset('icon/store.png') }}" alt="Al's Store" width="50" class="mr-2">
-                {{ __('Als Store') }}
+                {{ __('AL-N3T Support Gesitnet') }}
             </a>
 
             <ul class="mt-6">
@@ -25,7 +25,7 @@
             <a class="ml-6 flex items-center text-lg font-bold text-gray-800 dark:text-gray-200"
                 href="{{ route('dashboard.indexDashboardCustomer') }}">
                 <img src="{{ asset('icon/store.png') }}" alt="Al's Store" width="50" class="mr-2">
-                {{ __('Als Store') }}
+                {{ __('AL-N3T Support Gesitnet') }}
             </a>
 
             <ul class="mt-6">
@@ -1598,7 +1598,7 @@
     @keydown.escape="closeSideMenu">
     <div class="py-4 text-gray-500 dark:text-gray-400">
         <a class="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200" href="#">
-            {{ __('Als Store') }}
+            {{ __('AL-N3T Support Gesitnet') }}
         </a>
         <ul class="mt-6">
             <li class="relative px-6 py-3">

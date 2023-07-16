@@ -19,12 +19,12 @@ class CreateTransactionsTable extends Migration
 
             $table->unsignedbigInteger('users_id');
 
-            $table->text('address')->nullable();
+            $table->string('address')->nullable();
             $table->decimal('total_price', 12, 2);
             $table->float('shipping_price')->default(0);
-            $table->string('status', 20)->default('PENDING');
+            $table->string('status', 16)->default('PENDING');
             $table->string('payment', 20)->default('MANUAL');
-            // $table->string('snap_token')->nullable();
+            $table->string('snap_token', 75)->nullable();
 
 
             $table->softDeletes();

@@ -389,15 +389,13 @@ class MidtransWebhookController extends Controller
 
                 return redirect()->route('midtrans.transaction-success');
 
-                // Logika pengalihan pengguna berdasarkan role dan nilai order_id
+                // // Logika pengalihan pengguna berdasarkan role dan nilai order_id
                 // if ($user->roles == 'USER' && $transaction->id . '_' . time() == $request->order_id && $transaction->users_id == $user->id) {
                 //     // Jika pengguna bukan admin dan order_id == request->order_id dan users_id == id pengguna
-                //     // return redirect()->route('dashboard.midtrans.showCustomer', encrypt($transactionId));
-                //     // return redirect()->route('midtrans.transaction-success');
+                //     return redirect()->route('dashboard.midtrans.showCustomer', encrypt($transactionId));
                 // } else {
                 //     // Jika pengguna tidak memiliki peran admin atau kondisi lainnya ADMIN
-                //     // return redirect()->route('dashboard.midtrans.show', encrypt($transactionId));
-                //     // return redirect()->route('midtrans.transaction-success');
+                //     return redirect()->route('dashboard.midtrans.show', encrypt($transactionId));
                 // }
             } else {
                 // Logika jika data transaksi tidak ditemukan

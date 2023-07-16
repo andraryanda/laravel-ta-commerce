@@ -49,7 +49,7 @@
                             <div class="col-lg-6">
                                 <div class="hero__text">
                                     <h5>Starting At Only $ 2.8/month</h5>
-                                    <h2>Welcome to the best<br /> Toko Kami Networking</h2>
+                                    <h2>Welcome to the best<br /> AL-N3T Support Gesitnet Kami Networking</h2>
                                     <a href="#" class="primary-btn">Get started now</a>
                                 </div>
                             </div>
@@ -101,7 +101,7 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="section-title">
-                        <h3>Kenapa Harus Membeli WiFi dari Toko Al's Store?</h3>
+                        <h3>Kenapa Harus Membeli WiFi dari AL-N3T?</h3>
                     </div>
                 </div>
             </div>
@@ -111,14 +111,14 @@
                         <h5>Produk WiFi Berkualitas</h5>
                         {{-- <span>Mulai Dari $1.84</span> --}}
                         <p>Kami menyediakan produk WiFi berkualitas tinggi yang memberikan koneksi yang stabil dan cepat
-                            untuk toko Anda. Nikmati pengalaman online yang lancar dan tanpa gangguan.</p>
+                            untuk rumah Anda. Nikmati pengalaman online yang lancar dan tanpa gangguan.</p>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-4 col-sm-6">
                     <div class="services__item">
                         <h5>Kecepatan Internet Unggul</h5>
                         {{-- <span>Mulai Dari $1.84</span> --}}
-                        <p>Dapatkan kecepatan internet yang unggul dengan WiFi toko kami. Mempercepat kinerja bisnis Anda
+                        <p>Dapatkan kecepatan internet yang unggul dengan WiFi AL-N3T kami. Mempercepat kinerja bisnis Anda
                             dengan akses internet super cepat.</p>
                     </div>
                 </div>
@@ -127,7 +127,7 @@
                         <h5>Layanan Profesional</h5>
                         {{-- <span>Mulai Dari $1.84</span> --}}
                         <p>Kami menyediakan layanan profesional untuk membantu Anda dalam instalasi, konfigurasi, dan
-                            pemeliharaan WiFi toko Anda. Tim ahli kami siap membantu Anda setiap saat.</p>
+                            pemeliharaan WiFi rumah Anda. Tim ahli kami siap membantu Anda setiap saat.</p>
                     </div>
                 </div>
             </div>
@@ -296,9 +296,10 @@
                             <div class="col-lg-6">
                                 <div class="work__item">
                                     <i class="fa fa-wifi"></i>
-                                    <span>KENALI TOKO KAMI</span>
-                                    <h3>TENTANG TOKO WiFi</h3>
-                                    <p>Toko WiFi adalah destinasi terbaik Anda untuk memenuhi kebutuhan jaringan nirkabel
+                                    <span>KENALI AL-N3T Support Getsitnet KAMI</span>
+                                    <h3>TENTANG AL-N3T WiFi</h3>
+                                    <p>AL-N3T Support Gesitnet adalah destinasi terbaik Anda untuk memenuhi kebutuhan
+                                        jaringan nirkabel
                                         Anda. Kami menyediakan solusi WiFi yang handal dan berkualitas tinggi untuk rumah,
                                         bisnis, dan lingkungan publik. Dengan produk unggulan dan layanan profesional, kami
                                         membantu menghubungkan dunia digital Anda dengan koneksi yang stabil dan cepat.</p>

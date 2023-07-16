@@ -18,9 +18,9 @@ class CreateProductsTable extends Migration
 
             $table->string('name', 45);
             $table->decimal('price', 12, 2);
-            $table->longText('description');
+            $table->string('description');
 
-            $table->string('tags', 100)->nullable();
+            $table->string('tags', 15)->nullable();
             $table->string('status_product', 20)->nullable();
 
             // $table->bigInteger('categories_id');

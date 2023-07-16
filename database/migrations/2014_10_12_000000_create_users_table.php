@@ -17,15 +17,20 @@ class CreateUsersTable extends Migration
             $table->id();
 
             $table->string('name', 35);
-            // $table->string('username')->nullable();
+            // $table->string('username', 35)->nullable();
             $table->string('email', 40)->unique();
-            // $table->string('roles')->nullable();
+            // $table->string('roles', 10)->nullable();
+
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('phone', 20)->nullable();
-            $table->longText('alamat')->nullable();
+
+            $table->string('phone', 15)->nullable();
+            $table->string('alamat')->nullable();
+
             $table->timestamp('last_seen')->nullable();
+
             $table->rememberToken();
+
             $table->foreignId('current_team_id')->nullable();
             $table->text('profile_photo_path')->nullable();
             $table->timestamps();

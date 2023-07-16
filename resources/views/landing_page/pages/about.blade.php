@@ -145,7 +145,7 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="section-title">
-                        <h3>Fitur Alstore WiFi</h3>
+                        <h3>Fitur AL-N3T WiFi</h3>
                     </div>
                 </div>
             </div>
@@ -166,7 +166,7 @@
                         <div class="feature__item">
                             <span class="fa fa-wifi"></span>
                             <h5>Kecepatan Internet Tinggi</h5>
-                            <p>Nikmati kecepatan internet tinggi dengan Alstore WiFi. Dapatkan pengalaman menjelajah
+                            <p>Nikmati kecepatan internet tinggi dengan AL-N3T WiFi. Dapatkan pengalaman menjelajah
                                 internet
                                 yang lancar dan streaming video HD tanpa buffering.</p>
                         </div>
@@ -175,7 +175,7 @@
                         <div class="feature__item">
                             <span class="fa fa-wrench"></span>
                             <h5>Pemasangan Mudah</h5>
-                            <p>Alstore WiFi dapat dipasang dengan mudah di perumahan Anda. Tim kami akan memastikan
+                            <p>AL-N3T WiFi dapat dipasang dengan mudah di perumahan Anda. Tim kami akan memastikan
                                 pemasangan
                                 yang cepat dan efisien, sehingga Anda dapat segera menikmati koneksi internet yang handal.
                             </p>
@@ -185,7 +185,7 @@
                         <div class="feature__item">
                             <span class="fa fa-lock"></span>
                             <h5>Keamanan Terjamin</h5>
-                            <p>Keamanan adalah prioritas kami. Alstore WiFi dilengkapi dengan fitur keamanan tingkat lanjut,
+                            <p>Keamanan adalah prioritas kami. AL-N3T WiFi dilengkapi dengan fitur keamanan tingkat lanjut,
                                 termasuk enkripsi data, proteksi terhadap serangan siber, dan pengamanan jaringan yang
                                 ketat.
                             </p>
@@ -195,7 +195,7 @@
                         <div class="feature__item">
                             <span class="fa fa-users"></span>
                             <h5>Koneksi Stabil untuk Banyak Pengguna</h5>
-                            <p>Alstore WiFi dirancang untuk memberikan koneksi yang stabil dan konsisten, bahkan saat
+                            <p>AL-N3T WiFi dirancang untuk memberikan koneksi yang stabil dan konsisten, bahkan saat
                                 digunakan
                                 oleh banyak pengguna sekaligus. Nikmati konektivitas yang lancar tanpa terganggu oleh beban
                                 penggunaan yang tinggi.</p>
@@ -205,7 +205,7 @@
                         <div class="feature__item">
                             <span class="fa fa-globe"></span>
                             <h5>Cakupan Luas</h5>
-                            <p>Dengan Alstore WiFi, Anda dapat menikmati cakupan jaringan yang luas di seluruh perumahan
+                            <p>Dengan AL-N3T WiFi, Anda dapat menikmati cakupan jaringan yang luas di seluruh perumahan
                                 Anda.
                                 Tidak perlu khawatir tentang sinyal lemah atau kehilangan koneksi di beberapa area.</p>
                         </div>
@@ -217,7 +217,7 @@
                             <p>Kami menyediakan dukungan pelanggan yang siap membantu Anda 24 jam sehari, 7 hari seminggu.
                                 Tim
                                 kami akan dengan senang hati menjawab pertanyaan dan menyelesaikan masalah terkait layanan
-                                Alstore WiFi.</p>
+                                AL-N3T WiFi.</p>
                         </div>
                     </div>
                 @endforelse
@@ -335,10 +335,10 @@
                             <img src="{{ asset('landing_page/img/testimonial/testimonial-1.jpg') }}" alt="">
                             <h5>Andi Susanto</h5>
                             <span>Pelanggan</span>
-                            <p>Saya sangat senang menggunakan layanan Alstore WiFi. Koneksi yang stabil dan cepat membuat
+                            <p>Saya sangat senang menggunakan layanan AL-N3T WiFi. Koneksi yang stabil dan cepat membuat
                                 pengalaman internet di rumah saya menjadi lebih baik. Tim dukungan pelanggan juga sangat
                                 responsif dan membantu dengan setiap pertanyaan yang saya miliki. Sangat merekomendasikan
-                                Alstore WiFi kepada semua orang!</p>
+                                AL-N3T WiFi kepada semua orang!</p>
                             <div class="testimonial__rating">
                                 <i class="fa fa-star"></i>
                                 <i class="fa fa-star"></i>
@@ -353,7 +353,7 @@
                             <img src="{{ asset('landing_page/img/testimonial/testimonial-2.jpg') }}" alt="">
                             <h5>Siti Rahayu</h5>
                             <span>Pelanggan</span>
-                            <p>Alstore WiFi adalah pilihan terbaik untuk koneksi internet di perumahan. Kualitas layanan
+                            <p>AL-N3T WiFi adalah pilihan terbaik untuk koneksi internet di perumahan. Kualitas layanan
                                 yang luar biasa dan harga yang terjangkau. Saya sangat puas dengan kecepatan internet yang
                                 stabil dan customer service yang ramah. Tidak ada lagi masalah buffering saat streaming film
                                 favorit saya!</p>
@@ -371,9 +371,9 @@
                             <img src="{{ asset('landing_page/img/testimonial/testimonial-3.jpg') }}" alt="">
                             <h5>Budi Santoso</h5>
                             <span>Pelanggan</span>
-                            <p>Saya sangat terkesan dengan kehandalan dan kecepatan koneksi Alstore WiFi. Tidak ada lagi
+                            <p>Saya sangat terkesan dengan kehandalan dan kecepatan koneksi AL-N3T WiFi. Tidak ada lagi
                                 gangguan atau lambatnya internet di perumahan kami. Tim teknis juga sangat profesional dan
-                                memberikan layanan yang memuaskan. Terima kasih Alstore WiFi!</p>
+                                memberikan layanan yang memuaskan. Terima kasih AL-N3T WiFi!</p>
                             <div class="testimonial__rating">
                                 <i class="fa fa-star"></i>
                                 <i class="fa fa-star"></i>

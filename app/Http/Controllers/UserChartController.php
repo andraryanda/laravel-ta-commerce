@@ -61,6 +61,8 @@ class UserChartController extends Controller
 
         // Tambahkan dataset baru pada chart berdasarkan role, tahun, dan bulan
         $roles = $users->pluck('roles')->unique();
+        $colors = ['#007bff', '#dc3545', '#28a745']; // Set your desired colors
+
         foreach ($roles as $role) {
             $roleData = [];
             for ($month = 1; $month <= 12; $month++) {
@@ -68,10 +70,11 @@ class UserChartController extends Controller
                 array_push($roleData, $total);
             }
 
-            $color = $role == 'USER' ? '#007bff' : '#dc3545';
-            $chart->dataset($role, 'bar', $roleData)
-                ->backgroundColor($color);
+            $colorIndex = $roles->search($role); // Get the index of the current role
+            $color = $colors[$colorIndex]; // Get the corresponding color for the role
+            $chart->dataset($role, 'bar', $roleData)->backgroundColor($color);
         }
+
 
         // Tampilkan view dengan chart dan data lainnya
         return view('pages.dashboard.chart.index_user_tahun', [

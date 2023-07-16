@@ -106,7 +106,7 @@
      </div>
      <div class="offcanvas__logo">
          <a href="{{ route('landingPage.index') }}">
-             <h3 class="text-light font-weight-bold">Als Store</h3>
+             <h3 class="text-light font-weight-bold">AL-N3T Support Gesitnet</h3>
 
              {{-- <img src="{{ asset('landing_page/img/logo.png') }}" alt=""> --}}
          </a>
@@ -119,6 +119,8 @@
                      href="{{ route('landingPage.about') }}">About</a></li>
              <li class="{{ Request::routeIs('landingPage.pricing') ? 'active' : '' }}"><a
                      href="{{ route('landingPage.pricing') }}">Produk</a></li>
+             <li class="{{ Request::routeIs('landingPage.download.aplikasi') ? 'active' : '' }}"><a
+                     href="{{ route('landingPage.download.aplikasi') }}">Download Aplikasi Al-N3T</a></li>
              <li class="{{ Request::routeIs('landingPage.contact') ? 'active' : '' }}"><a
                      href="{{ route('landingPage.contact') }}">Contact</a></li>
          </ul>
@@ -130,7 +132,7 @@
                  @if (Auth::check())
                      @if (Auth::user()->roles == 'ADMIN' || Auth::user()->roles == 'OWNER')
                          <a href="{{ route('dashboard.transaction.indexPending') }}">
-                             <span class="fa fa-shopping-cart ml-2" style="font-size: 1.2em;"></span>
+                             <span class="fa fa-shopping-cart" style="font-size: 1.2em;"></span>
                              {{ __('Keranjang Produk ') }}
                              @if (!empty($total_pending_count))
                                  <span
@@ -141,7 +143,7 @@
                          </a>
                      @else
                          <a href="{{ route('dashboard.transactionCustomer.index') }}">
-                             <span class="fa fa-shopping-cart ml-2" style="font-size: 1.2em;"></span>
+                             <span class="fa fa-shopping-cart " style="font-size: 1.2em;"></span>
                              {{ __('Keranjang Produk') }}
                              @if (!empty($total_pending_count))
                                  <span
@@ -153,7 +155,7 @@
                      @endif
                  @else
                      <a href="{{ route('dashboard.transactionCustomer.index') }}">
-                         <span class="fa fa-shopping-cart ml-2" style="font-size: 1.2em;"></span>
+                         <span class="fa fa-shopping-cart " style="font-size: 1.2em;"></span>
                          {{ __('Keranjang Produk') }}
                          @if (!empty($total_pending_count))
                              <span
@@ -189,8 +191,7 @@
                      </li>
                      @if (Route::has('register'))
                          <li>
-                             <a href="{{ route('register') }}" class="btn btn-danger btn-action rounded-pill"><span
-                                     class="fa fa-user"></span>
+                             <a href="{{ route('register') }}" class=""><span class="fa fa-user"></span>
                                  {{ __('Register') }}
                              </a>
                          </li>
@@ -202,7 +203,7 @@
      <div class="offcanvas__info">
          <ul>
              <li><span class="icon_phone"></span> +62 85314005779</li>
-             <li><span class="fa fa-envelope"></span> alstoreWifi@gmail.com</li>
+             <li><span class="fa fa-envelope"></span> alnet@gmail.com</li>
          </ul>
      </div>
  </div>
@@ -217,7 +218,7 @@
                      <div class="header__info-left">
                          <ul>
                              <li><span class="icon_phone"></span> +62 85314005779</li>
-                             <li><span class="fa fa-envelope"></span> alstoreWifi@gmail.com</li>
+                             <li><span class="fa fa-envelope"></span> alnet@gmail.com</li>
                          </ul>
                      </div>
                  </div>
@@ -228,7 +229,7 @@
                                  @if (Auth::check())
                                      @if (Auth::user()->roles == 'ADMIN' || Auth::user()->roles == 'OWNER')
                                          <a href="{{ route('dashboard.transaction.indexPending') }}">
-                                             <span class="fa fa-shopping-cart ml-2" style="font-size: 1.2em;"></span>
+                                             <span class="fa fa-shopping-cart " style="font-size: 1.2em;"></span>
                                              {{ __('Keranjang Produk ') }}
                                              @if (!empty($total_pending_count))
                                                  <span
@@ -290,8 +291,7 @@
                                      </li>
                                      @if (Route::has('register'))
                                          <li>
-                                             <a href="{{ route('register') }}"
-                                                 class="btn btn-danger btn-action rounded-pill"><span
+                                             <a href="{{ route('register') }}" class=""><span
                                                      class="fa fa-user"></span>
                                                  {{ __('Register') }}
                                              </a>
@@ -310,7 +310,7 @@
              <div class="col-lg-3 col-md-3">
                  <div class="header__logo">
                      <a href="{{ route('landingPage.index') }}" class="">
-                         <h3 class="text-light font-weight-bold">Als Store</h3>
+                         <h5 class="text-light font-weight-bold">AL-N3T Support Gesitnet</h5>
                          {{-- <img src="{{ asset('landing_page/img/logo.png') }}" alt=""> --}}
                      </a>
                  </div>
@@ -324,6 +324,8 @@
                                  href="{{ route('landingPage.about') }}">About</a></li>
                          <li class="{{ Request::routeIs('landingPage.pricing') ? 'active' : '' }}"><a
                                  href="{{ route('landingPage.pricing') }}">Produk</a></li>
+                         <li class="{{ Request::routeIs('landingPage.download.aplikasi') ? 'active' : '' }}"><a
+                                 href="{{ route('landingPage.download.aplikasi') }}">Download Aplikasi Al-N3T</a></li>
                          <li class="{{ Request::routeIs('landingPage.contact') ? 'active' : '' }}"><a
                                  href="{{ route('landingPage.contact') }}">Contact</a></li>
                      </ul>

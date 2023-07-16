@@ -58,6 +58,7 @@ use Illuminate\Support\Facades\File;
 // });
 
 
+
 Route::get('redirects', [HomeController::class, 'index'])->name('redirects');
 
 
@@ -75,10 +76,10 @@ Route::get('hosting', [HostingController::class, 'index'])->name('landingPage.ho
 Route::get('contact', [ContactController::class, 'index'])->name('landingPage.contact');
 Route::get('produk', [PricingController::class, 'index'])->name('landingPage.pricing');
 Route::get('/searchProductLandingPageCustomer', [PricingLandingPageSearchController::class, 'searchProductLandingPageCustomer'])->name('landingPage.pricingCustomer.searchProductLandingPageCustomer');
+Route::get('download/apps', function () {
+    return view('landing_page.pages.download_apps');
+})->name('landingPage.download.aplikasi');
 
-Route::get('notify/transaction-success', function () {
-    return view('pages.midtrans.transaction-success');
-})->name('midtrans.transaction-success');
 
 Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::get('dashboard', [DashboardController::class, 'statusDashboard'])->name('dashboard.index')->middleware('admin');
@@ -86,6 +87,10 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::get('checkout-shipping/{id}', [HalamanUtamaController::class, 'show'])->name('landingPage.checkout.shipping');
     Route::post('checkout', [HalamanUtamaController::class, 'checkout'])->name('landingPage.checkout');
 
+
+    Route::get('notify/transaction-success', function () {
+        return view('pages.midtrans.transaction-success');
+    })->name('midtrans.transaction-success');
     Route::name('dashboard.')->prefix('dashboard')->group(function () {
         // Route::get('dashboard', [DashboardController::class, 'statusDashboard'])->name('index');
 

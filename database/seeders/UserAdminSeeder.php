@@ -36,20 +36,21 @@ class UserAdminSeeder extends Seeder
             'password' => Hash::make('password'),
         ])->markEmailAsVerified();
 
-        foreach (range(1, 5) as $item) {
+        foreach (range(1, 5) as $number) {
+            $phoneNumber = '0' . substr($faker->unique()->e164PhoneNumber, 3);
             User::updateOrCreate([
-                'email' => 'admin' . $item . '@admin.com',
-
+                'email' => 'admin' . $number . '@admin.com',
             ], [
-                'name' => 'Admin' . $item,
+                'name' => 'Admin' . $number,
                 'username' => $faker->unique()->userName,
-                'phone' => $faker->phoneNumber,
+                'phone' => $phoneNumber,
                 'alamat' => $faker->address,
                 'roles' => 'ADMIN',
                 'password' => Hash::make('password'),
                 'remember_token' => Str::random(10),
             ])->markEmailAsVerified();
         }
+
 
         // $this->command->info('Seeder User berhasil dijalankan.');
     }

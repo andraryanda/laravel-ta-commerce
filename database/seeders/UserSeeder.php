@@ -38,18 +38,21 @@ class UserSeeder extends Seeder
         ])->markEmailAsVerified();
 
         for ($i = 0; $i < 10; $i++) {
+            $phoneNumber = '0' . substr($faker->unique()->e164PhoneNumber, 3);
             User::updateOrCreate([
                 'email' => $faker->email,
             ], [
                 'name' => $faker->name,
                 'username' => $faker->unique()->userName,
-                'phone' => $faker->phoneNumber,
+                'phone' => $phoneNumber,
                 'alamat' => $faker->address,
                 'roles' => 'USER',
                 'password' => Hash::make('password'),
                 'remember_token' => Str::random(10),
             ])->markEmailAsVerified();
         }
+
+
 
         // $this->command->info('Seeder User berhasil dijalankan.');
     }
