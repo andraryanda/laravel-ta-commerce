@@ -16,11 +16,11 @@ class CreateLandingPageContactsTable extends Migration
         Schema::create('landing_page_contacts', function (Blueprint $table) {
             $table->id();
 
-            $table->string('title_contact');
+            $table->string('title_contact', 40);
             $table->longText('description_contact');
             $table->longText('address_contact');
-            $table->string('phone_contact');
-            $table->string('email_contact');
+            $table->string('phone_contact', 15);
+            $table->string('email_contact', 40);
 
             $table->timestamps();
         });

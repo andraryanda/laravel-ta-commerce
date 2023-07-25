@@ -427,6 +427,7 @@ class ReportController extends Controller
                 $total += $item->price * $item->quantity;
             }
 
+
             $pdf = new Dompdf();
             $pdf->loadHtml(view('pages.dashboard.transaction.print', compact('transaction', 'items', 'total')));
             $pdf->setPaper('A4', 'portrait');

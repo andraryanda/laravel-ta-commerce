@@ -22,7 +22,8 @@
 
                 <div class="container">
                     <div class="jumbotron text-center">
-                        <img src="nama-file-gambar.jpg" alt="Deskripsi Gambar" class="img-fluid">
+                        <img src="{{ asset('logo/alnet.jpg') }}" alt="alnet" width="250"
+                            class="img-fluid rounded-circle">
                         <h1 class="display-4 mt-4">Selamat datang di Al-N3T!</h1>
                         <p class="lead">Platform inovatif untuk mempercepat pertumbuhan bisnis Anda.</p>
                         <a href="#" class="btn btn-primary btn-lg">Download Aplikasi</a>

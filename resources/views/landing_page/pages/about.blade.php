@@ -232,7 +232,7 @@
             <div class="row">
                 <div class="col-lg-8 col-md-8">
                     <div class="section-title normal-title">
-                        <h3>Tim Als Store</h3>
+                        <h3>Tim AL-N3T Support Gesitnet</h3>
                     </div>
                 </div>
             </div>
@@ -261,7 +261,8 @@
                             <div class="team__text">
                                 <h5>Andi Susanto</h5>
                                 <span>Pemilik</span>
-                                <p>Merupakan pemilik dari Als Store. Bertanggung jawab dalam pengelolaan bisnis dan
+                                <p>Merupakan pemilik dari AL-N3T Support Gesitnet. Bertanggung jawab dalam pengelolaan
+                                    bisnis dan
                                     pengambilan
                                     keputusan strategis.</p>
 
@@ -276,7 +277,8 @@
                             <div class="team__text">
                                 <h5>Putri Purnama</h5>
                                 <span>Admin</span>
-                                <p>Bertugas dalam administrasi dan pengelolaan harian Als Store. Menangani tugas-tugas
+                                <p>Bertugas dalam administrasi dan pengelolaan harian AL-N3T Support Gesitnet. Menangani
+                                    tugas-tugas
                                     administratif dan koordinasi dengan tim lainnya.</p>
 
                             </div>
@@ -290,7 +292,8 @@
                             <div class="team__text">
                                 <h5>Dani Setiawan</h5>
                                 <span>Teknisi</span>
-                                <p>Bertanggung jawab dalam perawatan dan pemeliharaan infrastruktur jaringan Als Store.
+                                <p>Bertanggung jawab dalam perawatan dan pemeliharaan infrastruktur jaringan AL-N3T Support
+                                    Gesitnet.
                                     Menangani instalasi dan troubleshooting teknis.</p>
 
                             </div>
@@ -304,7 +307,8 @@
                             <div class="team__text">
                                 <h5>Aulia Rahman</h5>
                                 <span>Teknisi</span>
-                                <p>Bertugas dalam merancang dan mengembangkan desain visual untuk Als Store. Menangani
+                                <p>Bertugas dalam merancang dan mengembangkan desain visual untuk AL-N3T Support Gesitnet.
+                                    Menangani
                                     tampilan
                                     dan pengalaman pengguna.</p>
 

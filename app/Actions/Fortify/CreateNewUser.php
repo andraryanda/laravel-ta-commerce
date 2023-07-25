@@ -28,6 +28,8 @@ class CreateNewUser implements CreatesNewUsers
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => $this->passwordRules(),
             'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['required', 'accepted'] : '',
+            'phone' => ['required'],
+            'alamat' => ['required', 'string', 'max:255'],
         ],
         [
             'name.required' => 'Nama harus diisi.',
@@ -47,6 +49,10 @@ class CreateNewUser implements CreatesNewUsers
         'password.confirmed' => 'Konfirmasi password tidak cocok.',
         'terms.required' => 'Syarat dan Ketentuan harus diterima.',
         'terms.accepted' => 'Syarat dan Ketentuan harus diterima.',
+        'phone.required' => 'Nomor telepon harus diisi.',
+        'alamat.required' => 'Alamat harus diisi.',
+        'alamat.string' => 'Alamat harus berupa teks.',
+        'alamat.max' => 'Alamat tidak boleh lebih dari :max karakter.',
         ])->validate();
 
         return User::create([
@@ -54,6 +60,8 @@ class CreateNewUser implements CreatesNewUsers
             'username' => $input['username'],
             'email' => $input['email'],
             'password' => Hash::make($input['password']),
+            'phone' => $input['phone'],
+            'alamat' => $input['alamat'],
         ]);
 
 

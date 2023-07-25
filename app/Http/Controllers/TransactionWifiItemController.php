@@ -210,6 +210,24 @@ class TransactionWifiItemController extends Controller
         }
     }
 
+    public function destroy($encryptedId)
+    {
+        try {
+            $id = Crypt::decrypt($encryptedId);
+            $transaction = TransactionWifiItem::find($id);
+
+            if (!$transaction) {
+                abort(404);
+            }
+
+            $transaction->delete();
+
+            return back()->withSuccess('Transaksi berhasil dihapus!');
+        } catch (\Exception $e) {
+            return back()->withError('Transaksi gagal dihapus!');
+        }
+
+    }
 
 
 

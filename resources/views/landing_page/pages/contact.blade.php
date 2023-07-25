@@ -84,10 +84,13 @@
 
                 <div class="col-lg-8">
                     <div class="map">
-                        <iframe
+                        {{-- <iframe
                             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15838.158586401088!2d108.446899!3d-6.463941!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e688b8cc3d2f7eb%3A0x9c1c6f54323fe902!2sKarangampel%2C%20Indramayu%20Regency%2C%20West%20Java!5e0!3m2!1sen!2sid!4v1624051560154!5m2!1sen!2sid"
-                            width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-
+                            width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe> --}}
+                        <iframe
+                            src="https://www.google.com/maps/embed?pb=!4v1689772876118!6m8!1m7!1sB3aIg6L7QMfRGCP6_k-nhw!2m2!1d-6.456124483221121!2d108.3988146178506!3f263.8128239747266!4f28.25372490156701!5f0.7820865974627469"
+                            width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"></iframe>
                         {{-- <iframe
                             src="{{ url('https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20151.047591375514!2d-0.5735782106784704!3d50.85188881113048!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4875a4d10c96d8bf%3A0xe9a76e70e6b7cc5a!2sArundel%2C%20UK!5e0!3m2!1sen!2sbd!4v1584862449435!5m2!1sen!2sbd') }}"
                             height="515" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe> --}}

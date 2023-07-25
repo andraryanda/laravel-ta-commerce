@@ -25,10 +25,11 @@
             border-top: 2px solid #000;
         }
 
-        .header .logo {
+        /* .header .logo {
             width: 100%;
-            height: 50px;
-        }
+            height: 100px;
+
+        } */
 
         .header h1 {
             font-size: 36px;
@@ -125,31 +126,31 @@
 
     <div class="container">
         <div class="header">
-            <div class="logo" style="overflow: hidden;">
+            <div class="logo" style="overflow: hidden; text-align: center;">
                 @php
-                    $imagePath = asset('icon/store.png');
+                    $imagePath = asset('logo/alnet.jpg');
                     $imageData = '';
                     $imageType = '';
-                    
+
                     $allowedExtensions = ['png', 'jpg', 'jpeg']; // Ekstensi file gambar yang diizinkan
-                    
+
                     // Mendapatkan ekstensi file gambar
                     $extension = pathinfo($imagePath, PATHINFO_EXTENSION);
-                    
+
                     // Memeriksa apakah ekstensi file gambar diizinkan
                     if (in_array($extension, $allowedExtensions)) {
                         $imageData = base64_encode(file_get_contents($imagePath));
                         $imageType = 'image/' . $extension;
                     }
                 @endphp
-
                 <img src="data:{{ $imageType }};base64,{{ $imageData }}" alt="logo"
-                    style="float: left; margin-right: 10px;" width="50">
-                <h1 style="margin: 0;">Al's Store</h1>
+                    style="width: 100%; height: 150px; object-fit: cover; margin: 0 auto;">
+                <h1 style="margin-top: 10px; margin-bottom: 0;">AL-N3T Support Gesitnet</h1>
             </div>
+
             <br>
-            <h2>Invoice</h2>
         </div>
+        <h2>Invoice</h2>
         <div class="info">
             <div class="left">
                 <p>Transaction ID: {{ $transaction->id }}</p>
@@ -201,7 +202,7 @@
             <p class="text-lg font-semibold">Terima kasih telah menjadi pelanggan kami!</p>
             <p class="mt-2 text-sm text-gray-700">Kami sangat menghargai kepercayaan Anda dan berharap dapat terus
                 memberikan pelayanan terbaik. Silakan hubungi kami jika Anda memiliki pertanyaan atau masukan.</p>
-            <p class="mt-2 text-sm text-gray-700"><strong>Al's Store: 085314005779</strong></p>
+            <p class="mt-2 text-sm text-gray-700"><strong>AL-N3T Support Gesitnet: 085314005779</strong></p>
         </div>
         <div class="my-3 italic-custom">
             <p class="text-sm font-medium">Catatan:</p>

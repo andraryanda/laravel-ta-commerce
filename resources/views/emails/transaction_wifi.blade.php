@@ -198,7 +198,7 @@
         <div class="content">
 
             <div class="container">
-                <h1 class="store-name">Al's Store</h1>
+                <h1 class="store-name">AL-N3T Support Gesitnet</h1>
                 <h2 class="invoice">Invoice</h2>
                 <p class="transaction-id">Transaction ID: {{ $transactionWifi->id }}</p>
                 <p class="payment-status">Status Pembayaran: {{ $transactionWifi->status }}</p>
@@ -247,7 +247,7 @@
         <div class="thanks">
             <p>Regards,
                 <br><br>
-                <strong>Al's Store Team</strong>
+                <strong>AL-N3T Support Gesitnet Team</strong>
             </p>
         </div>
     </div>
