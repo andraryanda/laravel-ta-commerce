@@ -196,7 +196,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
             Route::get('sendWifiMessage-{transactionWifi}', [TransactionWifiController::class, 'sendWifiMessage'])->name('bulan.sendWifiMessage');
 
             Route::resource('pembayaran/wifi/bulan/item', TransactionWifiItemController::class)->only([
-                'show', 'store', 'edit', 'update'
+                'show', 'store', 'edit', 'update', 'destroy'
             ]);
             // Route::get('/transaction-wifi/{encryptedId}/edit', [TransactionWifiItemController::class, 'edit'])->name('transaction-wifi.edit');
             // Route::resource('transaction/pending', TransactionController::class)->only([

@@ -9,7 +9,7 @@
     <title>{{ __('AL-N3T Support Gesitnet') }}</title>
     {{-- <title>{{ __('Als Store RT/RW NET') }}</title> --}}
 
-    <link rel="shortcut icon" href="{{ asset('icon/store.png') }}">
+    <link rel="shortcut icon" href="{{ asset('logo/logo.jpg') }}">
     <link href="{{ url('https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/flowbite.min.css') }}" rel="stylesheet" />
     <link rel="stylesheet"
         href="{{ url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200') }}" />

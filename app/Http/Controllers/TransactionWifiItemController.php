@@ -21,64 +21,64 @@ class TransactionWifiItemController extends Controller
 {
 
     public function show($encryptedId)
-{
-    try {
-        $id = Crypt::decrypt($encryptedId); // Mendekripsi ID transaksi
-        $transaction = TransactionWifi::with(['items', 'wifi_items'])
-        ->findOrFail($id);
+    {
+        try {
+            $id = Crypt::decrypt($encryptedId); // Mendekripsi ID transaksi
+            $transaction = TransactionWifi::with(['items', 'wifi_items'])
+                ->findOrFail($id);
 
-        $transactionWifiItem = TransactionWifiItem::with(['product','wifis'])->first(); // Mengambil TransactionWifiItem yang sesuai, atau sesuaikan dengan kebutuhan Anda
+            $transactionWifiItem = TransactionWifiItem::with(['product', 'wifis'])->first(); // Mengambil TransactionWifiItem yang sesuai, atau sesuaikan dengan kebutuhan Anda
 
-        $users = User::where('roles', '=', 'USER')->get();
-        $products = Product::with('galleries')->with('category')->get();
-        $transactions = Transaction::with(['user','wifi_items'])->get();
-        $banks = Bank::get();
+            $users = User::where('roles', '=', 'USER')->get();
+            $products = Product::with('galleries')->with('category')->get();
+            $transactions = Transaction::with(['user', 'wifi_items'])->get();
+            $banks = Bank::get();
 
-        $status_wifi = [
-            ['label' => 'Aktif', 'value' => 'ACTIVE'],
-            ['label' => 'Tidak Aktif', 'value' => 'INACTIVE'],
-        ];
+            $status_wifi = [
+                ['label' => 'Aktif', 'value' => 'ACTIVE'],
+                ['label' => 'Tidak Aktif', 'value' => 'INACTIVE'],
+            ];
 
-        $status_payment = [
-            ['label' => 'Sudah Dibayar', 'value' => 'PAID'],
-            ['label' => 'Belum Dibayar', 'value' => 'UNPAID'],
-        ];
+            $status_payment = [
+                ['label' => 'Sudah Dibayar', 'value' => 'PAID'],
+                ['label' => 'Belum Dibayar', 'value' => 'UNPAID'],
+            ];
 
-        $status_payment_method = [
-            ['label' => 'BANK TRANSFER', 'value' => 'BANK TRANSFER'],
-            ['label' => 'MANUAL', 'value' => 'MANUAL'],
-        ];
+            $status_payment_method = [
+                ['label' => 'BANK TRANSFER', 'value' => 'BANK TRANSFER'],
+                ['label' => 'MANUAL', 'value' => 'MANUAL'],
+            ];
 
-        // Pengecekan data
-    if ($users->isEmpty()) {
-        throw new \Exception('Tidak ada data pengguna (users)');
+            // Pengecekan data
+            if ($users->isEmpty()) {
+                throw new \Exception('Tidak ada data pengguna (users)');
+            }
+
+            if ($transactions->isEmpty()) {
+                throw new \Exception('Tidak ada data transaksi utama (transactions)');
+            }
+
+            if ($products->isEmpty()) {
+                throw new \Exception('Tidak ada data produk (products)');
+            }
+
+
+            return view('pages.dashboard.pembayaran_wifi_bulan.transactionWifiItem.create', compact(
+                'transaction',
+                'transactionWifiItem',
+                'users',
+                'products',
+                'transactions',
+                'banks',
+                'status_wifi',
+                'status_payment',
+                'status_payment_method'
+
+            ));
+        } catch (DecryptException $e) {
+            return redirect()->route('landingPage.index')->with('error', 'Terjadi kesalahan dalam menampilkan transaksi');
+        }
     }
-
-    if ($transactions->isEmpty()) {
-        throw new \Exception('Tidak ada data transaksi utama (transactions)');
-    }
-
-    if ($products->isEmpty()) {
-        throw new \Exception('Tidak ada data produk (products)');
-    }
-
-
-        return view('pages.dashboard.pembayaran_wifi_bulan.transactionWifiItem.create', compact(
-            'transaction'
-            ,'transactionWifiItem',
-            'users',
-            'products',
-            'transactions',
-            'banks',
-            'status_wifi',
-            'status_payment',
-            'status_payment_method'
-
-        ));
-    } catch (DecryptException $e) {
-        return redirect()->route('landingPage.index')->with('error', 'Terjadi kesalahan dalam menampilkan transaksi');
-    }
-}
 
 
     public function store(Request $request)
@@ -120,11 +120,6 @@ class TransactionWifiItemController extends Controller
             return redirect()->back()->withError('Terjadi kesalahan: ' . $e->getMessage());
         }
     }
-
-
-
-
-
 
     public function edit($encryptedItemId)
     {
@@ -210,8 +205,26 @@ class TransactionWifiItemController extends Controller
         }
     }
 
+    public function destroy($encryptedId)
+    {
+        try {
+            $id = Crypt::decrypt($encryptedId);
+            $transactionWifiItem = TransactionWifiItem::find($id);
 
+            if (!$transactionWifiItem) {
+                abort(404);
+            }
 
+            $transactionWifiItem->delete();
 
+            // Hapus juga data pada tabel transaction_items yang terkait dengan transaksi ini
+            // TransactionWifiItem::where('transaction_wifi_id', $transactionWifiItem->id)->delete();
+            return back()->withSuccess('Transaksi berhasil dihapus!');
+            // return redirect()->route('dashboard.bulan.show', Crypt::encrypt($transactionWifiItem->id))->withSuccess('Transaksi berhasil dihapus!');
+        } catch (\Exception $e) {
+            return back()->withError('Transaksi gagal dihapus!');
 
+            // return redirect()->route('dashboard.bulan.show', Crypt::encrypt($transactionWifiItem->id))->withError('Transaksi gagal dihapus!');
+        }
+    }
 }

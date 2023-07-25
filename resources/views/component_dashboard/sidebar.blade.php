@@ -4,7 +4,7 @@
         @if (Auth::user()->roles == 'ADMIN' || Auth::user()->roles == 'OWNER')
             <a class="ml-6 flex items-center text-lg font-bold text-gray-800 dark:text-gray-200"
                 href="{{ route('dashboard.index') }}">
-                <img src="{{ asset('icon/store.png') }}" alt="Al's Store" width="50" class="mr-2">
+                <img src="{{ asset('logo/logo.jpg') }}" alt="Al's Store" width="50" class="mr-2">
                 {{ __('AL-N3T Support Gesitnet') }}
             </a>
 
@@ -24,7 +24,7 @@
         @elseif (Auth::user()->roles == 'USER')
             <a class="ml-6 flex items-center text-lg font-bold text-gray-800 dark:text-gray-200"
                 href="{{ route('dashboard.indexDashboardCustomer') }}">
-                <img src="{{ asset('icon/store.png') }}" alt="Al's Store" width="50" class="mr-2">
+                <img src="{{ asset('logo/logo.jpg') }}" alt="Al's Store" width="50" class="mr-2">
                 {{ __('AL-N3T Support Gesitnet') }}
             </a>
 

@@ -351,4 +351,64 @@
     @endsection
 
 
+    @push('javascript')
+        {{-- Delete --}}
+        <script>
+            $(document).ready(function() {
+                $('body').on('click', '.delete-button', function() {
+                    var transaction_wifi_id = $(this).data("id");
+                    Swal.fire({
+                        title: 'Apakah anda yakin ingin menghapus transaksi wifi ID  ini?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Hapus',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                type: "DELETE",
+                                url: "{{ route('dashboard.item.destroy', ':id') }}"
+                                    .replace(
+                                        ':id', transaction_wifi_id),
+                                data: {
+                                    "_token": "{{ csrf_token() }}"
+                                },
+                                error: function(data) {
+                                    console.log('Error:', data);
+                                }
+                            });
+                            setTimeout(function() {
+                                    location.reload();
+                                },
+                                1000
+                            ); // memberikan jeda selama 1000 milidetik atau 1 detik sebelum reload
+                            let timerInterval;
+                            Swal.fire({
+                                title: 'Deleted!',
+                                text: 'Your data has been deleted.',
+                                icon: 'success',
+                                timer: 1500,
+                                timerProgressBar: true,
+                                didOpen: () => {
+                                    Swal.showLoading();
+                                    timerInterval = setInterval(() => {}, 100);
+                                },
+                                willClose: () => {
+                                    clearInterval(timerInterval);
+                                    location.reload();
+                                }
+                            }).then((result) => {
+                                if (result.dismiss === Swal.DismissReason.timer) {
+                                    console.log('I was closed by the timer');
+                                }
+                            });
+                        }
+                    });
+                });
+            });
+        </script>
+    @endpush
+
 </x-layout.apps>
