@@ -32,14 +32,14 @@ class TransactionWifiController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            $query = TransactionWifi::with(['user','wifi_items.product'])
+            $query = TransactionWifi::with(['user', 'wifi_items.product'])
                 ->where('status', '=', 'ACTIVE')
                 ->OrderByDesc('created_at');
-                // ->get();
+            // ->get();
             return DataTables::of($query)
-            ->editColumn('user.name', function ($item) {
-                if ($item->user->profile_photo_url) {
-                    return '
+                ->editColumn('user.name', function ($item) {
+                    if ($item->user->profile_photo_url) {
+                        return '
                         <td class="px-4 py-3">
                             <div class="flex items-center text-sm">
                                 <!-- Avatar with inset shadow -->
@@ -53,8 +53,8 @@ class TransactionWifiController extends Controller
                             </div>
                         </td>
                     ';
-                } else {
-                    return '
+                    } else {
+                        return '
                         <td class="px-4 py-3">
                             <div class="flex items-center text-sm">
                                 <span class="inline-block h-8 w-8 rounded-full overflow-hidden bg-gray-100">
@@ -70,28 +70,28 @@ class TransactionWifiController extends Controller
                             </div>
                         </td>
                     ';
-                }
-            })
-            ->editColumn('status', function ($item) {
-                if ($item->status == 'ACTIVE') {
-                    // Periksa apakah masa expired_wifi telah lewat
-                    $expiredDate = Carbon::parse($item->expired_wifi);
-
-                    if ($expiredDate->isPast()) {
-                        $statusText = 'INACTIVE'; // Mengubah status menjadi "INACTIVE"
-                        $statusClass = 'text-red-700 bg-red-100';
-                    } else {
-                        $daysUntilExpired = $expiredDate->diffInDays(null, true); // Menggunakan $absolute = true
-                        $statusText = 'Masa Wifi berakhir dalam ' . $daysUntilExpired . ' hari';
-
-                        if ($daysUntilExpired < 7) {
-                            $statusClass = 'text-yellow-700 bg-yellow-100';
-                        } else {
-                            $statusClass = 'text-green-700 bg-green-100';
-                        }
                     }
+                })
+                ->editColumn('status', function ($item) {
+                    if ($item->status == 'ACTIVE') {
+                        // Periksa apakah masa expired_wifi telah lewat
+                        $expiredDate = Carbon::parse($item->expired_wifi);
 
-                    return '
+                        if ($expiredDate->isPast()) {
+                            $statusText = 'INACTIVE'; // Mengubah status menjadi "INACTIVE"
+                            $statusClass = 'text-red-700 bg-red-100';
+                        } else {
+                            $daysUntilExpired = $expiredDate->diffInDays(null, true); // Menggunakan $absolute = true
+                            $statusText = 'Masa Wifi berakhir dalam ' . $daysUntilExpired . ' hari';
+
+                            if ($daysUntilExpired < 7) {
+                                $statusClass = 'text-yellow-700 bg-yellow-100';
+                            } else {
+                                $statusClass = 'text-green-700 bg-green-100';
+                            }
+                        }
+
+                        return '
                         <td class="px-4 py-3 text-xs">
                             <span class="px-2 py-1 font-semibold leading-tight ' . $statusClass . ' rounded-full dark:bg-yellow-700 dark:text-yellow-100">
                                 ' . $item->status . '
@@ -99,35 +99,35 @@ class TransactionWifiController extends Controller
                             </span>
                         </td>
                     ';
-                } elseif ($item->status == 'INACTIVE') {
-                    return '
+                    } elseif ($item->status == 'INACTIVE') {
+                        return '
                         <td class="px-4 py-3 text-xs">
                             <span class="px-2 py-1 font-semibold leading-tight text-red-700 bg-red-100 rounded-full dark:bg-red-700 dark:text-red-100">
                                 ' . $item->status . '
                             </span>
                         </td>
                     ';
-                } else {
-                    return '
+                    } else {
+                        return '
                         <td class="px-4 py-3 text-xs">
                             Not Found!
                         </td>
                     ';
-                }
-            })
+                    }
+                })
 
 
                 ->editColumn('action', function ($item) {
                     $encryptedId = Crypt::encrypt($item->id);
                     // $status = $item->status;
-                        return '
+                    return '
                     <div class="flex justify-start items-center space-x-3.5">
                         <a href="' . route('dashboard.bulan.sendWifiMessage', $item->id) . '" title="WhatsApp" target="_blank"
                             class="inline-flex flex-col items-center justify-center w-20 h-12 bg-green-400 text-white rounded-md border border-green-500 transition duration-500 ease select-none hover:bg-green-500 focus:outline-none focus:shadow-outline">
                             <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/whatsapp.png') . '" alt="whatsapp" loading="lazy" width="20" />
                             <p class="mt-1 text-xs">WhatsApp</p>
                         </a>
-                        <a href="'. route('dashboard.midtrans.paymentWifi', $item->id) .'" target="_blank" title="Bayar"
+                        <a href="' . route('dashboard.midtrans.paymentWifi', $item->id) . '" target="_blank" title="Bayar"
                             class="flex flex-col shadow-sm items-center justify-center w-20 h-12 border border-purple-500 bg-purple-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-purple-500 focus:outline-none focus:shadow-outline">
                             <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/credit-card.png') . '" alt="Bayar" loading="lazy" width="20" />
                             <p class="mt-1 text-xs">Bayar Wifi</p>
@@ -145,7 +145,7 @@ class TransactionWifiController extends Controller
                     </div>
                     ';
                 })
-                ->rawColumns(['action','status','user.name'])
+                ->rawColumns(['action', 'status', 'user.name'])
                 ->make();
         }
         return view('pages.dashboard.pembayaran_wifi_bulan.index');
@@ -154,14 +154,14 @@ class TransactionWifiController extends Controller
     public function indexAdminInactive()
     {
         if (request()->ajax()) {
-            $query = TransactionWifi::with(['user','wifi_items.product'])
+            $query = TransactionWifi::with(['user', 'wifi_items.product'])
                 ->where('status', '=', 'INACTIVE')
                 ->OrderByDesc('created_at');
-                // ->get();
+            // ->get();
             return DataTables::of($query)
-            ->editColumn('user.name', function ($item) {
-                if ($item->user->profile_photo_url) {
-                    return '
+                ->editColumn('user.name', function ($item) {
+                    if ($item->user->profile_photo_url) {
+                        return '
                         <td class="px-4 py-3">
                             <div class="flex items-center text-sm">
                                 <!-- Avatar with inset shadow -->
@@ -175,8 +175,8 @@ class TransactionWifiController extends Controller
                             </div>
                         </td>
                     ';
-                } else {
-                    return '
+                    } else {
+                        return '
                         <td class="px-4 py-3">
                             <div class="flex items-center text-sm">
                                 <span class="inline-block h-8 w-8 rounded-full overflow-hidden bg-gray-100">
@@ -192,37 +192,37 @@ class TransactionWifiController extends Controller
                             </div>
                         </td>
                     ';
-                }
-            })
-            ->editColumn('status', function ($item) {
-                if ($item->status == 'ACTIVE') {
-                    return '
+                    }
+                })
+                ->editColumn('status', function ($item) {
+                    if ($item->status == 'ACTIVE') {
+                        return '
                     <td class="px-4 py-3 text-xs">
                         <span class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
                             ' . $item->status . '
                         </span>
                     </td>
                 ';
-                } elseif ($item->status == 'INACTIVE') {
-                    return '
+                    } elseif ($item->status == 'INACTIVE') {
+                        return '
                     <td class="px-4 py-3 text-xs">
                         <span class="px-2 py-1 font-semibold leading-tight text-red-700 bg-red-100 rounded-full dark:bg-red-700 dark:text-red-100">
                             ' . $item->status . '
                         </span>
                     </td>
                 ';
-                } else {
-                    return '
+                    } else {
+                        return '
                     <td class="px-4 py-3 text-xs">
                         Not Found!
                     </td>
                 ';
-                }
-            })
+                    }
+                })
                 ->editColumn('action', function ($item) {
                     $encryptedId = Crypt::encrypt($item->id);
                     // $status = $item->status;
-                        return '
+                    return '
                     <div class="flex justify-start items-center space-x-3.5">
                         <a href="' . route('dashboard.bulan.show', $encryptedId) . '" title="Show"
                             class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-blue-500 bg-blue-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-blue-500 focus:outline-none focus:shadow-outline">
@@ -237,7 +237,7 @@ class TransactionWifiController extends Controller
                     </div>
                     ';
                 })
-                ->rawColumns(['action','status','user.name'])
+                ->rawColumns(['action', 'status', 'user.name'])
                 ->make();
         }
 
@@ -254,7 +254,7 @@ class TransactionWifiController extends Controller
         try {
             $users = User::with(['transactions'])->where('roles', '=', 'USER')->get();
             $products = Product::with('galleries')->with('category')->get();
-            $transactions = Transaction::with(['user','wifi_items'])->get();
+            $transactions = Transaction::with(['user', 'wifi_items'])->get();
             $banks = Bank::get();
 
             $status_wifi = [
@@ -273,17 +273,17 @@ class TransactionWifiController extends Controller
             ];
 
             // Pengecekan data
-        if ($users->isEmpty()) {
-            throw new \Exception('Tidak ada data pengguna (users)');
-        }
+            if ($users->isEmpty()) {
+                throw new \Exception('Tidak ada data pengguna (users)');
+            }
 
-        if ($transactions->isEmpty()) {
-            throw new \Exception('Tidak ada data transaksi utama (transactions)');
-        }
+            if ($transactions->isEmpty()) {
+                throw new \Exception('Tidak ada data transaksi utama (transactions)');
+            }
 
-        if ($products->isEmpty()) {
-            throw new \Exception('Tidak ada data produk (products)');
-        }
+            if ($products->isEmpty()) {
+                throw new \Exception('Tidak ada data produk (products)');
+            }
 
 
             return view('pages.dashboard.pembayaran_wifi_bulan.create', compact(
@@ -365,9 +365,9 @@ class TransactionWifiController extends Controller
     {
         try {
             $id = Crypt::decrypt($encryptedId); // Mendekripsi ID transaksi
-            $transaction = TransactionWifi::with(['items','wifi_items'])
-            ->orderByDesc('created_at')
-            ->findOrFail($id);
+            $transaction = TransactionWifi::with(['items', 'wifi_items'])
+                ->orderByDesc('created_at')
+                ->findOrFail($id);
 
             $transactionProduk = Transaction::with(['user'])->where('id', $transaction->transactions_id)->first();
 
@@ -378,7 +378,7 @@ class TransactionWifiController extends Controller
             }
 
             if (request()->ajax()) {
-                $query = TransactionWifiItem::with(['product','wifis'])->where('transaction_wifi_id', $transaction->id);
+                $query = TransactionWifiItem::with(['product', 'wifis'])->where('transaction_wifi_id', $transaction->id);
 
                 return DataTables::of($query)
                     ->editColumn('product.price', function ($item) {
@@ -389,7 +389,7 @@ class TransactionWifiController extends Controller
                             return '
                             <td class="px-4 py-3 text-xs">
                                 <span class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
-                                    ' . 'Sudah Dibayar'.'
+                                    ' . 'Sudah Dibayar' . '
                                 </span>
                             </td>
                         ';
@@ -397,7 +397,7 @@ class TransactionWifiController extends Controller
                             return '
                             <td class="px-4 py-3 text-xs">
                                 <span class="px-2 py-1 font-semibold leading-tight text-yellow-700 bg-yellow-100 rounded-full dark:bg-yellow-700 dark:text-yellow-100">
-                                    ' . 'Belum Dibayar'.'
+                                    ' . 'Belum Dibayar' . '
                                 </span>
                             </td>
                         ';
@@ -437,61 +437,60 @@ class TransactionWifiController extends Controller
                     ->editColumn('action', function ($item) {
                         $encryptedId = Crypt::encrypt($item->id);
                         // $status = $item->status;
-                            return '
+                        return '
                         <div class="flex justify-start items-center space-x-3.5">
                             <a href="' . route('dashboard.item.edit', $encryptedId) . '" title="Edit"
                                 class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-yellow-500 bg-yellow-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-yellow-500 focus:outline-none focus:shadow-outline">
                                 <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/edit.png') . '" alt="show" loading="lazy" width="20" />
                                 <p class="mt-1 text-xs">Edit</p>
                             </a>
-                            <button type="button" title="Delete"
-                                    class="flex flex-col delete-button shadow-sm items-center justify-center w-20 h-12 border border-red-500 bg-red-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-red-500 focus:outline-none focus:shadow-outline"
-                                    data-id="' . $encryptedId . '">
-                                    <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/delete.png') . '" alt="delete" loading="lazy" width="20" />
-                                    <p class="mt-1 text-xs">Delete</p>
-                                </button>
+                            <a href="' . route('dashboard.bulan.edit', $encryptedId) . '" title="Delete"
+                                class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-red-500 bg-red-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-red-500 focus:outline-none focus:shadow-outline">
+                                <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/delete.png') . '" alt="delete" loading="lazy" width="20" />
+                                <p class="mt-1 text-xs">Delete</p>
+                            </a>
                         </div>
                         ';
                     })
-                ->rawColumns(['payment_status','description','action'])
-                ->make();
+                    ->rawColumns(['payment_status', 'description', 'action'])
+                    ->make();
             }
 
-            return view('pages.dashboard.pembayaran_wifi_bulan.show', compact('transaction','transactionWifiItem','transactionProduk'));
+            return view('pages.dashboard.pembayaran_wifi_bulan.show', compact('transaction', 'transactionWifiItem', 'transactionProduk'));
         } catch (DecryptException $e) {
             return redirect()->route('landingPage.index')->with('error', 'Terjadi kesalahan dalam menampilkan transaksi');
         }
     }
 
     public function sendWifiMessage(TransactionWifi $transactionWifi)
-{
-    $phone_number = '+62' . substr_replace($transactionWifi->user->phone, '', 0, 1);
+    {
+        $phone_number = '+62' . substr_replace($transactionWifi->user->phone, '', 0, 1);
 
-    $expiredDate = \Carbon\Carbon::parse($transactionWifi->expired_wifi)->locale('id_ID')->isoFormat('dddd, D MMMM Y');
+        $expiredDate = \Carbon\Carbon::parse($transactionWifi->expired_wifi)->locale('id_ID')->isoFormat('dddd, D MMMM Y');
 
-    $message = "Halo *" . $transactionWifi->user->name . "*, terima kasih telah berlangganan WiFi bulanan di toko *Al's Store*. Berikut adalah detail pesanan Anda:\n\n";
-    $message .= "-----------------------------------\n";
-    $message .= "*Detail Pesanan WiFi:*\n";
-    $message .= "No: " . $transactionWifi->id . "\n";
-    $message .= "Nama Customer: " . $transactionWifi->user->name . "\n";
-    $message .= "Nama Produk: " . $transactionWifi->product->name . "\n";
-    $message .= "Total Harga WIFI: " . $transactionWifi->total_price_wifi . "\n";
-    $message .= "Expired Tanggal WIFI: " . $expiredDate . "\n";
-    $message .= "Status WIFI: " . $transactionWifi->status . "\n";
-    $message .= "-----------------------------------\n\n";
+        $message = "Halo *" . $transactionWifi->user->name . "*, terima kasih telah berlangganan WiFi bulanan di toko *Al's Store*. Berikut adalah detail pesanan Anda:\n\n";
+        $message .= "-----------------------------------\n";
+        $message .= "*Detail Pesanan WiFi:*\n";
+        $message .= "No: " . $transactionWifi->id . "\n";
+        $message .= "Nama Customer: " . $transactionWifi->user->name . "\n";
+        $message .= "Nama Produk: " . $transactionWifi->product->name . "\n";
+        $message .= "Total Harga WIFI: " . $transactionWifi->total_price_wifi . "\n";
+        $message .= "Expired Tanggal WIFI: " . $expiredDate . "\n";
+        $message .= "Status WIFI: " . $transactionWifi->status . "\n";
+        $message .= "-----------------------------------\n\n";
 
-    if ($transactionWifi->status == 'ACTIVE') {
-        $message .= "WiFi telah diaktifkan. Anda dapat menggunakan WiFi sekarang. Terima kasih!\n";
-        $message .= "Silakan hubungi kami jika Anda memiliki pertanyaan atau masukan.\n";
-        $message .= "*Al's Store: 085314005779*";
-    } else if ($transactionWifi->status == 'INACTIVE') {
-        $message .= "WiFi tidak aktif. Mohon segera melakukan pembayaran agar WiFi dapat diaktifkan kembali.\n\n";
-        $message .= "*Al's Store: 085314005779*";
+        if ($transactionWifi->status == 'ACTIVE') {
+            $message .= "WiFi telah diaktifkan. Anda dapat menggunakan WiFi sekarang. Terima kasih!\n";
+            $message .= "Silakan hubungi kami jika Anda memiliki pertanyaan atau masukan.\n";
+            $message .= "*Al's Store: 085314005779*";
+        } else if ($transactionWifi->status == 'INACTIVE') {
+            $message .= "WiFi tidak aktif. Mohon segera melakukan pembayaran agar WiFi dapat diaktifkan kembali.\n\n";
+            $message .= "*Al's Store: 085314005779*";
+        }
+
+        $url = 'https://wa.me/' . $phone_number . '?text=' . urlencode($message);
+        return redirect()->away($url);
     }
-
-    $url = 'https://wa.me/' . $phone_number . '?text=' . urlencode($message);
-    return redirect()->away($url);
-}
 
 
 
@@ -558,7 +557,7 @@ class TransactionWifiController extends Controller
     {
         try {
             // Find the transaction wifi by ID
-            $transactionWifi = TransactionWifi::with(['wifi_items','user'])->findOrFail($id);
+            $transactionWifi = TransactionWifi::with(['wifi_items', 'user'])->findOrFail($id);
 
             // Update the transaction wifi
             $transactionWifi->update([
@@ -588,8 +587,8 @@ class TransactionWifiController extends Controller
             // Redirect or return a response
             return redirect()->route('dashboard.bulan.index')->withSuccess('Transaction Wifi updated successfully');
         } catch (\Exception $e) {
-        //     // Handle errors here
-        //     // For example, display an error message or redirect to another page
+            //     // Handle errors here
+            //     // For example, display an error message or redirect to another page
             return redirect()->back()->withError('Terjadi kesalahan: ' . $e->getMessage());
         }
     }

@@ -2,15 +2,11 @@
 <aside class="z-20 hidden w-64 overflow-y-auto bg-white dark:bg-gray-800 md:block flex-shrink-0">
     <div class="py-4 text-gray-500 dark:text-gray-400">
         @if (Auth::user()->roles == 'ADMIN' || Auth::user()->roles == 'OWNER')
-            <div class="">
-                <center><img src="{{ asset('logo/alnet.jpg') }}" alt="Al's Store" width="100"
-                        class="mr-2 rounded-full items-center">
-                </center>
-                <a class="ml-6 flex items-center text-lg font-bold text-gray-800 dark:text-gray-200"
-                    href="{{ route('dashboard.index') }}">
-                    {{ __('AL-N3T Support Gesitnet') }}
-                </a>
-            </div>
+            <a class="ml-6 flex items-center text-lg font-bold text-gray-800 dark:text-gray-200"
+                href="{{ route('dashboard.index') }}">
+                <img src="{{ asset('icon/store.png') }}" alt="Al's Store" width="50" class="mr-2">
+                {{ __('AL-N3T Support Gesitnet') }}
+            </a>
 
             <ul class="mt-6">
                 <li class="relative px-6 py-3">
@@ -26,15 +22,11 @@
                 </li>
             </ul>
         @elseif (Auth::user()->roles == 'USER')
-            <div class="">
-                <center><img src="{{ asset('logo/alnet.jpg') }}" alt="Al's Store" width="100"
-                        class="mr-2 rounded-full items-center">
-                </center>
-                <a class="ml-6 flex items-center text-lg font-bold text-gray-800 dark:text-gray-200"
-                    href="{{ route('dashboard.index') }}">
-                    {{ __('AL-N3T Support Gesitnet') }}
-                </a>
-            </div>
+            <a class="ml-6 flex items-center text-lg font-bold text-gray-800 dark:text-gray-200"
+                href="{{ route('dashboard.indexDashboardCustomer') }}">
+                <img src="{{ asset('icon/store.png') }}" alt="Al's Store" width="50" class="mr-2">
+                {{ __('AL-N3T Support Gesitnet') }}
+            </a>
 
             <ul class="mt-6">
                 <li class="relative px-6 py-3">

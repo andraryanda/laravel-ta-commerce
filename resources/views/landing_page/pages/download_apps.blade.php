@@ -26,10 +26,11 @@
                             class="img-fluid rounded-circle">
                         <h1 class="display-4 mt-4">Selamat datang di Al-N3T!</h1>
                         <p class="lead">Platform inovatif untuk mempercepat pertumbuhan bisnis Anda.</p>
-                        <a href="#" class="btn btn-primary btn-lg">Download Aplikasi</a>
+                        <a href="{{ asset('aplikasi-commerce-mobile/alnet.apk') }}" download="alnet.apk"
+                            class="btn btn-primary btn-lg">Download Aplikasi</a>
+
                     </div>
                 </div>
-
 
 
             </div>

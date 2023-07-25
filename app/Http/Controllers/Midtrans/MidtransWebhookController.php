@@ -325,15 +325,8 @@ class MidtransWebhookController extends Controller
 
 
         // Cek apakah transaksi ditemukan dalam database berdasarkan order_id
-        // $transaction = Transaction::where('id', $request->order_id)->first();
         $transaction = Transaction::where('id', $order_id_time)->first();
-        // $transactionWifi = TransactionWifi::with(['wifi_items'])->where('id', $request->order_id)->first();
         $transactionWifi = TransactionWifi::with(['wifi_items'])->where('id', $order_id_time)->first();
-
-
-        // if (!$transaction) {
-        //     return response()->json(['error' => 'Transaction not found'], 404);
-        // }
 
         if ($transaction) {
             // Transksi Pembelian Produk
@@ -515,7 +508,6 @@ class MidtransWebhookController extends Controller
                 return redirect()->route('landingPage.index')->withError('Transaksi Problem');
             }
         }
-
         // return redirect()->route('dashboard.midtrans.show', encrypt($transaction->id));
     }
 

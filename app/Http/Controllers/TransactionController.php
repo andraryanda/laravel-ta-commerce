@@ -1307,6 +1307,22 @@ class TransactionController extends Controller
             return redirect()->route('dashboard.transaction.index')->withError('Transaksi gagal dihapus!');
         }
 
+        // try {
+        //     $transaction = Transaction::find($id);
+
+        //     if (!$transaction) {
+        //         abort(404);
+        //     }
+
+        //     $transaction->delete();
+
+        //     // Hapus juga data pada tabel transaction_items yang terkait dengan transaksi ini
+        //     TransactionItem::where('transactions_id', $transaction->id)->delete();
+
+        //     return redirect()->route('dashboard.transaction.index')->withSuccess('Transaksi berhasil dihapus!');
+        // } catch (\Exception $e) {
+        //     return redirect()->route('dashboard.transaction.index')->withError('Transaksi gagal dihapus!');
+        // }
     }
 
 

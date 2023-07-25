@@ -350,6 +350,7 @@ class UserController extends Controller
             $user->username = $validatedData['username'];
             $user->password = Hash::make('password');
             $user->roles = decrypt($validatedData['roles']);
+            // $user->markEmailAsVerified();
             $user->save();
 
             if ($user->roles == 'ADMIN') {
@@ -385,7 +386,7 @@ class UserController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|\Illuminate\View\View
      */
-        public function edit($encryptedId)
+    public function edit($encryptedId)
     {
         try {
             $id = Crypt::decrypt($encryptedId);
