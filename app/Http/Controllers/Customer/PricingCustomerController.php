@@ -6,6 +6,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Models\ProductGallery;
 use App\Http\Controllers\Controller;
+use App\Models\LandingPage\LandingPageContact;
 
 class PricingCustomerController extends Controller
 {
@@ -28,9 +29,13 @@ class PricingCustomerController extends Controller
         foreach ($products as $product) {
             $product->productGallery = ProductGallery::where('products_id', $product->id)->get();
         }
+        $landingPageContact = LandingPageContact::get();
+
+
 
         return view('pages.customer.pricing.index', compact(
             'products',
+            'landingPageContact'
         ));
     }
 }

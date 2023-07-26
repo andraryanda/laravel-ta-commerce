@@ -35,6 +35,10 @@
             class="my-6 mx-2 text-2xl font-semibold text-gray-700 dark:text-gray-200">
             {{ __('Laporan Transaksi Cancelled') }}
         </h2>
+        <h2 id="header-laporan-transaksi-wifi-item"
+            class="my-6 mx-2 text-2xl font-semibold text-gray-700 dark:text-gray-200">
+            {{ __('Laporan Transaksi Wifi Items') }}
+        </h2>
     </x-slot>
 
     <x-slot name="slot">
@@ -58,6 +62,8 @@
                         <option value="laporan-transaksi-success">Laporan Transaksi Success</option>
                         <option value="laporan-transaksi-pending">Laporan Transaksi Pending</option>
                         <option value="laporan-transaksi-cancelled">Laporan Transaksi Cancelled</option>
+                        <option value="laporan-transaksi-wifi-item">Laporan Transaksi Wifi Perbulan Items</option>
+
                     </select>
                 @elseif (Auth::user()->roles == 'ADMIN')
                     <select name="laporan" id="laporan"
@@ -122,15 +128,26 @@
                             <p>Export Produk</p>
                         </div>
                     </button>
-                    <button type="button" id="btn-laporan-all-transaksi" title="Export All Transaction"
-                        onclick="showLoading(this);"
-                        class="text-gray-900 shadow-sm bg-yellow-300 hover:bg-yellow-100 border border-yellow-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 mr-2 mb-2">
-                        <div class="flex items-center">
-                            <img src="{{ asset('icon/download.png') }}" alt="Export" width="25"
-                                class="mr-2">
-                            <p>Export All Transaksi</p>
-                        </div>
-                    </button>
+                    <div id="">
+                        <button type="button" id="btn-laporan-all-transaksi" title="Export All Transaction"
+                            onclick="showLoading(this);"
+                            class="text-gray-900 shadow-sm bg-yellow-300 hover:bg-yellow-100 border border-yellow-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 mr-2 mb-2">
+                            <div class="flex items-center">
+                                <img src="{{ asset('icon/download.png') }}" alt="Export" width="25"
+                                    class="mr-2">
+                                <p>Export Excel All Transaksi</p>
+                            </div>
+                        </button>
+                        <button type="button" id="btn-laporan-all-transaksi-pdf" title="Export All Transaction"
+                            onclick="showLoading(this);"
+                            class="text-gray-900 shadow-sm bg-red-300 hover:bg-red-100 border border-red-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 mr-2 mb-2">
+                            <div class="flex items-center">
+                                <img src="{{ asset('icon/download.png') }}" alt="Export" width="25"
+                                    class="mr-2">
+                                <p>Export PDF All Transaksi</p>
+                            </div>
+                        </button>
+                    </div>
                     <button type="button" id="btn-laporan-transaksi-success" title="Export Transaction Success"
                         onclick="showLoading(this);"
                         class="text-gray-900 shadow-sm bg-yellow-300 hover:bg-yellow-100 border border-yellow-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 mr-2 mb-2">
@@ -156,6 +173,15 @@
                             <img src="{{ asset('icon/download.png') }}" alt="Export" width="25"
                                 class="mr-2">
                             <p>Export Transaksi Cancelled</p>
+                        </div>
+                    </button>
+                    <button type="button" id="btn-laporan-transaksi-wifi-item" title="Export Transaction Cancelled"
+                        onclick="showLoading(this);"
+                        class="text-gray-900 shadow-sm bg-red-300 hover:bg-red-100 border border-red-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 mr-2 mb-2">
+                        <div class="flex items-center">
+                            <img src="{{ asset('icon/download.png') }}" alt="Export" width="25"
+                                class="mr-2">
+                            <p>Export Transaksi Wifi Item</p>
                         </div>
                     </button>
                 </div>
@@ -931,7 +957,7 @@
                 $(document).ready(function() {
 
                     // Hide all buttons on page load
-                    $('#header-laporan-user-admin, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-all-transaksi, #header-laporan-kategori, #header-laporan-produk, #header-laporan-user-customer, #header-laporan-all-users, #btn-laporan-all-users, #btn-laporan-user-admin, #btn-laporan-user-customer, #btn-laporan-custom-all-users,#btn-laporan-custom-user-admin,#btn-laporan-custom-products,#btn-laporan-custom-user-customer,#btn-laporan-custom-category,#btn-laporan-custom-products, #btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-all-transaksi,#btn-laporan-custom-all-transaksi,#btn-laporan-custom-transaksi-success,#btn-laporan-custom-transaksi-pending, #btn-laporan-custom-transaksi-cancelled, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
+                    $('#header-laporan-user-admin, #header-laporan-transaksi-wifi-item, #btn-laporan-transaksi-wifi-item, #btn-laporan-all-transaksi-pdf, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-all-transaksi, #header-laporan-kategori, #header-laporan-produk, #header-laporan-user-customer, #header-laporan-all-users, #btn-laporan-all-users, #btn-laporan-user-admin, #btn-laporan-user-customer, #btn-laporan-custom-all-users,#btn-laporan-custom-user-admin,#btn-laporan-custom-products,#btn-laporan-custom-user-customer,#btn-laporan-custom-category,#btn-laporan-custom-products, #btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-all-transaksi,#btn-laporan-custom-all-transaksi,#btn-laporan-custom-transaksi-success,#btn-laporan-custom-transaksi-pending, #btn-laporan-custom-transaksi-cancelled, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
                         .hide();
                     // Show button when an option is selected
                     $('#laporan').on('change', function() {
@@ -939,7 +965,7 @@
 
                         if (selectedOption === '') {
                             $('#header-laporan-none').show();
-                            $('#header-laporan-all-users, #header-laporan-all-transaksi, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-user-admin, #header-laporan-kategori, #header-laporan-produk, #header-laporan-user-customer, #btn-laporan-all-users, #btn-laporan-user-admin, #btn-laporan-custom-user-customer,#btn-laporan-custom-all-users, #btn-laporan-user-customer, #btn-laporan-custom-user-admin,#btn-laporan-custom-products,#btn-laporan-custom-category,#btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-all-transaksi, #btn-laporan-custom-all-transaksi, #btn-laporan-custom-transaksi-success,#btn-laporan-custom-transaksi-cancelled, #btn-laporan-custom-transaksi-pending, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
+                            $('#header-laporan-all-users,  #header-laporan-transaksi-wifi-item, #btn-laporan-transaksi-wifi-item, #btn-laporan-all-transaksi-pdf, #header-laporan-all-transaksi, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-user-admin, #header-laporan-kategori, #header-laporan-produk, #header-laporan-user-customer, #btn-laporan-all-users, #btn-laporan-user-admin, #btn-laporan-custom-user-customer,#btn-laporan-custom-all-users, #btn-laporan-user-customer, #btn-laporan-custom-user-admin,#btn-laporan-custom-products,#btn-laporan-custom-category,#btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-all-transaksi, #btn-laporan-custom-all-transaksi, #btn-laporan-custom-transaksi-success,#btn-laporan-custom-transaksi-cancelled, #btn-laporan-custom-transaksi-pending, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
                                 .hide();
                         } else if (selectedOption === 'laporan-all-users') {
                             Swal.fire({
@@ -954,7 +980,7 @@
                                         $('#btn-laporan-all-users').show();
                                         $('#btn-laporan-custom-all-users').show();
                                         $('#header-laporan-all-users').show();
-                                        $('#header-laporan-none, #btn-laporan-user-admin, #btn-laporan-user-customer, #header-laporan-all-transaksi, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-kategori, #header-laporan-produk, #header-laporan-user-admin, #header-laporan-user-customer, #btn-laporan-custom-user-customer,#btn-laporan-custom-user-admin,#btn-laporan-custom-products,#btn-laporan-custom-category,#btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-all-transaksi, #btn-laporan-custom-transaksi-cancelled, #btn-laporan-custom-transaksi-pending,#btn-laporan-custom-transaksi-success,#btn-laporan-custom-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
+                                        $('#header-laporan-none,  #header-laporan-transaksi-wifi-item, #btn-laporan-transaksi-wifi-item, #btn-laporan-all-transaksi-pdf,#btn-laporan-user-admin, #btn-laporan-user-customer, #header-laporan-all-transaksi, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-kategori, #header-laporan-produk, #header-laporan-user-admin, #header-laporan-user-customer, #btn-laporan-custom-user-customer,#btn-laporan-custom-user-admin,#btn-laporan-custom-products,#btn-laporan-custom-category,#btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-all-transaksi, #btn-laporan-custom-transaksi-cancelled, #btn-laporan-custom-transaksi-pending,#btn-laporan-custom-transaksi-success,#btn-laporan-custom-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
                                             .hide();
                                         Swal.close();
                                     }, 1000);
@@ -973,7 +999,7 @@
                                         $('#btn-laporan-user-admin').show();
                                         $('#btn-laporan-custom-user-admin').show();
                                         $('#header-laporan-user-admin').show();
-                                        $('#header-laporan-none, #btn-laporan-all-users, #btn-laporan-user-customer, #header-laporan-all-transaksi, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-kategori, #header-laporan-produk, #header-laporan-user-customer, #header-laporan-all-users, #btn-laporan-custom-user-customer,#btn-laporan-custom-all-users,#btn-laporan-custom-products,#btn-laporan-custom-category,#btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-all-transaksi,#btn-laporan-custom-transaksi-cancelled, #btn-laporan-custom-transaksi-pending,#btn-laporan-custom-transaksi-success,#btn-laporan-custom-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
+                                        $('#header-laporan-none,  #header-laporan-transaksi-wifi-item, #btn-laporan-transaksi-wifi-item, #btn-laporan-all-transaksi-pdf,#btn-laporan-all-users, #btn-laporan-user-customer, #header-laporan-all-transaksi, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-kategori, #header-laporan-produk, #header-laporan-user-customer, #header-laporan-all-users, #btn-laporan-custom-user-customer,#btn-laporan-custom-all-users,#btn-laporan-custom-products,#btn-laporan-custom-category,#btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-all-transaksi,#btn-laporan-custom-transaksi-cancelled, #btn-laporan-custom-transaksi-pending,#btn-laporan-custom-transaksi-success,#btn-laporan-custom-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
                                             .hide();
                                         Swal.close();
                                     }, 1000);
@@ -992,7 +1018,7 @@
                                         $('#btn-laporan-user-customer').show();
                                         $('#btn-laporan-custom-user-customer').show();
                                         $('#header-laporan-user-customer').show();
-                                        $('#header-laporan-none, #btn-laporan-all-users, #btn-laporan-user-admin, #header-laporan-all-transaksi, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-kategori, #header-laporan-produk, #header-laporan-user-admin,  #header-laporan-all-users, #btn-laporan-kategori,#btn-laporan-custom-user-admin,#btn-laporan-custom-all-users, #btn-laporan-custom-products,#btn-laporan-custom-category,#btn-laporan-custom-transaksi-cancelled, #btn-laporan-custom-transaksi-pending,#btn-laporan-produk, #btn-laporan-all-transaksi,#btn-laporan-custom-transaksi-success,#btn-laporan-custom-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
+                                        $('#header-laporan-none, #btn-laporan-all-transaksi-pdf,#btn-laporan-all-users, #btn-laporan-user-admin, #header-laporan-all-transaksi, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-kategori, #header-laporan-produk, #header-laporan-user-admin,  #header-laporan-all-users, #btn-laporan-kategori,#btn-laporan-custom-user-admin,#btn-laporan-custom-all-users, #btn-laporan-custom-products,#btn-laporan-custom-category,#btn-laporan-custom-transaksi-cancelled, #btn-laporan-custom-transaksi-pending,#btn-laporan-produk, #btn-laporan-all-transaksi,#btn-laporan-custom-transaksi-success,#btn-laporan-custom-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
                                             .hide();
                                         Swal.close();
                                     }, 1000);
@@ -1011,7 +1037,7 @@
                                         $('#btn-laporan-kategori').show();
                                         $('#btn-laporan-custom-category').show();
                                         $('#header-laporan-kategori').show();
-                                        $('#header-laporan-none, #btn-laporan-all-users, #btn-laporan-user-admin, #header-laporan-all-transaksi, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-produk, #header-laporan-user-admin, #header-laporan-user-customer, #header-laporan-all-users, #btn-laporan-custom-user-admin,#btn-laporan-custom-all-users,#btn-laporan-custom-products,#btn-laporan-custom-user-customer,#btn-laporan-user-customer, #btn-laporan-produk, #btn-laporan-custom-transaksi-cancelled, #btn-laporan-all-transaksi,#btn-laporan-custom-all-transaksi, #btn-laporan-custom-transaksi-pending,#btn-laporan-custom-transaksi-success,#btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
+                                        $('#header-laporan-none,  #header-laporan-transaksi-wifi-item, #btn-laporan-transaksi-wifi-item, #btn-laporan-all-transaksi-pdf,#btn-laporan-all-users, #btn-laporan-user-admin, #header-laporan-all-transaksi, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-produk, #header-laporan-user-admin, #header-laporan-user-customer, #header-laporan-all-users, #btn-laporan-custom-user-admin,#btn-laporan-custom-all-users,#btn-laporan-custom-products,#btn-laporan-custom-user-customer,#btn-laporan-user-customer, #btn-laporan-produk, #btn-laporan-custom-transaksi-cancelled, #btn-laporan-all-transaksi,#btn-laporan-custom-all-transaksi, #btn-laporan-custom-transaksi-pending,#btn-laporan-custom-transaksi-success,#btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
                                             .hide();
                                         Swal.close();
                                     }, 1000);
@@ -1030,7 +1056,7 @@
                                         $('#btn-laporan-produk').show();
                                         $('#btn-laporan-custom-products').show();
                                         $('#header-laporan-produk').show();
-                                        $('#header-laporan-none, #btn-laporan-all-users, #btn-laporan-user-admin, #header-laporan-all-transaksi, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-kategori ,#header-laporan-user-admin, #header-laporan-user-customer, #header-laporan-all-users, #btn-laporan-custom-user-admin,#btn-laporan-custom-all-users,#btn-laporan-custom-category,#btn-laporan-user-customer, #btn-laporan-kategori, #btn-laporan-custom-user-customer,#btn-laporan-custom-transaksi-cancelled, #btn-laporan-all-transaksi,#btn-laporan-custom-all-transaksi, #btn-laporan-custom-transaksi-pending,#btn-laporan-custom-transaksi-success,#btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
+                                        $('#header-laporan-none, #header-laporan-transaksi-wifi-item, #btn-laporan-transaksi-wifi-item,  #btn-laporan-all-transaksi-pdf,#btn-laporan-all-users, #btn-laporan-user-admin, #header-laporan-all-transaksi, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-kategori ,#header-laporan-user-admin, #header-laporan-user-customer, #header-laporan-all-users, #btn-laporan-custom-user-admin,#btn-laporan-custom-all-users,#btn-laporan-custom-category,#btn-laporan-user-customer, #btn-laporan-kategori, #btn-laporan-custom-user-customer,#btn-laporan-custom-transaksi-cancelled, #btn-laporan-all-transaksi,#btn-laporan-custom-all-transaksi, #btn-laporan-custom-transaksi-pending,#btn-laporan-custom-transaksi-success,#btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
                                             .hide();
                                         Swal.close();
                                     }, 1000);
@@ -1049,7 +1075,8 @@
                                         $('#btn-laporan-all-transaksi').show();
                                         $('#btn-laporan-custom-all-transaksi').show();
                                         $('#header-laporan-all-transaksi').show();
-                                        $('#header-laporan-none, #btn-laporan-all-users, #btn-laporan-user-admin, #header-laporan-kategori, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-produk, #header-laporan-user-admin, #header-laporan-user-customer, #header-laporan-all-users, #btn-laporan-custom-category,#btn-laporan-custom-user-customer,#btn-laporan-custom-user-admin,#btn-laporan-custom-all-users,#btn-laporan-custom-products,#btn-laporan-user-customer, #btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-custom-transaksi-pending,#btn-laporan-custom-transaksi-cancelled, #btn-laporan-custom-transaksi-success,#btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
+                                        $('#btn-laporan-all-transaksi-pdf').show();
+                                        $('#header-laporan-none,  #header-laporan-transaksi-wifi-item, #btn-laporan-transaksi-wifi-item, #btn-laporan-all-users, #btn-laporan-user-admin, #header-laporan-kategori, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-produk, #header-laporan-user-admin, #header-laporan-user-customer, #header-laporan-all-users, #btn-laporan-custom-category,#btn-laporan-custom-user-customer,#btn-laporan-custom-user-admin,#btn-laporan-custom-all-users,#btn-laporan-custom-products,#btn-laporan-user-customer, #btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-custom-transaksi-pending,#btn-laporan-custom-transaksi-cancelled, #btn-laporan-custom-transaksi-success,#btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
                                             .hide();
                                         Swal.close();
                                     }, 1000);
@@ -1068,7 +1095,7 @@
                                         $('#btn-laporan-transaksi-success').show();
                                         $('#btn-laporan-custom-transaksi-success').show();
                                         $('#header-laporan-transaksi-success').show();
-                                        $('#header-laporan-none, #btn-laporan-all-users, #btn-laporan-user-admin, #header-laporan-all-transaksi, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-kategori, #header-laporan-produk, #header-laporan-user-admin, #header-laporan-user-customer, #header-laporan-all-users, #btn-laporan-custom-user-customer,#btn-laporan-custom-user-admin,#btn-laporan-custom-products,#btn-laporan-custom-all-users,#btn-laporan-user-customer, #btn-laporan-custom-category,#btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-custom-transaksi-pending,#btn-laporan-all-transaksi,#btn-laporan-custom-transaksi-cancelled, #btn-laporan-custom-all-transaksi, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
+                                        $('#header-laporan-none,  #header-laporan-transaksi-wifi-item, #btn-laporan-transaksi-wifi-item, #btn-laporan-all-transaksi-pdf,#btn-laporan-all-users, #btn-laporan-user-admin, #header-laporan-all-transaksi, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-kategori, #header-laporan-produk, #header-laporan-user-admin, #header-laporan-user-customer, #header-laporan-all-users, #btn-laporan-custom-user-customer,#btn-laporan-custom-user-admin,#btn-laporan-custom-products,#btn-laporan-custom-all-users,#btn-laporan-user-customer, #btn-laporan-custom-category,#btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-custom-transaksi-pending,#btn-laporan-all-transaksi,#btn-laporan-custom-transaksi-cancelled, #btn-laporan-custom-all-transaksi, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
                                             .hide();
                                         Swal.close();
                                     }, 1000);
@@ -1087,7 +1114,7 @@
                                         $('#btn-laporan-transaksi-pending').show();
                                         $('#btn-laporan-custom-transaksi-pending').show();
                                         $('#header-laporan-transaksi-pending').show();
-                                        $('#header-laporan-none, #btn-laporan-all-users, #btn-laporan-user-admin, #header-laporan-all-transaksi, #header-laporan-transaksi-success, #header-laporan-transaksi-cancelled, #header-laporan-kategori, #header-laporan-produk, #header-laporan-user-admin, #header-laporan-user-customer, #header-laporan-all-users, #btn-laporan-custom-user-customer,#btn-laporan-custom-user-admin,#btn-laporan-custom-all-users,#btn-laporan-user-customer, #btn-laporan-custom-products,#btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-custom-category,#btn-laporan-custom-transaksi-cancelled, #btn-laporan-custom-transaksi-success,#btn-laporan-all-transaksi,#btn-laporan-custom-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-cancelled')
+                                        $('#header-laporan-none,  #header-laporan-transaksi-wifi-item, #btn-laporan-transaksi-wifi-item, #btn-laporan-all-transaksi-pdf,#btn-laporan-all-users, #btn-laporan-user-admin, #header-laporan-all-transaksi, #header-laporan-transaksi-success, #header-laporan-transaksi-cancelled, #header-laporan-kategori, #header-laporan-produk, #header-laporan-user-admin, #header-laporan-user-customer, #header-laporan-all-users, #btn-laporan-custom-user-customer,#btn-laporan-custom-user-admin,#btn-laporan-custom-all-users,#btn-laporan-user-customer, #btn-laporan-custom-products,#btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-custom-category,#btn-laporan-custom-transaksi-cancelled, #btn-laporan-custom-transaksi-success,#btn-laporan-all-transaksi,#btn-laporan-custom-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-cancelled')
                                             .hide();
                                         Swal.close();
                                     }, 1000);
@@ -1106,7 +1133,25 @@
                                         $('#btn-laporan-transaksi-cancelled').show();
                                         $('#btn-laporan-custom-transaksi-cancelled').show();
                                         $('#header-laporan-transaksi-cancelled').show();
-                                        $('#header-laporan-none, #btn-laporan-all-users, #btn-laporan-user-admin, #header-laporan-all-transaksi, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-kategori, #header-laporan-produk, #header-laporan-user-admin, #header-laporan-user-customer, #header-laporan-all-users, #btn-laporan-custom-user-customer,#btn-laporan-custom-user-admin,#btn-laporan-custom-products,#btn-laporan-custom-all-users,#btn-laporan-user-customer, #btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-custom-category,#btn-laporan-custom-transaksi-pending,#btn-laporan-custom-transaksi-success,#btn-laporan-all-transaksi,#btn-laporan-custom-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending')
+                                        $('#header-laporan-none,  #header-laporan-transaksi-wifi-item, #btn-laporan-transaksi-wifi-item, #btn-laporan-all-transaksi-pdf,#btn-laporan-all-users, #btn-laporan-user-admin, #header-laporan-all-transaksi, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-kategori, #header-laporan-produk, #header-laporan-user-admin, #header-laporan-user-customer, #header-laporan-all-users, #btn-laporan-custom-user-customer,#btn-laporan-custom-user-admin,#btn-laporan-custom-products,#btn-laporan-custom-all-users,#btn-laporan-user-customer, #btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-custom-category,#btn-laporan-custom-transaksi-pending,#btn-laporan-custom-transaksi-success,#btn-laporan-all-transaksi,#btn-laporan-custom-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending')
+                                            .hide();
+                                        Swal.close();
+                                    }, 1000);
+                                }
+                            });
+                        } else if (selectedOption === 'laporan-transaksi-wifi-item') {
+                            Swal.fire({
+                                title: 'Tunggu sebentar...',
+                                text: 'Sedang memuat laporan transaksi wifi items...',
+                                allowOutsideClick: false,
+                                allowEscapeKey: false,
+                                allowEnterKey: false,
+                                showConfirmButton: false,
+                                didOpen: () => {
+                                    setTimeout(() => {
+                                        $('#header-laporan-transaksi-wifi-item').show();
+                                        $('#btn-laporan-transaksi-wifi-item').show();
+                                        $('#header-laporan-none, #btn-laporan-transaksi-cancelled, #btn-laporan-custom-transaksi-cancelled, #header-laporan-transaksi-cancelled,#btn-laporan-all-transaksi-pdf,#btn-laporan-all-users, #btn-laporan-user-admin, #header-laporan-all-transaksi, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-kategori, #header-laporan-produk, #header-laporan-user-admin, #header-laporan-user-customer, #header-laporan-all-users, #btn-laporan-custom-user-customer,#btn-laporan-custom-user-admin,#btn-laporan-custom-products,#btn-laporan-custom-all-users,#btn-laporan-user-customer, #btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-custom-category,#btn-laporan-custom-transaksi-pending,#btn-laporan-custom-transaksi-success,#btn-laporan-all-transaksi,#btn-laporan-custom-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending')
                                             .hide();
                                         Swal.close();
                                     }, 1000);
@@ -1140,6 +1185,10 @@
                         var exportUrl = "{{ route('dashboard.report.exportAllTransactions') }}";
                         window.location.href = exportUrl;
                     });
+                    $('#btn-laporan-all-transaksi-pdf').on('click', function() {
+                        var exportUrl = "{{ route('dashboard.report.exportAllTransactionsPDF') }}";
+                        window.location.href = exportUrl;
+                    });
                     $('#btn-laporan-transaksi-success').on('click', function() {
                         var exportUrl = "{{ route('dashboard.report.exportTransactionSuccess') }}";
                         window.location.href = exportUrl;
@@ -1150,6 +1199,10 @@
                     });
                     $('#btn-laporan-transaksi-cancelled').on('click', function() {
                         var exportUrl = "{{ route('dashboard.report.exportTransactionCancelled') }}";
+                        window.location.href = exportUrl;
+                    });
+                    $('#btn-laporan-transaksi-wifi-item').on('click', function() {
+                        var exportUrl = "{{ route('dashboard.report.exportTransactionWifiItemPdf') }}";
                         window.location.href = exportUrl;
                     });
                 });

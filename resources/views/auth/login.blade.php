@@ -46,16 +46,19 @@
 
     <section class="bg-gray-50 dark:bg-gray-900">
         <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+
             <a href="{{ route('landingPage.index') }}"
                 class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
-                <img class="w-8 h-8 mr-2" src="{{ asset('logo/alnet.jpg') }}" alt="logo">
-                AL-N3T Support Gesitnet
+                <img class=" mr-2" src="{{ asset('logo/alnet.jpg') }}" width="200" alt="logo"
+                    style="border-radius: 75%;">
+                {{-- AL-N3T Support Gesitnet --}}
             </a>
             <div
                 class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
                 <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-                    <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                        Sign in to your account
+                    <h1
+                        class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+                        Login Sekarang juga!
                     </h1>
 
                     <x-jet-validation-errors class="mb-4" />
@@ -94,12 +97,12 @@
                                 </label>
                             </div>
 
-                            {{-- @if (Route::has('password.request'))
+                            @if (Route::has('password.request'))
                                 <a class="underline text-sm text-gray-600 hover:text-gray-900"
                                     href="{{ route('password.request') }}">
                                     {{ __('Forgot your password?') }}
                                 </a>
-                            @endif --}}
+                            @endif
                         </div>
 
                         <button type="submit"
@@ -107,10 +110,10 @@
                             {{ __('Sign in') }}
                         </button>
                         <p class="text-sm font-light text-gray-500 dark:text-gray-400">
-                            {{ __('Don’t have an account yet?') }}
+                            {{ __('Belum mempunyai akun?') }}
                             <a href="{{ route('register') }}"
                                 class="font-medium text-blue-600 hover:underline dark:text-blue-500">
-                                {{ __('Sign up') }}
+                                {{ __('Daftar') }}
                             </a>
                         </p>
                     </form>

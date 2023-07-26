@@ -92,8 +92,14 @@ class TransactionWifiItemController extends Controller
             // Ambil transaksi wifi berdasarkan ID yang diterima
             $transactionWifi = TransactionWifi::findOrFail($request->transaction_wifi_id);
 
-            // Tambahkan 1 bulan ke expired_wifi
-            $nextMonth = Carbon::parse($transactionWifi->expired_wifi)->addMonth();
+            if ($request->payment_status === 'UNPAID') {
+                // Jika payment_status == 'UNPAID', jangan tambahkan masa wifi aktifnya
+                $nextMonth = $transactionWifi->expired_wifi;
+            } else {
+                // Jika payment_status != 'UNPAID', tambahkan 1 bulan ke expired_wifi
+                $nextMonth = Carbon::parse($transactionWifi->expired_wifi)->addMonth();
+            }
+
             $transactionWifi->expired_wifi = $nextMonth;
             $transactionWifi->save();
 
@@ -120,6 +126,7 @@ class TransactionWifiItemController extends Controller
             return redirect()->back()->withError('Terjadi kesalahan: ' . $e->getMessage());
         }
     }
+
 
     public function edit($encryptedItemId)
     {
@@ -172,6 +179,9 @@ class TransactionWifiItemController extends Controller
             $itemId = Crypt::decrypt($encryptedItemId);
             $transactionWifiItem = TransactionWifiItem::findOrFail($itemId);
 
+            // Get the original payment status before the update
+            $previousPaymentStatus = $transactionWifiItem->getOriginal('payment_status');
+
             // Update the transaction wifi item
             $transactionWifiItem->update([
                 'users_id' => $request->input('users_id'),
@@ -183,8 +193,22 @@ class TransactionWifiItemController extends Controller
                 'description' => $request->input('description'),
             ]);
 
-            // // Find the transaction wifi related to the item
+            // Find the transaction wifi related to the item
             $transactionWifi = TransactionWifi::findOrFail($transactionWifiItem->transaction_wifi_id);
+
+            // Adjust the expired_wifi based on payment_status change
+            if ($previousPaymentStatus === 'UNPAID' && $request->input('payment_status') === 'PAID') {
+                // If previously UNPAID and now PAID, add a month to expired_wifi
+                $nextMonth = Carbon::parse($transactionWifi->expired_wifi)->addMonth();
+                $transactionWifi->expired_wifi = $nextMonth;
+            } elseif ($previousPaymentStatus === 'PAID' && $request->input('payment_status') === 'UNPAID') {
+                // If previously PAID and now UNPAID, subtract a month from expired_wifi
+                $previousMonth = Carbon::parse($transactionWifi->expired_wifi)->subMonth();
+                $transactionWifi->expired_wifi = $previousMonth;
+            }
+
+            $transactionWifi->save();
+
             $encryptedTransactionWifiId = Crypt::encrypt($transactionWifi->id);
             // Redirect or return a response
             return redirect()->route('dashboard.bulan.show', $encryptedTransactionWifiId)->withSuccess('Transaction Wifi updated successfully');
@@ -195,9 +219,10 @@ class TransactionWifiItemController extends Controller
         }
     }
 
+
     public function destroy($encryptedItemId)
     {
-        try{
+        try {
             $id = Crypt::decrypt($encryptedItemId);
             $transactionWifiItem = TransactionWifiItem::findOrFail($id);
 
@@ -209,13 +234,12 @@ class TransactionWifiItemController extends Controller
 
             // Hapus juga data pada tabel transaction_items yang terkait dengan transaksi ini
             // TransactionWifiItem::where('transaction_wifi_id', $transactionWifiItem->id)->delete();
-            return back()->withSuccess('Transaksi berhasil dihapus!');
+            return back()->withSuccess('Transaksi Wifi Items berhasil dihapus!');
             // return redirect()->route('dashboard.bulan.show', Crypt::encrypt($transactionWifiItem->id))->withSuccess('Transaksi berhasil dihapus!');
         } catch (\Exception $e) {
-            return back()->withError('Transaksi gagal dihapus!');
+            return back()->withError('Transaksi Wifi Items gagal dihapus!');
 
             // return redirect()->route('dashboard.bulan.show', Crypt::encrypt($transactionWifiItem->id))->withError('Transaksi gagal dihapus!');
         }
     }
 }
-

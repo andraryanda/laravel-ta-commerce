@@ -444,11 +444,12 @@ class TransactionWifiController extends Controller
                                 <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/edit.png') . '" alt="show" loading="lazy" width="20" />
                                 <p class="mt-1 text-xs">Edit</p>
                             </a>
-                            <a href="' . route('dashboard.bulan.edit', $encryptedId) . '" title="Delete"
-                                class="flex flex-col shadow-sm  items-center justify-center w-20 h-12 border border-red-500 bg-red-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-red-500 focus:outline-none focus:shadow-outline">
+                            <button type="button" title="Delete"
+                                class="flex flex-col delete-button shadow-sm items-center justify-center w-20 h-12 border border-red-500 bg-red-400 text-white rounded-md mx-2 my-2 transition duration-500 ease select-none hover:bg-red-500 focus:outline-none focus:shadow-outline"
+                                data-id="' . $encryptedId . '">
                                 <img class="object-cover w-6 h-6 rounded-full" src="' . asset('icon/delete.png') . '" alt="delete" loading="lazy" width="20" />
                                 <p class="mt-1 text-xs">Delete</p>
-                            </a>
+                            </button>
                         </div>
                         ';
                     })

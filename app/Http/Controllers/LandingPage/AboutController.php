@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\LandingPage\LandingPageAbout;
+use App\Models\LandingPage\LandingPageContact;
 use App\Models\LandingPage\LandingPageAboutTeam;
 use App\Models\LandingPage\LandingPageAboutFeature;
 
@@ -36,6 +37,8 @@ class AboutController extends Controller
         $landingPageAbout = LandingPageAbout::get();
         $landingPageAboutFeature = LandingPageAboutFeature::get();
         $landingPageAboutTeam = LandingPageAboutTeam::get();
+        $landingPageContact = LandingPageContact::get();
+        $products = Product::get();
 
 
 
@@ -47,7 +50,9 @@ class AboutController extends Controller
             'users_customer_count' => $users_customer_count,
             'new_transaction' => $new_transaction,
             'total_product' => $total_product,
-            'total_amount_success' => $total_amount_success
+            'total_amount_success' => $total_amount_success,
+            'landingPageContact' => $landingPageContact,
+            'products' => $products,
 
         ]);
     }

@@ -241,7 +241,13 @@
                                             dan bisa <b>Download Bukti Transaksi/kwitansi</b> kalian.</p>
                                         <p class="font-italic">Apabila masih bingung untuk Download Bukti
                                             Transaksi/Kwitansi kalian juga bisa memintanya Ke Admin, dengan menghubungi
-                                            <b>Nomor berikut: 085314005779</b>
+                                            @forelse ($landingPageContact as $item)
+                                                <b>Nomor berikut: {{ $item->phone_contact }}</b>
+
+                                            @empty
+
+                                                <b>Nomor berikut: 085314005779</b>
+                                            @endforelse
                                         </p>
                                         <img src="{{ asset('metode-pembayaran/Screenshot_5.png') }}"
                                             alt="metode-pembayaran-5" height="100%">
@@ -288,7 +294,9 @@
                         <h5 class="font-weight-bold my-2">Informasi penting</h5>
                     </div>
                     <div class="pl-2">
-                        <div>Proses konfirmasi pembayaran akan membutuhkan waktu sekitar 20 menit (dari pesan WhatsApp
+                        <div style="text-align: justify;">Proses konfirmasi pembayaran akan membutuhkan waktu sekitar <b>20
+                                menit</b> (dari pesan
+                            WhatsApp
                             dikirim). Mohon menunggu dengan sabar dan terima kasih.</div>
                     </div>
                     <div class="pt-2">
@@ -300,7 +308,12 @@
                     </div>
                     <div class="d-flex">
                         <div class="col-8">No. WhatsApp</div>
-                        <div class="ml-auto"><b>+6285314005779</b></div>
+                        @forelse ($landingPageContact as $item)
+                            <div class="ml-auto"><b>{{ $item->phone_contact }}</b></div>
+
+                        @empty
+                            <div class="ml-auto"><b>+6285314005779</b></div>
+                        @endforelse
                     </div>
                 </div>
             </div>

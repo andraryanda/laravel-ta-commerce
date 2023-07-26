@@ -1,7 +1,10 @@
 <?php
 
+use App\Models\Product;
 use App\Models\ProductGallery;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\File;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\UserController;
@@ -13,6 +16,7 @@ use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\Auth\HomeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserChartController;
+use App\Models\LandingPage\LandingPageContact;
 use App\Http\Controllers\ProfileUserController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\SearchGlobalController;
@@ -39,8 +43,6 @@ use App\Http\Controllers\LandingPageCustom\LandingPageAboutController;
 use App\Http\Controllers\LandingPageCustom\LandingPageContactController;
 use App\Http\Controllers\LandingPageCustom\LandingPageAboutTeamController;
 use App\Http\Controllers\LandingPageCustom\LandingPageAboutFeatureController;
-use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Facades\File;
 
 /*
 |--------------------------------------------------------------------------
@@ -77,7 +79,10 @@ Route::get('contact', [ContactController::class, 'index'])->name('landingPage.co
 Route::get('produk', [PricingController::class, 'index'])->name('landingPage.pricing');
 Route::get('/searchProductLandingPageCustomer', [PricingLandingPageSearchController::class, 'searchProductLandingPageCustomer'])->name('landingPage.pricingCustomer.searchProductLandingPageCustomer');
 Route::get('download/apps', function () {
-    return view('landing_page.pages.download_apps');
+    $landingPageContact = LandingPageContact::get();
+    $products = Product::get();
+
+    return view('landing_page.pages.download_apps', compact('products', 'landingPageContact'));
 })->name('landingPage.download.aplikasi');
 
 
@@ -237,6 +242,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
             Route::get('exportCustomProducts', [ReportController::class, 'exportCustomProducts'])->name('report.exportCustomProducts');
 
             Route::get('exportAllTransactions', [ReportController::class, 'exportAllTransactions'])->name('report.exportAllTransactions');
+            Route::get('exportAllTransactionsPDF', [ReportController::class, 'exportAllTransactionsPDF'])->name('report.exportAllTransactionsPDF');
             Route::get('exportAllCustomTransactions', [ReportController::class, 'exportAllCustomTransactions'])->name('report.exportAllCustomTransactions');
             Route::get('exportTransactionCancelled', [ReportController::class, 'exportTransactionCancelled'])->name('report.exportTransactionCancelled');
             Route::get('exportTransactionSuccess', [ReportController::class, 'exportTransactionSuccess'])->name('report.exportTransactionSuccess');
@@ -248,6 +254,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
             Route::get('exportTransactionWifi', [ReportController::class, 'exportTransactionWifi'])->name('report.exportTransactionWifi');
             Route::get('exportTransactionCustomWifi', [ReportController::class, 'exportTransactionCustomWifi'])->name('report.exportTransactionCustomWifi');
             Route::get('exportTransactionWifiItem', [ReportController::class, 'exportTransactionWifiItem'])->name('report.exportTransactionWifiItem');
+            Route::get('exportTransactionWifiItemPDF', [ReportController::class, 'exportTransactionWifiItemPdf'])->name('report.exportTransactionWifiItemPdf');
 
             // // Midtrans
             // Route::get('dashboard/payment/cancel/{id}', [MidtransWebhookController::class, 'cancelPayment'])->name('midtrans.cancel');

@@ -74,7 +74,7 @@ class LandingPageAboutController extends Controller
         $existingAbout = LandingPageAbout::first();
 
         if ($existingAbout) {
-            return back()->withErrors('Data About sudah tersedia.');
+            return back()->withError('Data About sudah tersedia.');
         }
 
         $this->validate($request, [

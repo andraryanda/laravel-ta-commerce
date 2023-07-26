@@ -91,7 +91,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label for="name"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Masukkan
                                     name</label>
                                 <input type="text" name="name" id="name"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -99,7 +99,7 @@
                             </div>
                             <div>
                                 <label for="username"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Masukkan
                                     username</label>
                                 <input type="text" name="username" id="username"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -109,7 +109,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label for="email"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Masukkan
                                     email</label>
                                 <input type="email" name="email" id="email"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -117,7 +117,7 @@
                             </div>
                             <div>
                                 <label for="phone"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Masukkan
                                     phone</label>
                                 <input type="phone" name="phone" id="phone"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -126,7 +126,7 @@
                         </div>
                         <div>
                             <label for="alamat"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your alamat</label>
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Masukkan alamat</label>
                             <textarea name="alamat" id="alamat" rows="5"
                                 class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 placeholder="Masukkan alamat anda"></textarea>
@@ -204,9 +204,8 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
                 </svg> --}}
-                <img class="w-8 h-8 mr-2" src="{{ asset('logo/alnet.jpg') }}" width="150"
-                    class="img-fluid rounded-circle" alt="logo">
-
+                <img class=" mr-2" src="{{ asset('logo/alnet.jpg') }}" width="200" alt="logo"
+                    style="border-radius: 75%;">
             </div>
             <h3 class="text-2xl font-bold text-center">AL-N3T Support Gesitnet</h3>
             <br>
@@ -215,14 +214,16 @@
                 @csrf
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your
+                        <label for="name"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Masukkan
                             name</label>
                         <input type="text" name="name" id="name"
                             class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder="Tuliskan name" required="">
                     </div>
                     <div>
-                        <label for="username" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your
+                        <label for="username"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Masukkan
                             username</label>
                         <input type="text" name="username" id="username"
                             class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -231,14 +232,16 @@
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your
+                        <label for="email"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Masukkan
                             email</label>
                         <input type="email" name="email" id="email"
                             class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder="name@company.com" required="">
                     </div>
                     <div>
-                        <label for="phone" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your
+                        <label for="phone"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Masukkan
                             phone</label>
                         <input type="phone" name="phone" id="phone"
                             class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -246,7 +249,7 @@
                     </div>
                 </div>
                 <div>
-                    <label for="alamat" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your
+                    <label for="alamat" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Masukkan
                         alamat</label>
                     <textarea name="alamat" id="alamat" rows="5"
                         class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -302,10 +305,11 @@
                 @endif
 
                 <button type="submit"
-                    class="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Create
-                    an account</button>
+                    class="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                    {{ __('Daftar') }}
+                </button>
                 <p class="text-sm font-light text-gray-500 dark:text-gray-400">
-                    Already have an account? <a href="{{ route('login') }}"
+                    Sudah mempunyai akun? <a href="{{ route('login') }}"
                         class="font-medium text-blue-600 hover:underline dark:text-blue-500">Login here</a>
                 </p>
             </form>

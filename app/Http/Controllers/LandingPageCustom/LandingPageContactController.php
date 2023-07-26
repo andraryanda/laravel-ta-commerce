@@ -69,7 +69,7 @@ class LandingPageContactController extends Controller
         $existingContact = LandingPageContact::first();
 
         if ($existingContact) {
-            return redirect()->route('dashboard.contact.index')->withErrors('Data Contact sudah tersedia.');
+            return redirect()->route('dashboard.contact.index')->withError('Data Contact sudah tersedia.');
         }
 
         $this->validate(

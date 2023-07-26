@@ -202,8 +202,13 @@
      </div>
      <div class="offcanvas__info">
          <ul>
-             <li><span class="icon_phone"></span> +62 85314005779</li>
-             <li><span class="fa fa-envelope"></span> alnet@gmail.com</li>
+             @forelse ($landingPageContact as $item)
+                 <li><span class="icon_phone"></span> {{ $item->phone_contact }}</li>
+                 <li><span class="fa fa-envelope"></span> {{ $item->email_contact }}</li>
+             @empty
+                 <li><span class="icon_phone"></span> +62 85314005779</li>
+                 <li><span class="fa fa-envelope"></span> alnet@gmail.com</li>
+             @endforelse
          </ul>
      </div>
  </div>
@@ -217,8 +222,13 @@
                  <div class="col-lg-6 col-md-6">
                      <div class="header__info-left">
                          <ul>
-                             <li><span class="icon_phone"></span> +62 85314005779</li>
-                             <li><span class="fa fa-envelope"></span> alnet@gmail.com</li>
+                             @forelse ($landingPageContact as $item)
+                                 <li><span class="icon_phone"></span> {{ $item->phone_contact }}</li>
+                                 <li><span class="fa fa-envelope"></span> {{ $item->email_contact }}</li>
+                             @empty
+                                 <li><span class="icon_phone"></span> +62 85314005779</li>
+                                 <li><span class="fa fa-envelope"></span> alnet@gmail.com</li>
+                             @endforelse
                          </ul>
                      </div>
                  </div>

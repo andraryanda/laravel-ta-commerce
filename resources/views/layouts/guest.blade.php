@@ -6,7 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>Apps Als Store RT/RW NET</title>
+    <title>{{ __('AL-N3T Support Gesitnet') }}</title>
+    {{-- <title>{{ __('Als Store RT/RW NET') }}</title> --}}
+
     <link rel="shortcut icon" href="{{ asset('logo/alnet.jpg') }}">
 
     <!-- Fonts -->

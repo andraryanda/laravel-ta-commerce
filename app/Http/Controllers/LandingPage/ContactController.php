@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\LandingPage;
 
+use App\Models\Product;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -25,10 +26,12 @@ class ContactController extends Controller
         }
 
         $landingPageContact = LandingPageContact::get();
+        $products = Product::get();
 
         return view('landing_page.pages.contact', [
             'total_pending_count' => $total_pending_count,
-            'landingPageContact' => $landingPageContact
+            'landingPageContact' => $landingPageContact,
+            'products' => $products,
         ]);
     }
 }

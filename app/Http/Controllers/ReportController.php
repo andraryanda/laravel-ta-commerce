@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\Transaction;
 use App\Exports\UsersExport;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use App\Models\TransactionWifi;
 use Illuminate\Support\Facades\DB;
 use App\Models\TransactionWifiItem;
@@ -18,6 +19,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Dompdf\Options;
 
 class ReportController extends Controller
 {
@@ -470,6 +472,38 @@ class ReportController extends Controller
 
         return new StreamedResponse($callback, 200, $headers);
     }
+    public function exportAllTransactionsPDF()
+    {
+        $transactions = DB::table('transactions')
+            ->join('transaction_items', 'transactions.id', '=', 'transaction_items.transactions_id')
+            ->join('users', 'transactions.users_id', '=', 'users.id')
+            ->join('products', 'transaction_items.products_id', '=', 'products.id')
+            ->select('transactions.id', 'transaction_items.products_id', 'transactions.users_id', 'users.name', 'transactions.address', 'products.name as product_name', 'products.price as product_price', 'transaction_items.quantity', 'transactions.total_price', 'transactions.shipping_price', 'transactions.status', 'transactions.payment', 'transactions.deleted_at', 'transactions.created_at', 'transactions.updated_at')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $pdf = new Dompdf();
+        $pdf->loadHtml(view('pdf.transaction_produk_all', ['transactions' => $transactions])->render());
+
+        // Optionally, set paper size and orientation
+        $pdf->setPaper('A4', 'landscape');
+
+        // Render the PDF
+        $pdf->render();
+
+        // Get the PDF content as a string
+        $pdfContent = $pdf->output();
+
+        // Set HTTP response headers
+        $headers = [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename=all_transactions_' . date('d-m-Y') . '.pdf',
+        ];
+
+        // Create and return the response with PDF content
+        return new \Symfony\Component\HttpFoundation\Response($pdfContent, 200, $headers);
+    }
+
 
     public function exportAllCustomTransactions(Request $request)
     {
@@ -760,120 +794,159 @@ class ReportController extends Controller
     }
 
     public function exportTransactionCustomWifi(Request $request)
-{
-    $startDate = $request->input('start_date');
-    $endDate = $request->input('end_date');
+    {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
 
-    $transactions = TransactionWifi::with(['user', 'items', 'wifi_items'])
-        ->whereBetween('created_at', [$startDate, $endDate])
-        ->orderBy('created_at', 'desc')
-        ->get();
+        $transactions = TransactionWifi::with(['user', 'items', 'wifi_items'])
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-    $headers = [
-        'Content-Type' => 'text/csv',
-        'Content-Disposition' => 'attachment; filename=transaction_wifis_' . date('d-m-Y') . '.csv',
-    ];
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename=transaction_wifis_' . date('d-m-Y') . '.csv',
+        ];
 
-    $callback = function () use ($transactions) {
-        $file = fopen('php://output', 'w');
+        $callback = function () use ($transactions) {
+            $file = fopen('php://output', 'w');
 
-        fputcsv($file, [
-            'Transaction ID',
-            'User ID',
-            'User Name',
-            'Product ID',
-            'Total Price Wifi',
-            'Status',
-            'Expired Wifi',
-            'Deleted At',
-            'Created At',
-            'Updated At',
-        ]);
-
-        foreach ($transactions as $transaction) {
             fputcsv($file, [
-                $transaction->id,
-                $transaction->users_id,
-                $transaction->user->name,
-                $transaction->products_id,
-                $transaction->total_price_wifi,
-                $transaction->status,
-                $transaction->expired_wifi,
-                $transaction->deleted_at,
-                $transaction->created_at,
-                $transaction->updated_at,
+                'Transaction ID',
+                'User ID',
+                'User Name',
+                'Product ID',
+                'Total Price Wifi',
+                'Status',
+                'Expired Wifi',
+                'Deleted At',
+                'Created At',
+                'Updated At',
             ]);
-        }
 
-        fclose($file);
-    };
+            foreach ($transactions as $transaction) {
+                fputcsv($file, [
+                    $transaction->id,
+                    $transaction->users_id,
+                    $transaction->user->name,
+                    $transaction->products_id,
+                    $transaction->total_price_wifi,
+                    $transaction->status,
+                    $transaction->expired_wifi,
+                    $transaction->deleted_at,
+                    $transaction->created_at,
+                    $transaction->updated_at,
+                ]);
+            }
 
-    return new StreamedResponse($callback, 200, $headers);
-}
+            fclose($file);
+        };
 
-public function exportTransactionWifiItem()
-{
-    $items = TransactionWifiItem::with(['wifis', 'user', 'product'])
-        ->orderBy('created_at', 'desc')
-        ->get();
+        return new StreamedResponse($callback, 200, $headers);
+    }
 
-    $headers = [
-        'Content-Type' => 'text/csv',
-        'Content-Disposition' => 'attachment; filename=transaction_wifi_items_' . date('d-m-Y') . '.csv',
-    ];
+    public function exportTransactionWifiItem()
+    {
+        $items = TransactionWifiItem::with(['wifis', 'user', 'product'])
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-    $callback = function () use ($items) {
-        $file = fopen('php://output', 'w');
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename=transaction_wifi_items_' . date('d-m-Y') . '.csv',
+        ];
 
-        fputcsv($file, [
-            'ID',
-            'Incre ID',
-            'User ID',
-            'Product ID',
-            'Transaction Wifi ID',
-            'Nama Produk',
-            'Harga Produk',
-            'Name Customer',
-            'Total Harga Wifi',
-            'Status Pembayaran',
-            'Total Pembayaran Customer',
-            'Metode Pembayaran',
-            'Bank Pembayaran',
-            'Deskripsi',
-            'Deleted At',
-            'Created At',
-            'Updated At',
-        ]);
+        $callback = function () use ($items) {
+            $file = fopen('php://output', 'w');
+
+            fputcsv($file, [
+                'ID',
+                'Incre ID',
+                'User ID',
+                'Product ID',
+                'Transaction Wifi ID',
+                'Nama Produk',
+                'Harga Produk',
+                'Name Customer',
+                'Total Harga Wifi',
+                'Status Pembayaran',
+                'Total Pembayaran Customer',
+                'Metode Pembayaran',
+                'Bank Pembayaran',
+                'Deskripsi',
+                'Deleted At',
+                'Created At',
+                'Updated At',
+            ]);
+
+            foreach ($items as $item) {
+                fputcsv($file, [
+                    $item->id,
+                    $item->incre_id,
+                    $item->users_id,
+                    $item->products_id,
+                    $item->transaction_wifi_id,
+                    $item->product->name,
+                    $item->product->price,
+                    $item->user->name,
+                    $item->wifis->total_price_wifi,
+                    $item->payment_status,
+                    $item->payment_transaction,
+                    $item->payment_method,
+                    $item->payment_bank,
+                    $item->description,
+                    $item->deleted_at,
+                    $item->created_at,
+                    $item->updated_at,
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return new StreamedResponse($callback, 200, $headers);
+    }
+
+    public function exportTransactionWifiItemPdf()
+    {
+        $items = TransactionWifiItem::with(['wifis', 'user', 'product'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Calculate total omset PAID per year
+        $totalOmset = 0;
+        $totalOmsetPaidPerYear = [];
 
         foreach ($items as $item) {
-            fputcsv($file, [
-                $item->id,
-                $item->incre_id,
-                $item->users_id,
-                $item->products_id,
-                $item->transaction_wifi_id,
-                $item->product->name,
-                $item->product->price,
-                $item->user->name,
-                $item->wifis->total_price_wifi,
-                $item->payment_status,
-                $item->payment_transaction,
-                $item->payment_method,
-                $item->payment_bank,
-                $item->description,
-                $item->deleted_at,
-                $item->created_at,
-                $item->updated_at,
-            ]);
+            $totalOmset += $item->payment_transaction; // Use payment_transaction instead of total_price_wifi
+            if ($item->payment_status === 'PAID') {
+                $year = Carbon::parse($item->created_at)->format('Y');
+                $totalOmsetPaidPerYear[$year] = isset($totalOmsetPaidPerYear[$year])
+                    ? $totalOmsetPaidPerYear[$year] + $item->payment_transaction
+                    : $item->payment_transaction;
+            }
         }
 
-        fclose($file);
-    };
+        // Konfigurasi options untuk Dompdf
+        $pdfOptions = new Options();
+        $pdfOptions->set('defaultFont', 'Arial'); // Ganti font jika diperlukan
 
-    return new StreamedResponse($callback, 200, $headers);
-}
+        // Inisialisasi objek Dompdf dengan options yang telah dikonfigurasi
+        $dompdf = new Dompdf($pdfOptions);
 
+        // Render HTML ke dalam file PDF
+        $html = view('pdf.transaction_wifi_item_all', compact('items', 'totalOmsetPaidPerYear', 'totalOmset'));
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'landscape'); // Set orientasi landscape
 
+        // Render file PDF
+        $dompdf->render();
 
+        // Simpan atau tampilkan file PDF
+        $filename = 'transaction_wifi_items_' . date('d-m-Y') . '.pdf';
+        $dompdf->stream($filename, ['Attachment' => true]);
 
+        // Kembalikan response kosong karena file PDF sudah ditampilkan
+        return new Response();
+    }
 }

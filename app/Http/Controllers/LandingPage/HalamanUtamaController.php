@@ -19,6 +19,7 @@ use App\Models\NotificationTransaction;
 use App\Http\Requests\TransactionRequest;
 use Illuminate\Support\Facades\Validator;
 use App\Models\LandingPage\LandingPageHome;
+use App\Models\LandingPage\LandingPageContact;
 use App\Notifications\TransactionNotification;
 
 class HalamanUtamaController extends Controller
@@ -48,6 +49,7 @@ class HalamanUtamaController extends Controller
             }
 
             $landingPageHome = LandingPageHome::get();
+            $landingPageContact = LandingPageContact::get();
 
 
             return view('landing_page.pages.index', compact(
@@ -57,7 +59,8 @@ class HalamanUtamaController extends Controller
                 'new_transaction',
                 'total_amount_success',
                 'total_pending_count',
-                'landingPageHome'
+                'landingPageHome',
+                'landingPageContact'
             ));
         } catch (\Exception $e) {
             // Tangani kesalahan di sini
@@ -256,10 +259,16 @@ class HalamanUtamaController extends Controller
             $total_pending_count = 0;
         }
 
+        $products = Product::get();
+        $landingPageContact = LandingPageContact::get();
+
+
 
         return view('landing_page.pages.checkout.checkout-shipping', compact(
             'product',
+            'products',
             'total_pending_count',
+            'landingPageContact',
         ));
     }
 }
