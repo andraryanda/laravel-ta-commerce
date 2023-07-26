@@ -133,7 +133,75 @@
             </table>
         </page>
     </div>
+
+    <!-- Table for WiFi Status -->
     <div class="table-3" style="page-break-before: always;">
+        <h2 style="text-align: center;">AL-N3T Support Gesitnet</h2>
+        <hr>
+        <h2 style="text-align: center;">Laporan All Transaksi WiFi - Masa Wifi Berakhir (Lanjutan)</h2>
+        <!-- Display WiFi Status -->
+        <p style="text-align: justify; ">Tabel di bawah menampilkan informasi tentang status masa berakhir WiFi.</p>
+
+        <table>
+            <tr>
+                <th>No.</th>
+                <th>ID Wifi Utama</th>
+                <th>Name Customer</th>
+                <th>Nama Produk Wifi</th>
+                <th>Total Harga WiFi</th>
+                <th>Status WiFi</th>
+            </tr>
+            @php
+                $i = 1;
+            @endphp
+            @foreach ($wifi_utama as $wifi)
+                @php
+                    // Calculate remaining days for WiFi status
+                    $statusWiFi = '';
+                    $expiredWiFi = Carbon\Carbon::parse($wifi->expired_wifi);
+                    $remainingDays = $expiredWiFi->diffInDays(Carbon\Carbon::now());
+                    
+                    // Set background color based on remaining days
+                    $background = '';
+                    if ($remainingDays > 0) {
+                        if ($remainingDays <= 3) {
+                            $statusWiFi = 'Aktif (Masa Wifi berakhir dalam ' . $remainingDays . ' hari)';
+                            $background = 'background-color: #ffff00;'; // Yellow background
+                        } else {
+                            $statusWiFi = 'Aktif (Masa Wifi berakhir pada ' . $expiredWiFi->translatedFormat('l, d F Y') . ')';
+                            $background = ''; // Default background
+                        }
+                    } else {
+                        $statusWiFi = 'Berakhir';
+                        $background = 'background-color: #ff0000;'; // Red background
+                    }
+                @endphp
+                <tr style="{{ $background }}">
+                    <td>{{ $i++ }}</td>
+                    <td>{{ $wifi->id }}</td>
+                    <td>{{ $wifi->user->name }}</td>
+                    <td>
+                        @foreach ($wifi->wifi_items as $item)
+                            {{ $item->product->name }}
+                        @endforeach
+                    </td>
+                    <td>{{ number_format($wifi->total_price_wifi, 0, ',', '.') }}</td>
+                    <td>{{ $statusWiFi }}</td>
+                </tr>
+            @endforeach
+        </table>
+    </div>
+
+
+
+
+
+
+
+
+
+
+    <div class="table-4" style="page-break-before: always;">
         <page>
             {{-- <br><br> <!-- Add spacing between tables --> --}}
             <h2 style="text-align: center;">AL-N3T Support Gesitnet</h2>

@@ -910,6 +910,13 @@ class ReportController extends Controller
     public function exportTransactionWifiItemPdf()
     {
         $items = TransactionWifiItem::with(['wifis', 'user', 'product'])
+            ->whereNull('deleted_at') // Tambahkan ini untuk mengambil data yang belum terhapus
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $wifi_utama = TransactionWifi::with(['wifi_items', 'user', 'product'])
+            ->where('status', 'ACTIVE') // Filter hanya data dengan status "ACTIVE"
+            ->whereNull('deleted_at') // Hanya data yang belum terhapus
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -935,7 +942,7 @@ class ReportController extends Controller
         $dompdf = new Dompdf($pdfOptions);
 
         // Render HTML ke dalam file PDF
-        $html = view('pdf.transaction_wifi_item_all', compact('items', 'totalOmsetPaidPerYear', 'totalOmset'));
+        $html = view('pdf.transaction_wifi_item_all', compact('items', 'wifi_utama', 'totalOmsetPaidPerYear', 'totalOmset'));
         $dompdf->loadHtml($html);
         $dompdf->setPaper('A4', 'landscape'); // Set orientasi landscape
 
