@@ -151,7 +151,7 @@
                     @if (request()->has('q'))
                         <h3>Hasil pencarian untuk "{{ request('q') }}"</h3>
                     @else
-                        <h3>Choose your product</h3>
+                        <h3>Pilih Produk Anda</h3>
                     @endif
                 </div>
             </div>

@@ -16,8 +16,42 @@
                 <div class="col-lg-6 col-md-6">
                     <div class="footer__top-auth">
                         <h5>Mari bergabung dengan kami</h5>
-                        <a href="{{ route('login') }}" class="primary-btn">Log in</a>
-                        <a href="{{ route('register') }}" class="primary-btn sign-up">Sign Up</a>
+                        @if (Route::has('login'))
+                            @auth
+                                {{-- <li> --}}
+                                @if (Auth::user()->roles == 'ADMIN' || Auth::user()->roles == 'OWNER')
+                                    <a href="{{ url('/dashboard') }}" class="btn btn-primary btn-action rounded-pill"
+                                        class="primary-btn"><span class="fa fa-home"></span>
+                                        {{ __('Dashboard') }}
+                                    </a>
+                                @elseif (Auth::user()->roles == 'USER')
+                                    <a href="{{ url('/dashboardCustomer') }}"
+                                        class="btn btn-primary btn-action rounded-pill" class="primary-btn"><span
+                                            class="fa fa-home"></span>
+                                        {{ __('Dashboard') }}
+                                    </a>
+                                @else
+                                    <span class="btn btn-danger btn-action rounded-pill">Not Found</span>
+                                @endif
+                                {{-- </li> --}}
+                            @else
+                                {{-- <li> --}}
+                                <a href="{{ route('login') }}" class="primary-btn"><span class="fa fa-key"></span>
+                                    {{ __('Login') }}
+                                </a>
+                                {{-- </li> --}}
+                                @if (Route::has('register'))
+                                    {{-- <li> --}}
+                                    <a href="{{ route('register') }}" class="primary-btn sign-up"><span
+                                            class="fa fa-user"></span>
+                                        {{ __('Register') }}
+                                    </a>
+                                    {{-- </li> --}}
+                                @endif
+                            @endauth
+                        @endif
+                        {{-- <a href="{{ route('login') }}" class="primary-btn">Log in</a>
+                        <a href="{{ route('register') }}" class="primary-btn sign-up">Sign Up</a> --}}
                     </div>
                 </div>
             </div>
@@ -69,7 +103,7 @@
                                         href="{{ route('landingPage.checkout.shipping', encrypt($product->id)) }}">{{ $product->name }}</a>
                                 </li>
                             @empty
-                            <p>No products found.</p>
+                                <p>No products found.</p>
                             @endforelse
                         </ul>
                     </div>

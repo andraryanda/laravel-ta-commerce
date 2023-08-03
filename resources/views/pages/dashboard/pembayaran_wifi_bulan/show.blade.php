@@ -9,7 +9,7 @@
         </button>
 
         <h2 class="my-2 text-2xl font-semibold text-gray-700 dark:text-gray-200">
-            Transaction &raquo; #{{ $transaction->id }} {{ $transaction->name }}
+            Transaksi Wifi Perbulan &raquo; #{{ $transaction->id }} {{ $transaction->name }}
         </h2>
     </x-slot>
 
@@ -179,7 +179,7 @@
 
         <div class="py-2">
             {{-- <div class="max-w-7xl mx-auto sm:px-6 lg:px-8"> --}}
-            <h2 class="font-semibold text-lg text-gray-800 leading-tight mb-5">Transaction Details</h2>
+            <h2 class="font-semibold text-lg text-gray-800 leading-tight mb-5">Detail Transaksi Wifi Perbulan</h2>
             <div class="bg-white overflow-hidden shadow sm:rounded-lg mb-10">
                 <div class="p-6 bg-white border-b border-gray-200">
                     <table class="table-auto w-full">
@@ -299,7 +299,7 @@
 
 
 
-        <h2 class="font-semibold text-lg text-gray-800 leading-tight mb-5">Transaction Items</h2>
+        <h2 class="font-semibold text-lg text-gray-800 leading-tight mb-5">Isi Transaksi Wifi Perbulan</h2>
         <div class="w-full overflow-hidden rounded-lg shadow-xs">
             <div class="px-3 py-3 overflow-x-auto bg-white sm:p-6">
                 <div class="flex justify-start space-x-2 my-3 mx-3">
@@ -309,7 +309,7 @@
                         class="text-gray-900 shadow-sm bg-white hover:bg-green-100 border border-green-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 mr-2 mb-2">
                         <div class="flex items-center">
                             <img src="{{ asset('icon/create.png') }}" alt="Create" width="25" class="mr-2">
-                            <p>Create Transaction Wifi</p>
+                            <p>Tambah Transaksi Wifi</p>
                         </div>
                     </button>
                 </div>

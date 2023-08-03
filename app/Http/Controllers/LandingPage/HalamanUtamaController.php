@@ -197,7 +197,7 @@ class HalamanUtamaController extends Controller
     public function sendMessageCustomerTransaction(Transaction $transaction)
     {
         // Nomor Handphone Admin
-        $phone_number = '+62' . '85314005779';
+        $phone_number = '62' . '85314005779';
 
         $transaction_id = $transaction->id;
 
@@ -216,7 +216,7 @@ class HalamanUtamaController extends Controller
         $message .= "-----------------------------------\n";
         $message .= "*Detail User:*\n";
         $message .= "*Nama       : "  . $transaction->user->name . '*' . "\n";
-        $message .= "*Email        : "  . $transaction->user->email . '*' . "\n";
+        $message .= "*Email*        : " . ' ' . $transaction->user->email . ' ' . '' . "\n";
         $message .= "*Phone      : "  . $transaction->user->phone . '*' . "\n";
         $message .= "*Alamat     : "  . $transaction->address . '*' . "\n\n";
 

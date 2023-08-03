@@ -9,7 +9,7 @@
         </button>
 
         <h2 class="my-2 text-2xl font-semibold text-gray-700 dark:text-gray-200">
-            Transaction &raquo; Edit
+            Transaksi &raquo; Edit
         </h2>
     </x-slot>
 
@@ -96,7 +96,7 @@
                                     <div class="flex items-center">
                                         <img src="{{ asset('icon/save.png') }}" alt="save" class="mr-2" width="20"
                                             height="20">
-                                        <p id="buttonText">Simpan Update Transaction</p>
+                                        <p id="buttonText">Simpan Update Transaksi</p>
                                     </div>
                                 </button>
                             </div>

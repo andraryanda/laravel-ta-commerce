@@ -2,7 +2,7 @@
     <x-slot name="header">
 
         <h2 id="header-laporan-none" class="my-6 mx-2 text-2xl font-semibold text-gray-700 dark:text-gray-200">
-            {{ __('Report Users/Category/Product/Transaction') }}
+            {{ __('Laporan Users/Kategori Produk/Produk/Transaksi Produk/Transaksi Wifi Perbulan') }}
         </h2>
 
         <h2 id="header-laporan-all-users" class="my-6 mx-2 text-2xl font-semibold text-gray-700 dark:text-gray-200">
@@ -82,11 +82,11 @@
                 @endif
 
                 <div id="btn-container" class="mt-3 space-y-3">
-                    <div class="flex">
+                    {{-- <div class="flex">
                         <span class="text-red-500 mx-1">*</span>
                         <i>Export Laporan dibawah ini menggunakan format</i> <strong class="text-green-500 mx-1">Excel
                             CSV</strong>
-                    </div>
+                    </div> --}}
 
                     <button type="button" id="btn-laporan-all-users" title="Export All Users"
                         onclick="showLoading(this);"

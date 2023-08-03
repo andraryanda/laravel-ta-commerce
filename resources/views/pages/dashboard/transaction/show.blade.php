@@ -9,7 +9,7 @@
         </button>
 
         <h2 class="my-2 text-2xl font-semibold text-gray-700 dark:text-gray-200">
-            Transaction &raquo; #{{ $transaction->id }} {{ $transaction->name }}
+            Transaksi &raquo; #{{ $transaction->id }} {{ $transaction->name }}
         </h2>
     </x-slot>
 
@@ -93,7 +93,7 @@
 
         <div class="py-2">
             {{-- <div class="max-w-7xl mx-auto sm:px-6 lg:px-8"> --}}
-            <h2 class="font-semibold text-lg text-gray-800 leading-tight mb-5">Transaction Details</h2>
+            <h2 class="font-semibold text-lg text-gray-800 leading-tight mb-5">Detail Transaksi</h2>
             <div class="bg-white overflow-hidden shadow sm:rounded-lg mb-10">
                 <div class="p-6 bg-white border-b border-gray-200">
                     <table class="table-auto w-full">
@@ -145,7 +145,7 @@
 
 
 
-        <h2 class="font-semibold text-lg text-gray-800 leading-tight mb-5">Transaction Items</h2>
+        <h2 class="font-semibold text-lg text-gray-800 leading-tight mb-5">Isi Transaksi</h2>
         <div class="w-full overflow-hidden rounded-lg shadow-xs">
             <div class="px-3 py-3 overflow-x-auto bg-white sm:p-6">
                 <table id="crudTable" class="w-full row-border whitespace-no-wrap mt-2 pt-2">

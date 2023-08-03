@@ -8,7 +8,7 @@
             </div>
         </button>
         <h2 class="my-2 text-2xl font-semibold text-gray-700 dark:text-gray-200">
-            {!! __('Category &raquo; Create') !!}
+            {!! __('Kategori &raquo; Tambah') !!}
         </h2>
     </x-slot>
 
@@ -41,11 +41,11 @@
                             <div class="w-full px-3">
                                 <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                                     for="grid-last-name">
-                                    Name
+                                    Nama
                                 </label>
                                 <input value="{{ old('name') }}" name="name"
                                     class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                    id="grid-last-name" type="text" placeholder="Category Name">
+                                    id="grid-last-name" type="text" placeholder="Kategori Name">
                             </div>
                         </div>
                         <div class="flex flex-wrap -mx-3 mb-6">
@@ -56,7 +56,7 @@
                                     <div class="flex items-center">
                                         <img src="{{ asset('icon/save.png') }}" alt="save" class="mr-2" width="20"
                                             height="20">
-                                        <p id="buttonText">Simpan Category</p>
+                                        <p id="buttonText">Simpan Kategori</p>
                                     </div>
                                 </button>
                             </div>

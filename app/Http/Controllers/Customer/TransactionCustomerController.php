@@ -207,6 +207,9 @@ class TransactionCustomerController extends Controller
         return redirect()->away($url);
     }
 
+
+
+
     /**
      * Show the form for creating a new resource.
      *

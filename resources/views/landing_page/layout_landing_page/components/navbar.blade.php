@@ -122,7 +122,7 @@
              <li class="{{ Request::routeIs('landingPage.download.aplikasi') ? 'active' : '' }}"><a
                      href="{{ route('landingPage.download.aplikasi') }}">Download Aplikasi Al-N3T</a></li>
              <li class="{{ Request::routeIs('landingPage.contact') ? 'active' : '' }}"><a
-                     href="{{ route('landingPage.contact') }}">Contact</a></li>
+                     href="{{ route('landingPage.contact') }}">Kontak</a></li>
          </ul>
      </nav>
      <div id="mobile-menu-wrap"></div>
@@ -337,7 +337,7 @@
                          <li class="{{ Request::routeIs('landingPage.download.aplikasi') ? 'active' : '' }}"><a
                                  href="{{ route('landingPage.download.aplikasi') }}">Download Aplikasi Al-N3T</a></li>
                          <li class="{{ Request::routeIs('landingPage.contact') ? 'active' : '' }}"><a
-                                 href="{{ route('landingPage.contact') }}">Contact</a></li>
+                                 href="{{ route('landingPage.contact') }}">Kontak</a></li>
                      </ul>
                  </nav>
              </div>

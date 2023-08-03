@@ -57,56 +57,61 @@
                 </button>
             </li> --}}
             <!-- Notifications menu -->
-            <li class="relative">
-                <button class="relative align-middle rounded-md focus:outline-none focus:shadow-outline-purple"
-                    @click="toggleNotificationsMenu" @keydown.escape="closeNotificationsMenu" aria-label="Notifications"
-                    aria-haspopup="true">
-                    <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-                        <path
-                            d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z">
-                        </path>
-                    </svg>
-                    <!-- Notification badge -->
-                    @php
-                        $notificationCount = app(\App\Http\Controllers\NotificationTransactionController::class)->getCount();
-                    @endphp
-                    @if ($notificationCount > 0)
-                        <span aria-hidden="true"
-                            class="absolute top-0 right-0 inline-block w-3 h-3 transform translate-x-1 -translate-y-1 bg-red-600 border-2 border-white rounded-full dark:border-gray-800"></span>
-                    @endif
-                </button>
-                <template x-if="isNotificationsMenuOpen">
-                    <ul x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100"
-                        x-transition:leave-end="opacity-0" @click.away="closeProfileMenu"
-                        @keydown.escape="closeProfileMenu" class="absolute right-0 w-56 p-2 mt-2 space-y-2 "
-                        aria-label="submenu">
-                        <li class="rounded-md shadow-md bg-white dark:bg-gray-800 overflow-hidden">
-                            <div
-                                class="text-lg font-bold px-4 py-3 bg-gray-100 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
-                                Notifications
-                            </div>
-                            <ul class="divide-y divide-gray-200">
-                                <li class="px-4 py-3">
-                                    <div class="flex justify-between">
-                                        <span class="font-semibold">New Order</span>
-                                        <button type="button" class="text-gray-500 hover:text-red-500">
-                                            <svg class="h-5 w-5 fill-current" viewBox="0 0 20 20"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <path
-                                                    d="M10 8.586L6.707 5.293a1 1 0 00-1.414 1.414L8.586 10l-3.293 3.293a1 1 0 001.414 1.414L10 11.414l3.293 3.293a1 1 0 001.414-1.414L11.414 10l3.293-3.293a1 1 0 00-1.414-1.414L10 8.586z" />
-                                            </svg>
-                                        </button>
-                                    </div>
-                                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                        {{ app(\App\Http\Controllers\NotificationTransactionController::class)->getCount() }}
-                                    </p>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </template>
+            @if (Auth::user()->roles == 'OWNER' || Auth::user()->roles == 'ADMIN')
 
-            </li>
+                <li class="relative">
+                    <button class="relative align-middle rounded-md focus:outline-none focus:shadow-outline-purple"
+                        @click="toggleNotificationsMenu" @keydown.escape="closeNotificationsMenu"
+                        aria-label="Notifications" aria-haspopup="true">
+                        <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
+                            <path
+                                d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z">
+                            </path>
+                        </svg>
+                        <!-- Notification badge -->
+                        @php
+                            $notificationCount = app(\App\Http\Controllers\NotificationTransactionController::class)->getCount();
+                        @endphp
+                        @if ($notificationCount > 0)
+                            <span aria-hidden="true"
+                                class="absolute top-0 right-0 inline-block w-3 h-3 transform translate-x-1 -translate-y-1 bg-red-600 border-2 border-white rounded-full dark:border-gray-800"></span>
+                        @endif
+                    </button>
+                    <template x-if="isNotificationsMenuOpen">
+                        <ul x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100"
+                            x-transition:leave-end="opacity-0" @click.away="closeProfileMenu"
+                            @keydown.escape="closeProfileMenu" class="absolute right-0 w-56 p-2 mt-2 space-y-2 "
+                            aria-label="submenu">
+                            <li class="rounded-md shadow-md bg-white dark:bg-gray-800 overflow-hidden">
+                                <div
+                                    class="text-lg font-bold px-4 py-3 bg-gray-100 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+                                    Notifications
+                                </div>
+                                <ul class="divide-y divide-gray-200">
+                                    <li class="px-4 py-3">
+                                        <div class="flex justify-between">
+                                            <span class="font-semibold">New Order</span>
+                                            <button type="button" class="text-gray-500 hover:text-red-500">
+                                                <svg class="h-5 w-5 fill-current" viewBox="0 0 20 20"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <path
+                                                        d="M10 8.586L6.707 5.293a1 1 0 00-1.414 1.414L8.586 10l-3.293 3.293a1 1 0 001.414 1.414L10 11.414l3.293 3.293a1 1 0 001.414-1.414L11.414 10l3.293-3.293a1 1 0 00-1.414-1.414L10 8.586z" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                            {{ app(\App\Http\Controllers\NotificationTransactionController::class)->getCount() }}
+
+                                        </p>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </template>
+
+                </li>
+            @elseif (Auth::user()->roles == 'USER')
+            @endif
             {{-- You have a new order from John Doe --}}
 
             <!-- Profile menu -->

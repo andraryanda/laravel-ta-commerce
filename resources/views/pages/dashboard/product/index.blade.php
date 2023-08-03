@@ -1,7 +1,7 @@
 <x-layout.apps>
     <x-slot name="header">
         <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
-            {{ __('Product') }}
+            {{ __('Produk') }}
         </h2>
     </x-slot>
 
@@ -155,7 +155,7 @@
                         class="text-gray-900 shadow-sm bg-white hover:bg-green-100 border border-green-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 mr-2 mb-2">
                         <div class="flex items-center">
                             <img src="{{ asset('icon/create.png') }}" alt="Create" width="25" class="mr-2">
-                            <p>Create Product</p>
+                            <p>Create Produk</p>
                         </div>
                     </button>
                     <!-- Modal toggle -->
@@ -174,7 +174,7 @@
                         class="text-gray-900 shadow-sm bg-white hover:bg-blue-100 border border-blue-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 mr-2 mb-2">
                         <div class="flex items-center">
                             <img src="{{ asset('icon/download.png') }}" alt="Export" width="25" class="mr-2">
-                            <p>Export Product</p>
+                            <p>Export Produk</p>
                         </div>
                     </button>
                 </div>
@@ -188,7 +188,7 @@
                             <!-- Modal header -->
                             <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
                                 <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                                    Import Product Gallery
+                                    Import Produk Gambar
                                 </h3>
                                 <button type="button"
                                     class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
@@ -302,7 +302,7 @@
                     $('body').on('click', '.delete-button', function() {
                         var product_id = $(this).data("id");
                         Swal.fire({
-                            title: 'Apakah anda yakin ingin menghapus product ini?',
+                            title: 'Apakah anda yakin ingin menghapus Produk ini?',
                             icon: 'warning',
                             showCancelButton: true,
                             confirmButtonColor: '#d33',

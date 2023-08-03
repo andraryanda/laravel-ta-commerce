@@ -1,7 +1,7 @@
 <x-layout.apps>
     <x-slot name="header">
         <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
-            {{ __('Transaction Pending') }}
+            {{ __('Transaksi Pending') }}
         </h2>
     </x-slot>
 
@@ -258,7 +258,7 @@
                 </div>
                 <div>
                     <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
-                        Total Transaction
+                        Total Transaksi
                     </p>
                     <p class="counter text-lg font-semibold text-gray-700 dark:text-gray-200"
                         data-target="{{ $new_transaction }}">
@@ -296,17 +296,17 @@
                         class="text-gray-900 shadow-sm bg-white hover:bg-green-100 border border-green-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 mr-2 mb-2">
                         <div class="flex items-center">
                             <img src="{{ asset('icon/create.png') }}" alt="Create" width="25" class="mr-2">
-                            <p>Create Transaction</p>
+                            <p>Tambah Transaksi</p>
                         </div>
                     </button>
 
                     <button type="button"
                         onclick="window.location.href='{{ route('dashboard.report.exportTransactionPending') }}'"
-                        title="Export All Transactions"
+                        title="Export All Transaksi"
                         class="text-gray-900 shadow-sm bg-white hover:bg-blue-100 border border-blue-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 mr-2 mb-2">
                         <div class="flex items-center">
                             <img src="{{ asset('icon/download.png') }}" alt="Export" width="25" class="mr-2">
-                            <p>Export Transaction Pending</p>
+                            <p>Export Transaksi Pending</p>
                         </div>
                     </button>
                 </div>

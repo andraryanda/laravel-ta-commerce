@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\ProductGallery;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Models\LandingPage\LandingPageContact;
 
 class PricingLandingPageSearchController extends Controller
 {
@@ -28,9 +29,13 @@ class PricingLandingPageSearchController extends Controller
         } else {
             $total_pending_count = 0;
         }
+
+        $landingPageContact = LandingPageContact::get();
+
         return view('landing_page.pages.pricing', compact(
             'products',
             'total_pending_count',
+            'landingPageContact',
         ));
     }
 }

@@ -59,7 +59,9 @@ use App\Http\Controllers\LandingPageCustom\LandingPageAboutFeatureController;
 //     Artisan::call('storage:link');
 // });
 
-
+// Router::get('/storage_link', function (){
+//     Artisan::call('storage:link');
+// });
 
 Route::get('redirects', [HomeController::class, 'index'])->name('redirects');
 

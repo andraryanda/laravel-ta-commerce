@@ -11,7 +11,7 @@
             </button>
 
             <h2 class="my-2 text-2xl font-semibold text-gray-700 dark:text-gray-200">
-                {{ __('Create Transaction') }}
+                {{ __('Tambah Transaksi Produk') }}
             </h2>
         </x-slot>
 
@@ -153,7 +153,7 @@
                                         <div class="flex items-center">
                                             <img src="{{ asset('icon/save.png') }}" alt="save" class="mr-2"
                                                 width="20" height="20">
-                                            <p id="buttonText">Simpan Transaction</p>
+                                            <p id="buttonText">Simpan Transaksi</p>
                                         </div>
                                     </button>
                                 </div>

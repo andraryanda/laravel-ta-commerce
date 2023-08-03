@@ -9,7 +9,7 @@
         </button>
 
         <h2 class="my-2 text-2xl font-semibold text-gray-700 dark:text-gray-200">
-            {!! __('Product &raquo; Create') !!}
+            {!! __('Produk &raquo; Tambah') !!}
         </h2>
     </x-slot>
 
@@ -46,7 +46,7 @@
                             <div class="w-full px-3">
                                 <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                                     for="product-name">
-                                    Name
+                                    Nama Produk
                                 </label>
                                 <input value="{{ old('name') }}" name="name"
                                     class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
@@ -69,7 +69,7 @@
                             <div class="w-full px-3">
                                 <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                                     for="product-categories">
-                                    Categories
+                                    Kategori Produk
                                 </label>
                                 <select name="categories_id"
                                     class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
@@ -84,7 +84,7 @@
                             <div class="w-full px-3">
                                 <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                                     for="product-description">
-                                    Description
+                                    Deskripsi
                                 </label>
                                 <textarea name="description"
                                     class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
@@ -95,7 +95,7 @@
                             <div class="w-full px-3">
                                 <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                                     for="price">
-                                    Price
+                                    Harga Produk
                                 </label>
                                 <input value="{{ old('price') }}" name="price"
                                     class="input-harga appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
@@ -129,7 +129,7 @@
                                     <div class="flex items-center">
                                         <img src="{{ asset('icon/save.png') }}" alt="save" class="mr-2"
                                             width="20" height="20">
-                                        <p id="buttonText">Simpan Product</p>
+                                        <p id="buttonText">Simpan Produk</p>
                                     </div>
                                 </button>
                             </div>
