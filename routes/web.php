@@ -30,6 +30,7 @@ use App\Http\Controllers\LandingPage\ContactController;
 use App\Http\Controllers\LandingPage\HostingController;
 use App\Http\Controllers\LandingPage\PricingController;
 use App\Http\Controllers\TransactionWifiItemController;
+use App\Http\Controllers\NotificationTransactionController;
 use Laravel\Fortify\Http\Controllers\VerifyEmailController;
 use App\Http\Controllers\Customer\PricingCustomerController;
 use App\Http\Controllers\LandingPage\HalamanUtamaController;
@@ -98,6 +99,8 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::get('notify/transaction-success', function () {
         return view('pages.midtrans.transaction-success');
     })->name('midtrans.transaction-success');
+
+
     Route::name('dashboard.')->prefix('dashboard')->group(function () {
         // Route::get('dashboard', [DashboardController::class, 'statusDashboard'])->name('index');
 
@@ -129,6 +132,12 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
         Route::get('sendMessageCustomerTransaction-{transaction}', [HalamanUtamaController::class, 'sendMessageCustomerTransaction'])->name('transaction.sendMessageCustomerTransaction');
         Route::get('sendMessageCustomerDashboardTransaction-{transaction}', [TransactionCustomerController::class, 'sendMessageCustomerDashboardTransaction'])->name('transaction.sendMessageCustomerDashboardTransaction');
         // Route::get('sendMessageCustomer', [HalamanUtamaController::class, 'sendMessage2'])->name('transaction.sendMessage2');
+
+
+        Route::get('/notif-transaction', [NotificationTransactionController::class, 'index'])->name('notif-transaction.index');
+        Route::delete('/notif-transaction/{id}/destroy', [NotificationTransactionController::class, 'destroy'])->name('notif-transaction.destroy');
+        Route::post('/notifications/destroy-all', [NotificationTransactionController::class, 'destroyAll'])->name('notifications.destroy-all');
+
 
 
         Route::resource('profileUser', ProfileUserController::class)->only([
@@ -257,6 +266,11 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
             Route::get('exportTransactionCustomWifi', [ReportController::class, 'exportTransactionCustomWifi'])->name('report.exportTransactionCustomWifi');
             Route::get('exportTransactionWifiItem', [ReportController::class, 'exportTransactionWifiItem'])->name('report.exportTransactionWifiItem');
             Route::get('exportTransactionWifiItemPDF', [ReportController::class, 'exportTransactionWifiItemPdf'])->name('report.exportTransactionWifiItemPdf');
+
+            // Route::resource('notif-transaction', [NotificationTransactionController::class])->except([
+            //     'create', 'show', 'edit', 'update', 'destroy'
+            // ]);
+
 
             // // Midtrans
             // Route::get('dashboard/payment/cancel/{id}', [MidtransWebhookController::class, 'cancelPayment'])->name('midtrans.cancel');

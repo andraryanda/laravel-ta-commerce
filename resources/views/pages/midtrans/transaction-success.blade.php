@@ -4,7 +4,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Transaction Success</title>
+    <title>AL-N3T Support Gesitnet - Transaksi Berhasil</title>
+    <link rel="shortcut icon" href="{{ asset('logo/alnet.jpg') }}">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <style>
@@ -152,10 +154,15 @@
 <body>
     <div class="container">
         <div class="card">
+            <div style="text-align: center;">
+                <img src="{{ asset('logo/alnet.jpg') }}"
+                    style="border-radius: 2%; width: 100%; height: auto; max-height: 350px;" alt="alstore">
+            </div>
+
             <div class="checkmark">&#10004;</div>
             <div class="thank-you">Terima Kasih!</div>
             <h2>Selamat, transaksi Anda berhasil!</h2>
-            <h4>Terima kasih telah berbelanja di Al's Store. Kami sangat menghargai kepercayaan Anda.</h4>
+            <h4>Terima kasih telah berbelanja di AL-N3T Support Gesitnet. Kami sangat menghargai kepercayaan Anda.</h4>
             <p class="fst-italic fw-bold mt-3">Anda bisa menutup halaman ini, dan mengecek status transaksi anda!</p>
             {{-- <div class="btn-conteiner">
                 <a class="btn-content" href="#">

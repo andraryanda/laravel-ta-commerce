@@ -417,11 +417,246 @@
                             </form>
                         </div>
                     </div>
+
+                    <div id="data-laporan-transaksi-wifi-item">
+                        <div class="w-full overflow-hidden rounded-lg shadow-xs">
+                            <div class="overflow-x-auto bg-white ">
+                                <div class="flex justify-start space-x-2 my-3 mx-3">
+                                    <div class="mb-4">
+                                        <label for="filterStatus"
+                                            class="block text-sm font-medium text-gray-700">Filter Status:</label>
+                                        <select id="filterStatus" class="filter-dropdown select2">
+                                            <option value="">Semua</option>
+                                            <option value="ACTIVE">Aktif</option>
+                                            <option value="INACTIVE">Tidak Aktif</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="filterUser" class="block text-sm font-medium text-gray-700">Filter
+                                            Nama Customer:</label>
+                                        <select id="filterUser" class="filter-dropdown select2">
+                                            <option value="">Semua</option>
+                                            @foreach ($transactionWifi as $transaction)
+                                                <option value="{{ $transaction->user->name }}">
+                                                    {{ $transaction->user->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="filterProduk"
+                                            class="block text-sm font-medium text-gray-700">Filter Nama Produk:</label>
+                                        <select id="filterProduk" class="filter-dropdown select2">
+                                            <option value="">Semua</option>
+                                            @foreach ($transactionWifi as $transaction)
+                                                <option value="{{ $transaction->product->name }}">
+                                                    {{ $transaction->product->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="filterHarga"
+                                            class="block text-sm font-medium text-gray-700">Filter Total Harga
+                                            Wifi:</label>
+                                        <select id="filterHarga" class="filter-dropdown select2">
+                                            <option value="">Semua</option>
+                                            @foreach ($transactionWifi as $transaction)
+                                                <option value="{{ $transaction->total_price_wifi }}">
+                                                    {{ $transaction->total_price_wifi }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="filterExpired"
+                                            class="block text-sm font-medium text-gray-700">Filter Expired Tanggal
+                                            Wifi:</label>
+                                        <select id="filterExpired" class="filter-dropdown select2">
+                                            <option value="">Semua</option>
+                                            @foreach ($transactionWifi as $transaction)
+                                                <option
+                                                    value="{{ \Carbon\Carbon::parse($transaction->expired_wifi)->format('Y-m-d') }}">
+                                                    {{ \Carbon\Carbon::parse($transaction->expired_wifi)->isoFormat('dddd, DD-MM-YY') }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                </div>
+
+
+                                @if (Session::get('success'))
+                                    <div id="success-message"
+                                        class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 my-2.5 rounded relative"
+                                        role="alert">
+                                        <strong class="font-bold">Success!</strong>
+                                        <span class="block sm:inline">{{ Session::get('success') }}</span>
+                                    </div>
+                                    <script>
+                                        $(document).ready(function() {
+                                            // Hide the success message after 5 seconds
+                                            setTimeout(function() {
+                                                $("#success-message").fadeOut("slow");
+                                            }, 10000);
+
+                                            // Hide the success message when the close button is clicked
+                                            function closeAlert() {
+                                                $("#success-message").fadeOut("slow");
+                                            }
+                                        });
+                                    </script>
+                                @endif
+
+                                @if ($errorMessage = Session::get('errorMessage'))
+                                    <div id="error-message"
+                                        class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 my-2.5 rounded relative"
+                                        role="alert">
+                                        <strong class="font-bold">Error!</strong>
+                                        <span class="block sm:inline">{{ $errorMessage }}</span>
+                                    </div>
+                                    <script>
+                                        $(document).ready(function() {
+                                            // Hide the error message after 5 seconds
+                                            setTimeout(function() {
+                                                $("#error-message").fadeOut("slow");
+                                            }, 10000);
+
+                                            // Hide the error message when the close button is clicked
+                                            function closeAlert() {
+                                                $("#error-message").fadeOut("slow");
+                                            }
+                                        });
+                                    </script>
+                                @endif
+
+                                <table class="datatables w-full row-border whitespace-nowrap my-2 py-2">
+                                    <thead>
+                                        <tr
+                                            class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
+                                            <th>No</th>
+                                            <th>ID</th>
+                                            <th>Nama Customer</th>
+                                            <th>Nama Produk</th>
+                                            <th>Total Harga Wifi</th>
+                                            <th>Expired Tanggal Wifi</th>
+                                            <th>Status Wifi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
+                                        @foreach ($transactionWifi as $item)
+                                            <tr>
+                                                <td class="py-2 px-4">{{ $loop->iteration }}</td>
+                                                <td class="py-2 px-4">{{ $item->id }}</td>
+                                                <td class="px-4 py-3">
+                                                    @if ($item->user->profile_photo_url)
+                                                        <div class="flex items-center text-sm">
+                                                            <!-- Avatar with inset shadow -->
+                                                            <div
+                                                                class="relative hidden w-8 h-8 mr-3 rounded-full md:block">
+                                                                <img class="object-cover w-full h-full rounded-full"
+                                                                    src="{{ $item->user->profile_photo_url }}"
+                                                                    alt="{{ $item->user->id }}" loading="lazy" />
+                                                            </div>
+                                                            <div>
+                                                                <p class="font-semibold">{{ $item->user->name }}</p>
+                                                                <p class="text-xs text-gray-600 dark:text-gray-400">
+                                                                    @ {{ $item->user->username }}</p>
+                                                            </div>
+                                                        </div>
+                                                    @else
+                                                        <div class="flex items-center text-sm">
+                                                            <span
+                                                                class="inline-block h-8 w-8 rounded-full overflow-hidden bg-gray-100">
+                                                                <svg class="h-full w-full text-gray-300"
+                                                                    fill="currentColor" viewBox="0 0 24 24">
+                                                                    <path
+                                                                        d="M12 14.75c2.67 0 8 1.34 8 4v1.25H4v-1.25c0-2.66 5.33-4 8-4zm0-9.5c-2.22 0-4 1.78-4 4s1.78 4 4 4 4-1.78 4-4-1.78-4-4-4zm0 6c-1.11 0-2-.89-2-2s.89-2 2-2 2 .89 2 2-.89 2-2 2z" />
+                                                                </svg>
+                                                            </span>
+                                                            <div>
+                                                                <p class="font-semibold">{{ $item->user->name }}</p>
+                                                                <p class="text-xs text-gray-600 dark:text-gray-400">@
+                                                                    {{ $item->user->username }}</p>
+                                                            </div>
+                                                        </div>
+                                                    @endif
+                                                </td>
+                                                <td class="py-2 px-4">{{ $item->product->name }}</td>
+                                                <td class="py-2 px-4">{{ $item->total_price_wifi }}</td>
+                                                <td class="py-2 px-4">
+                                                    {{ \Carbon\Carbon::parse($item->expired_wifi)->format('l, d-m-Y') }}
+                                                </td>
+                                                <td class="py-2 px-4">
+                                                    <span
+                                                        class="px-2 py-1 font-semibold leading-tight
+                                                    @if ($item->status == 'ACTIVE') text-green-700 bg-green-100 dark:bg-green-700 dark:text-green-100
+                                                    @elseif ($item->status == 'INACTIVE')
+                                                        text-red-700 bg-red-100 dark:bg-red-700 dark:text-red-100
+                                                    @else
+                                                        text-gray-700 bg-gray-100 dark:bg-gray-700 dark:text-gray-100 @endif
+                                                    rounded-full">
+                                                        {{ $item->status }}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+
+                                    <tfoot
+                                        class="text-xs font-semibold tracking-wide text-left text-gray-600 uppercase border-b dark:border-gray-800 bg-gray-50 dark:text-gray-800 dark:bg-gray-400">
+                                        <th class="no-search"></th>
+                                        <th>ID</th>
+                                        <th>Nama Customer</th>
+                                        <th>Nama Produk</th>
+                                        <th>Total Harga Wifi</th>
+                                        <th>Expired Tanggal Wifi</th>
+                                        <th>Status Wifi</th>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+
+
                 </div>
             </div>
         </div>
 
+        @push('style')
+            <link rel="stylesheet" href="{{ asset('select2/dist/css/select2.min.css') }}">
+        @endpush
         @push('javascript')
+            <script src="{{ asset('select2/dist/js/select2.min.js') }}"></script>
+            <script>
+                $(document).ready(function() {
+                    var table = $('.datatables').DataTable();
+
+                    $('.select2').select2();
+
+                    $('#filterStatus, #filterUser, #filterProduk, #filterHarga, #filterExpired').on('change', function() {
+                        var status = $('#filterStatus').val();
+                        var user = $('#filterUser').val();
+                        var produk = $('#filterProduk').val();
+                        var harga = $('#filterHarga').val();
+                        // var expired = $('#filterExpired').val();
+
+                        table.column(6).search(status).draw();
+                        table.column(2).search(user).draw();
+                        table.column(3).search(produk).draw();
+                        table.column(4).search(harga).draw();
+                        // table.column(5).search(expired).draw();
+                        // var expired = $(this).val();
+                        if (expired === '') {
+                            table.column(5).search('').draw();
+                        } else {
+                            table.column(5).search('^' + expired + '$', true, false).draw();
+                        }
+                    });
+
+
+                });
+            </script>
+
+
             <script>
                 $(document).ready(function() {
                     $('#laporan option[value=""]').css('display', 'none');
@@ -957,7 +1192,7 @@
                 $(document).ready(function() {
 
                     // Hide all buttons on page load
-                    $('#header-laporan-user-admin, #header-laporan-transaksi-wifi-item, #btn-laporan-transaksi-wifi-item, #btn-laporan-all-transaksi-pdf, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-all-transaksi, #header-laporan-kategori, #header-laporan-produk, #header-laporan-user-customer, #header-laporan-all-users, #btn-laporan-all-users, #btn-laporan-user-admin, #btn-laporan-user-customer, #btn-laporan-custom-all-users,#btn-laporan-custom-user-admin,#btn-laporan-custom-products,#btn-laporan-custom-user-customer,#btn-laporan-custom-category,#btn-laporan-custom-products, #btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-all-transaksi,#btn-laporan-custom-all-transaksi,#btn-laporan-custom-transaksi-success,#btn-laporan-custom-transaksi-pending, #btn-laporan-custom-transaksi-cancelled, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
+                    $('#header-laporan-user-admin, #data-laporan-transaksi-wifi-item, #header-laporan-transaksi-wifi-item, #btn-laporan-transaksi-wifi-item, #btn-laporan-all-transaksi-pdf, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-all-transaksi, #header-laporan-kategori, #header-laporan-produk, #header-laporan-user-customer, #header-laporan-all-users, #btn-laporan-all-users, #btn-laporan-user-admin, #btn-laporan-user-customer, #btn-laporan-custom-all-users,#btn-laporan-custom-user-admin,#btn-laporan-custom-products,#btn-laporan-custom-user-customer,#btn-laporan-custom-category,#btn-laporan-custom-products, #btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-all-transaksi,#btn-laporan-custom-all-transaksi,#btn-laporan-custom-transaksi-success,#btn-laporan-custom-transaksi-pending, #btn-laporan-custom-transaksi-cancelled, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
                         .hide();
                     // Show button when an option is selected
                     $('#laporan').on('change', function() {
@@ -965,7 +1200,7 @@
 
                         if (selectedOption === '') {
                             $('#header-laporan-none').show();
-                            $('#header-laporan-all-users,  #header-laporan-transaksi-wifi-item, #btn-laporan-transaksi-wifi-item, #btn-laporan-all-transaksi-pdf, #header-laporan-all-transaksi, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-user-admin, #header-laporan-kategori, #header-laporan-produk, #header-laporan-user-customer, #btn-laporan-all-users, #btn-laporan-user-admin, #btn-laporan-custom-user-customer,#btn-laporan-custom-all-users, #btn-laporan-user-customer, #btn-laporan-custom-user-admin,#btn-laporan-custom-products,#btn-laporan-custom-category,#btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-all-transaksi, #btn-laporan-custom-all-transaksi, #btn-laporan-custom-transaksi-success,#btn-laporan-custom-transaksi-cancelled, #btn-laporan-custom-transaksi-pending, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
+                            $('#header-laporan-all-users, #data-laporan-transaksi-wifi-item,  #header-laporan-transaksi-wifi-item, #btn-laporan-transaksi-wifi-item, #btn-laporan-all-transaksi-pdf, #header-laporan-all-transaksi, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-user-admin, #header-laporan-kategori, #header-laporan-produk, #header-laporan-user-customer, #btn-laporan-all-users, #btn-laporan-user-admin, #btn-laporan-custom-user-customer,#btn-laporan-custom-all-users, #btn-laporan-user-customer, #btn-laporan-custom-user-admin,#btn-laporan-custom-products,#btn-laporan-custom-category,#btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-all-transaksi, #btn-laporan-custom-all-transaksi, #btn-laporan-custom-transaksi-success,#btn-laporan-custom-transaksi-cancelled, #btn-laporan-custom-transaksi-pending, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
                                 .hide();
                         } else if (selectedOption === 'laporan-all-users') {
                             Swal.fire({
@@ -980,7 +1215,7 @@
                                         $('#btn-laporan-all-users').show();
                                         $('#btn-laporan-custom-all-users').show();
                                         $('#header-laporan-all-users').show();
-                                        $('#header-laporan-none,  #header-laporan-transaksi-wifi-item, #btn-laporan-transaksi-wifi-item, #btn-laporan-all-transaksi-pdf,#btn-laporan-user-admin, #btn-laporan-user-customer, #header-laporan-all-transaksi, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-kategori, #header-laporan-produk, #header-laporan-user-admin, #header-laporan-user-customer, #btn-laporan-custom-user-customer,#btn-laporan-custom-user-admin,#btn-laporan-custom-products,#btn-laporan-custom-category,#btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-all-transaksi, #btn-laporan-custom-transaksi-cancelled, #btn-laporan-custom-transaksi-pending,#btn-laporan-custom-transaksi-success,#btn-laporan-custom-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
+                                        $('#header-laporan-none, #data-laporan-transaksi-wifi-item,  #header-laporan-transaksi-wifi-item, #btn-laporan-transaksi-wifi-item, #btn-laporan-all-transaksi-pdf,#btn-laporan-user-admin, #btn-laporan-user-customer, #header-laporan-all-transaksi, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-kategori, #header-laporan-produk, #header-laporan-user-admin, #header-laporan-user-customer, #btn-laporan-custom-user-customer,#btn-laporan-custom-user-admin,#btn-laporan-custom-products,#btn-laporan-custom-category,#btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-all-transaksi, #btn-laporan-custom-transaksi-cancelled, #btn-laporan-custom-transaksi-pending,#btn-laporan-custom-transaksi-success,#btn-laporan-custom-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
                                             .hide();
                                         Swal.close();
                                     }, 1000);
@@ -999,7 +1234,7 @@
                                         $('#btn-laporan-user-admin').show();
                                         $('#btn-laporan-custom-user-admin').show();
                                         $('#header-laporan-user-admin').show();
-                                        $('#header-laporan-none,  #header-laporan-transaksi-wifi-item, #btn-laporan-transaksi-wifi-item, #btn-laporan-all-transaksi-pdf,#btn-laporan-all-users, #btn-laporan-user-customer, #header-laporan-all-transaksi, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-kategori, #header-laporan-produk, #header-laporan-user-customer, #header-laporan-all-users, #btn-laporan-custom-user-customer,#btn-laporan-custom-all-users,#btn-laporan-custom-products,#btn-laporan-custom-category,#btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-all-transaksi,#btn-laporan-custom-transaksi-cancelled, #btn-laporan-custom-transaksi-pending,#btn-laporan-custom-transaksi-success,#btn-laporan-custom-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
+                                        $('#header-laporan-none, #data-laporan-transaksi-wifi-item,  #header-laporan-transaksi-wifi-item, #btn-laporan-transaksi-wifi-item, #btn-laporan-all-transaksi-pdf,#btn-laporan-all-users, #btn-laporan-user-customer, #header-laporan-all-transaksi, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-kategori, #header-laporan-produk, #header-laporan-user-customer, #header-laporan-all-users, #btn-laporan-custom-user-customer,#btn-laporan-custom-all-users,#btn-laporan-custom-products,#btn-laporan-custom-category,#btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-all-transaksi,#btn-laporan-custom-transaksi-cancelled, #btn-laporan-custom-transaksi-pending,#btn-laporan-custom-transaksi-success,#btn-laporan-custom-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
                                             .hide();
                                         Swal.close();
                                     }, 1000);
@@ -1018,7 +1253,7 @@
                                         $('#btn-laporan-user-customer').show();
                                         $('#btn-laporan-custom-user-customer').show();
                                         $('#header-laporan-user-customer').show();
-                                        $('#header-laporan-none, #btn-laporan-all-transaksi-pdf,#btn-laporan-all-users, #btn-laporan-user-admin, #header-laporan-all-transaksi, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-kategori, #header-laporan-produk, #header-laporan-user-admin,  #header-laporan-all-users, #btn-laporan-kategori,#btn-laporan-custom-user-admin,#btn-laporan-custom-all-users, #btn-laporan-custom-products,#btn-laporan-custom-category,#btn-laporan-custom-transaksi-cancelled, #btn-laporan-custom-transaksi-pending,#btn-laporan-produk, #btn-laporan-all-transaksi,#btn-laporan-custom-transaksi-success,#btn-laporan-custom-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
+                                        $('#header-laporan-none, #data-laporan-transaksi-wifi-item, #btn-laporan-all-transaksi-pdf,#btn-laporan-all-users, #btn-laporan-user-admin, #header-laporan-all-transaksi, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-kategori, #header-laporan-produk, #header-laporan-user-admin,  #header-laporan-all-users, #btn-laporan-kategori,#btn-laporan-custom-user-admin,#btn-laporan-custom-all-users, #btn-laporan-custom-products,#btn-laporan-custom-category,#btn-laporan-custom-transaksi-cancelled, #btn-laporan-custom-transaksi-pending,#btn-laporan-produk, #btn-laporan-all-transaksi,#btn-laporan-custom-transaksi-success,#btn-laporan-custom-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
                                             .hide();
                                         Swal.close();
                                     }, 1000);
@@ -1037,7 +1272,7 @@
                                         $('#btn-laporan-kategori').show();
                                         $('#btn-laporan-custom-category').show();
                                         $('#header-laporan-kategori').show();
-                                        $('#header-laporan-none,  #header-laporan-transaksi-wifi-item, #btn-laporan-transaksi-wifi-item, #btn-laporan-all-transaksi-pdf,#btn-laporan-all-users, #btn-laporan-user-admin, #header-laporan-all-transaksi, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-produk, #header-laporan-user-admin, #header-laporan-user-customer, #header-laporan-all-users, #btn-laporan-custom-user-admin,#btn-laporan-custom-all-users,#btn-laporan-custom-products,#btn-laporan-custom-user-customer,#btn-laporan-user-customer, #btn-laporan-produk, #btn-laporan-custom-transaksi-cancelled, #btn-laporan-all-transaksi,#btn-laporan-custom-all-transaksi, #btn-laporan-custom-transaksi-pending,#btn-laporan-custom-transaksi-success,#btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
+                                        $('#header-laporan-none, #data-laporan-transaksi-wifi-item,  #header-laporan-transaksi-wifi-item, #btn-laporan-transaksi-wifi-item, #btn-laporan-all-transaksi-pdf,#btn-laporan-all-users, #btn-laporan-user-admin, #header-laporan-all-transaksi, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-produk, #header-laporan-user-admin, #header-laporan-user-customer, #header-laporan-all-users, #btn-laporan-custom-user-admin,#btn-laporan-custom-all-users,#btn-laporan-custom-products,#btn-laporan-custom-user-customer,#btn-laporan-user-customer, #btn-laporan-produk, #btn-laporan-custom-transaksi-cancelled, #btn-laporan-all-transaksi,#btn-laporan-custom-all-transaksi, #btn-laporan-custom-transaksi-pending,#btn-laporan-custom-transaksi-success,#btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
                                             .hide();
                                         Swal.close();
                                     }, 1000);
@@ -1056,7 +1291,7 @@
                                         $('#btn-laporan-produk').show();
                                         $('#btn-laporan-custom-products').show();
                                         $('#header-laporan-produk').show();
-                                        $('#header-laporan-none, #header-laporan-transaksi-wifi-item, #btn-laporan-transaksi-wifi-item,  #btn-laporan-all-transaksi-pdf,#btn-laporan-all-users, #btn-laporan-user-admin, #header-laporan-all-transaksi, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-kategori ,#header-laporan-user-admin, #header-laporan-user-customer, #header-laporan-all-users, #btn-laporan-custom-user-admin,#btn-laporan-custom-all-users,#btn-laporan-custom-category,#btn-laporan-user-customer, #btn-laporan-kategori, #btn-laporan-custom-user-customer,#btn-laporan-custom-transaksi-cancelled, #btn-laporan-all-transaksi,#btn-laporan-custom-all-transaksi, #btn-laporan-custom-transaksi-pending,#btn-laporan-custom-transaksi-success,#btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
+                                        $('#header-laporan-none, #data-laporan-transaksi-wifi-item, #header-laporan-transaksi-wifi-item, #btn-laporan-transaksi-wifi-item,  #btn-laporan-all-transaksi-pdf,#btn-laporan-all-users, #btn-laporan-user-admin, #header-laporan-all-transaksi, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-kategori ,#header-laporan-user-admin, #header-laporan-user-customer, #header-laporan-all-users, #btn-laporan-custom-user-admin,#btn-laporan-custom-all-users,#btn-laporan-custom-category,#btn-laporan-user-customer, #btn-laporan-kategori, #btn-laporan-custom-user-customer,#btn-laporan-custom-transaksi-cancelled, #btn-laporan-all-transaksi,#btn-laporan-custom-all-transaksi, #btn-laporan-custom-transaksi-pending,#btn-laporan-custom-transaksi-success,#btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
                                             .hide();
                                         Swal.close();
                                     }, 1000);
@@ -1076,7 +1311,7 @@
                                         $('#btn-laporan-custom-all-transaksi').show();
                                         $('#header-laporan-all-transaksi').show();
                                         $('#btn-laporan-all-transaksi-pdf').show();
-                                        $('#header-laporan-none,  #header-laporan-transaksi-wifi-item, #btn-laporan-transaksi-wifi-item, #btn-laporan-all-users, #btn-laporan-user-admin, #header-laporan-kategori, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-produk, #header-laporan-user-admin, #header-laporan-user-customer, #header-laporan-all-users, #btn-laporan-custom-category,#btn-laporan-custom-user-customer,#btn-laporan-custom-user-admin,#btn-laporan-custom-all-users,#btn-laporan-custom-products,#btn-laporan-user-customer, #btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-custom-transaksi-pending,#btn-laporan-custom-transaksi-cancelled, #btn-laporan-custom-transaksi-success,#btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
+                                        $('#header-laporan-none, #data-laporan-transaksi-wifi-item,  #header-laporan-transaksi-wifi-item, #btn-laporan-transaksi-wifi-item, #btn-laporan-all-users, #btn-laporan-user-admin, #header-laporan-kategori, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-produk, #header-laporan-user-admin, #header-laporan-user-customer, #header-laporan-all-users, #btn-laporan-custom-category,#btn-laporan-custom-user-customer,#btn-laporan-custom-user-admin,#btn-laporan-custom-all-users,#btn-laporan-custom-products,#btn-laporan-user-customer, #btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-custom-transaksi-pending,#btn-laporan-custom-transaksi-cancelled, #btn-laporan-custom-transaksi-success,#btn-laporan-transaksi-success, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
                                             .hide();
                                         Swal.close();
                                     }, 1000);
@@ -1095,7 +1330,7 @@
                                         $('#btn-laporan-transaksi-success').show();
                                         $('#btn-laporan-custom-transaksi-success').show();
                                         $('#header-laporan-transaksi-success').show();
-                                        $('#header-laporan-none,  #header-laporan-transaksi-wifi-item, #btn-laporan-transaksi-wifi-item, #btn-laporan-all-transaksi-pdf,#btn-laporan-all-users, #btn-laporan-user-admin, #header-laporan-all-transaksi, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-kategori, #header-laporan-produk, #header-laporan-user-admin, #header-laporan-user-customer, #header-laporan-all-users, #btn-laporan-custom-user-customer,#btn-laporan-custom-user-admin,#btn-laporan-custom-products,#btn-laporan-custom-all-users,#btn-laporan-user-customer, #btn-laporan-custom-category,#btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-custom-transaksi-pending,#btn-laporan-all-transaksi,#btn-laporan-custom-transaksi-cancelled, #btn-laporan-custom-all-transaksi, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
+                                        $('#header-laporan-none, #data-laporan-transaksi-wifi-item,  #header-laporan-transaksi-wifi-item, #btn-laporan-transaksi-wifi-item, #btn-laporan-all-transaksi-pdf,#btn-laporan-all-users, #btn-laporan-user-admin, #header-laporan-all-transaksi, #header-laporan-transaksi-pending, #header-laporan-transaksi-cancelled, #header-laporan-kategori, #header-laporan-produk, #header-laporan-user-admin, #header-laporan-user-customer, #header-laporan-all-users, #btn-laporan-custom-user-customer,#btn-laporan-custom-user-admin,#btn-laporan-custom-products,#btn-laporan-custom-all-users,#btn-laporan-user-customer, #btn-laporan-custom-category,#btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-custom-transaksi-pending,#btn-laporan-all-transaksi,#btn-laporan-custom-transaksi-cancelled, #btn-laporan-custom-all-transaksi, #btn-laporan-transaksi-pending, #btn-laporan-transaksi-cancelled')
                                             .hide();
                                         Swal.close();
                                     }, 1000);
@@ -1114,7 +1349,7 @@
                                         $('#btn-laporan-transaksi-pending').show();
                                         $('#btn-laporan-custom-transaksi-pending').show();
                                         $('#header-laporan-transaksi-pending').show();
-                                        $('#header-laporan-none,  #header-laporan-transaksi-wifi-item, #btn-laporan-transaksi-wifi-item, #btn-laporan-all-transaksi-pdf,#btn-laporan-all-users, #btn-laporan-user-admin, #header-laporan-all-transaksi, #header-laporan-transaksi-success, #header-laporan-transaksi-cancelled, #header-laporan-kategori, #header-laporan-produk, #header-laporan-user-admin, #header-laporan-user-customer, #header-laporan-all-users, #btn-laporan-custom-user-customer,#btn-laporan-custom-user-admin,#btn-laporan-custom-all-users,#btn-laporan-user-customer, #btn-laporan-custom-products,#btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-custom-category,#btn-laporan-custom-transaksi-cancelled, #btn-laporan-custom-transaksi-success,#btn-laporan-all-transaksi,#btn-laporan-custom-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-cancelled')
+                                        $('#header-laporan-none, #data-laporan-transaksi-wifi-item,  #header-laporan-transaksi-wifi-item, #btn-laporan-transaksi-wifi-item, #btn-laporan-all-transaksi-pdf,#btn-laporan-all-users, #btn-laporan-user-admin, #header-laporan-all-transaksi, #header-laporan-transaksi-success, #header-laporan-transaksi-cancelled, #header-laporan-kategori, #header-laporan-produk, #header-laporan-user-admin, #header-laporan-user-customer, #header-laporan-all-users, #btn-laporan-custom-user-customer,#btn-laporan-custom-user-admin,#btn-laporan-custom-all-users,#btn-laporan-user-customer, #btn-laporan-custom-products,#btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-custom-category,#btn-laporan-custom-transaksi-cancelled, #btn-laporan-custom-transaksi-success,#btn-laporan-all-transaksi,#btn-laporan-custom-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-cancelled')
                                             .hide();
                                         Swal.close();
                                     }, 1000);
@@ -1133,7 +1368,7 @@
                                         $('#btn-laporan-transaksi-cancelled').show();
                                         $('#btn-laporan-custom-transaksi-cancelled').show();
                                         $('#header-laporan-transaksi-cancelled').show();
-                                        $('#header-laporan-none,  #header-laporan-transaksi-wifi-item, #btn-laporan-transaksi-wifi-item, #btn-laporan-all-transaksi-pdf,#btn-laporan-all-users, #btn-laporan-user-admin, #header-laporan-all-transaksi, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-kategori, #header-laporan-produk, #header-laporan-user-admin, #header-laporan-user-customer, #header-laporan-all-users, #btn-laporan-custom-user-customer,#btn-laporan-custom-user-admin,#btn-laporan-custom-products,#btn-laporan-custom-all-users,#btn-laporan-user-customer, #btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-custom-category,#btn-laporan-custom-transaksi-pending,#btn-laporan-custom-transaksi-success,#btn-laporan-all-transaksi,#btn-laporan-custom-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending')
+                                        $('#header-laporan-none, #data-laporan-transaksi-wifi-item,  #header-laporan-transaksi-wifi-item, #btn-laporan-transaksi-wifi-item, #btn-laporan-all-transaksi-pdf,#btn-laporan-all-users, #btn-laporan-user-admin, #header-laporan-all-transaksi, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-kategori, #header-laporan-produk, #header-laporan-user-admin, #header-laporan-user-customer, #header-laporan-all-users, #btn-laporan-custom-user-customer,#btn-laporan-custom-user-admin,#btn-laporan-custom-products,#btn-laporan-custom-all-users,#btn-laporan-user-customer, #btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-custom-category,#btn-laporan-custom-transaksi-pending,#btn-laporan-custom-transaksi-success,#btn-laporan-all-transaksi,#btn-laporan-custom-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending')
                                             .hide();
                                         Swal.close();
                                     }, 1000);
@@ -1151,6 +1386,7 @@
                                     setTimeout(() => {
                                         $('#header-laporan-transaksi-wifi-item').show();
                                         $('#btn-laporan-transaksi-wifi-item').show();
+                                        $('#data-laporan-transaksi-wifi-item').show();
                                         $('#header-laporan-none, #btn-laporan-transaksi-cancelled, #btn-laporan-custom-transaksi-cancelled, #header-laporan-transaksi-cancelled,#btn-laporan-all-transaksi-pdf,#btn-laporan-all-users, #btn-laporan-user-admin, #header-laporan-all-transaksi, #header-laporan-transaksi-success, #header-laporan-transaksi-pending, #header-laporan-kategori, #header-laporan-produk, #header-laporan-user-admin, #header-laporan-user-customer, #header-laporan-all-users, #btn-laporan-custom-user-customer,#btn-laporan-custom-user-admin,#btn-laporan-custom-products,#btn-laporan-custom-all-users,#btn-laporan-user-customer, #btn-laporan-kategori, #btn-laporan-produk, #btn-laporan-custom-category,#btn-laporan-custom-transaksi-pending,#btn-laporan-custom-transaksi-success,#btn-laporan-all-transaksi,#btn-laporan-custom-all-transaksi, #btn-laporan-transaksi-success, #btn-laporan-transaksi-pending')
                                             .hide();
                                         Swal.close();

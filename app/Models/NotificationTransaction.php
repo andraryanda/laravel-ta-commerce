@@ -15,7 +15,7 @@ class NotificationTransaction extends Model
 
     public function transaction()
     {
-        return $this->belongsTo(Transaction::class, 'transactions_id', 'transactions_id');
+        return $this->belongsTo(Transaction::class, 'transactions_id');
     }
 }
 

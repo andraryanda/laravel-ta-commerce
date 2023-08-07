@@ -165,10 +165,10 @@
                     $background = '';
                     if ($remainingDays > 0) {
                         if ($remainingDays <= 3) {
-                            $statusWiFi = 'Aktif (Masa Wifi berakhir dalam ' . $remainingDays . ' hari)';
+                            $statusWiFi = '<strong>Aktif</strong> (Masa Wifi berakhir dalam ' . $remainingDays . ' hari)';
                             $background = 'background-color: #ffff00;'; // Yellow background
                         } else {
-                            $statusWiFi = 'Aktif (Masa Wifi berakhir pada ' . $expiredWiFi->translatedFormat('l, d F Y') . ')';
+                            $statusWiFi = '<strong>Aktif</strong> (Masa Wifi berakhir pada ' . $expiredWiFi->translatedFormat('l, d F Y') . ')';
                             $background = ''; // Default background
                         }
                     } else {
@@ -181,12 +181,22 @@
                     <td>{{ $wifi->id }}</td>
                     <td>{{ $wifi->user->name }}</td>
                     <td>
+                        @php
+                            $printedProducts = []; // Array untuk melacak produk yang sudah ditampilkan
+                        @endphp
+
                         @foreach ($wifi->wifi_items as $item)
-                            {{ $item->product->name }}
+                            @if ($wifi->id == $item->transaction_wifi_id && $wifi->users_id == $item->users_id)
+                                @if (!in_array($item->product_id, $printedProducts))
+                                    {{ $item->product->name }}
+                                    @php $printedProducts[] = $item->product_id; @endphp
+                                @endif
+                            @endif
                         @endforeach
                     </td>
+
                     <td>{{ number_format($wifi->total_price_wifi, 0, ',', '.') }}</td>
-                    <td>{{ $statusWiFi }}</td>
+                    <td>{!! $statusWiFi !!}</td>
                 </tr>
             @endforeach
         </table>

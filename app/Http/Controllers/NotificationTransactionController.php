@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\NotificationTransaction;
 
 class NotificationTransactionController extends Controller
@@ -46,7 +47,8 @@ class NotificationTransactionController extends Controller
     public function index()
     {
         $transactions = NotificationTransaction::with('transaction')->get();
-        return view('component_dashboard.navbar', compact('transactions'));
+        $notif = NotificationTransaction::get();
+        return view('component_dashboard.navbar', compact('transactions', 'notif'));
     }
 
 
@@ -103,8 +105,44 @@ class NotificationTransactionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        //
+        // Find the notification by ID
+        $notification = NotificationTransaction::find($id);
+
+        // If the notification is found, delete it
+        if ($notification) {
+            DB::beginTransaction();
+            try {
+                $notification->delete();
+
+                DB::commit();
+
+                return redirect()->back()->with('success', 'Notifikasi Transaksi Produk berhasil dihapus!');
+            } catch (\Exception $e) {
+                DB::rollback();
+
+                return redirect()->back()->with('error', 'Notifikasi Transaksi Produk berhasil dihapus!');
+            }
+        }
+
+        // If the notification is not found, redirect back with an error message
+        return redirect()->back()->with('error', 'Notification transaction not found');
+    }
+
+    public function destroyAll()
+    {
+        DB::beginTransaction();
+        try {
+            NotificationTransaction::truncate();
+
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Semua Notifikasi Transaksi Produk berhasil dihapus!');
+        } catch (\Exception $e) {
+            DB::rollback();
+
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menghapus notifikasi transaksi produk.');
+        }
     }
 }

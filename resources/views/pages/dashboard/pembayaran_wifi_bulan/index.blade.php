@@ -120,7 +120,7 @@
                             {
                                 data: 'expired_wifi',
                                 name: 'expired_wifi',
-                                className: 'dt-body-start',
+                                className: 'dt-body-start font-bold',
                                 searchable: true,
                                 render: function(data) {
                                     var date = new Date(data);
@@ -128,10 +128,11 @@
                                         day: 'numeric',
                                         month: 'long',
                                         year: 'numeric',
-                                        hour: 'numeric',
-                                        minute: 'numeric',
-                                        second: 'numeric',
-                                        weekday: 'long'
+                                        weekday: 'long' // Tambahkan ini untuk menampilkan nama hari
+                                        // hour: 'numeric',
+                                        // minute: 'numeric',
+                                        // second: 'numeric',
+                                        // weekday: 'long'
                                     });
                                 }
                             },

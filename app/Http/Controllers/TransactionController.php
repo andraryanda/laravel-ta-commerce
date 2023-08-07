@@ -1020,7 +1020,7 @@ class TransactionController extends Controller
             $total += $item->price * $item->quantity;
         }
 
-        $message = "Halo " . '*' . $transaction->user->name . '*' . ", terima kasih telah berbelanja di toko *Al's Store* kami. Berikut adalah detail pesanan Anda:\n\n";
+        $message = "Halo " . '*' . $transaction->user->name . '*' . ", terima kasih telah berbelanja di *AL-N3T Support Gesitnet* kami. Berikut adalah detail pesanan Anda:\n\n";
         $message .= "-----------------------------------\n";
         $message .= "*Detail User:*\n";
         $message .= "*Nama       : "  . $transaction->user->name . '*' . "\n";
@@ -1043,15 +1043,15 @@ class TransactionController extends Controller
         if ($transaction->status == 'PENDING') {
             $message .= "Silakan konfirmasi pembayaran Anda dengan mengirimkan bukti transfer ke nomor ini. Terima kasih. \n\n";
             $message .= "Silakan hubungi kami jika Anda memiliki pertanyaan atau masukan.\n";
-            $message .= "*Al's Store: 085314005779*";
+            $message .= "*AL-N3T Support Gesitnet: 085314005779*";
         } else if ($transaction->status == 'SUCCESS') {
             $message .= "Terima kasih telah menjadi pelanggan kami! \n";
             $message .= "Kami sangat menghargai kepercayaan Anda dan berharap dapat terus memberikan pelayanan terbaik. \n\n";
             $message .= "Silakan hubungi kami jika Anda memiliki pertanyaan atau masukan. \n\n";
-            $message .= "*Al's Store: 085314005779*";
+            $message .= "*AL-N3T Support Gesitnet: 085314005779*";
         } else if ($transaction->status == 'CANCELLED') {
             $message .= "*Maaf, pesanan Anda telah dibatalkan.* Silakan hubungi kami jika Anda memiliki pertanyaan atau masukan.\n\n";
-            $message .= "*Al's Store: 085314005779*";
+            $message .= "*AL-N3T Support Gesitnet: 085314005779*";
         }
 
         $url = 'https://wa.me/' . $phone_number . '?text=' . urlencode($message);

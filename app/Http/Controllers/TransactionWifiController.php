@@ -469,7 +469,7 @@ class TransactionWifiController extends Controller
 
         $expiredDate = \Carbon\Carbon::parse($transactionWifi->expired_wifi)->locale('id_ID')->isoFormat('dddd, D MMMM Y');
 
-        $message = "Halo *" . $transactionWifi->user->name . "*, terima kasih telah berlangganan WiFi bulanan di toko *Al's Store*. Berikut adalah detail pesanan Anda:\n\n";
+        $message = "Halo *" . $transactionWifi->user->name . "*, terima kasih telah berlangganan WiFi bulanan di *AL-N3T Support Gesitnet*. Berikut adalah detail pesanan Anda:\n\n";
         $message .= "-----------------------------------\n";
         $message .= "*Detail Pesanan WiFi:*\n";
         $message .= "No: " . $transactionWifi->id . "\n";
@@ -483,10 +483,10 @@ class TransactionWifiController extends Controller
         if ($transactionWifi->status == 'ACTIVE') {
             $message .= "WiFi telah diaktifkan. Anda dapat menggunakan WiFi sekarang. Terima kasih!\n";
             $message .= "Silakan hubungi kami jika Anda memiliki pertanyaan atau masukan.\n";
-            $message .= "*Al's Store: 085314005779*";
+            $message .= "*AL-N3T Support Gesitnet: 085314005779*";
         } else if ($transactionWifi->status == 'INACTIVE') {
             $message .= "WiFi tidak aktif. Mohon segera melakukan pembayaran agar WiFi dapat diaktifkan kembali.\n\n";
-            $message .= "*Al's Store: 085314005779*";
+            $message .= "*AL-N3T Support Gesitnet: 085314005779*";
         }
 
         $url = 'https://wa.me/' . $phone_number . '?text=' . urlencode($message);

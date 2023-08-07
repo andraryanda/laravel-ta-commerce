@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use Dompdf\Dompdf;
+use Dompdf\Options;
+use App\Models\Bank;
 use App\Models\User;
 use App\Models\Product;
 use App\Models\Transaction;
 use App\Exports\UsersExport;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Models\TransactionItem;
 use App\Models\TransactionWifi;
 use Illuminate\Support\Facades\DB;
 use App\Models\TransactionWifiItem;
@@ -17,9 +20,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Dompdf\Options;
 
 class ReportController extends Controller
 {
@@ -30,7 +33,17 @@ class ReportController extends Controller
      */
     public function index()
     {
-        return view('pages.dashboard.report.index');
+        $data = [
+            'users' => User::where('roles', '=', 'USER')->get(),
+            'products' => Product::with('galleries')->with('category')->get(),
+            'transactions' => Transaction::with(['user', 'wifi_items'])->get(),
+            'transactionItem' => TransactionItem::with(['user'])->get(),
+            'transactionWifi' => TransactionWifi::get(),
+            'transactionWifiItem' => TransactionWifiItem::get(),
+            'banks' => Bank::get(),
+        ];
+
+        return view('pages.dashboard.report.index', $data);
     }
 
     // Export Users

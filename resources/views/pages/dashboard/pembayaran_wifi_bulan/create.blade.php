@@ -144,6 +144,14 @@
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
+                            {{-- <div class="mb-4">
+                                <label for="total_price_wifi" class="block mb-2 text-sm font-medium text-gray-700">Total
+                                    Harga Wifi Per/bulan</label>
+                                <div id="total_price_wifi" name="total_price_wifi"
+                                    class="input-harga w-full p-2 border border-gray-300 rounded-md" contenteditable="true"
+                                    placeholder="Masukan Total Harga Wifi ..." value="{{ old('total_price_wifi') }}">
+                                </div>
+                            </div> --}}
 
                             <div class="mb-4">
                                 <label for="expired_wifi" class="block mb-2 text-sm font-medium text-gray-700">
@@ -225,7 +233,7 @@
                             </div>
 
 
-                            <div class="mb-4" id="total-pembayaran-input">
+                            {{-- <div class="mb-4" id="total-pembayaran-input">
                                 <label for="payment_transaction"
                                     class="block mb-2 text-sm font-medium text-gray-700">Total Pembayaran
                                     Transaksi</label>
@@ -233,9 +241,19 @@
                                     class="input-harga w-full p-2 border border-gray-300 rounded-md @error('payment_transaction') border-red-500 @enderror"
                                     value="{{ old('payment_transaction') }}"
                                     placeholder="Masukan Total Pembayaran Transaksi ...">
+                                <p id="nominal_comparison" class="text-green-500 text-sm mt-1"></p>
                                 @error('payment_transaction')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
+                            </div> --}}
+                            <div class="mb-4" id="total-pembayaran-input">
+                                <label for="payment_transaction"
+                                    class="block mb-2 text-sm font-medium text-gray-700">Total Pembayaran
+                                    Transaksi</label>
+                                <input type="text" name="payment_transaction"
+                                    class="input-harga w-full p-2 border border-gray-300 rounded-md"
+                                    placeholder="Masukan Total Pembayaran Transaksi ...">
+                                {{-- <p id="nominal_comparison" class="text-green-500 text-sm mt-1"></p> --}}
                             </div>
 
                             <div class="mb-4" id="description">
@@ -472,6 +490,49 @@
                         window.history.back();
                     }
                 </script>
+
+
+                {{-- <script>
+                    const totalWifiPrice = document.getElementById('total_price_wifi');
+                    const paymentInput = document.getElementsByName('payment_transaction')[0];
+                    const nominalComparison = document.getElementById('nominal_comparison');
+
+                    totalWifiPrice.addEventListener('input', () => {
+                        const total = totalWifiPrice.innerText;
+                        updateNominalComparison(total);
+                    });
+
+                    paymentInput.addEventListener('input', () => {
+                        const total = totalWifiPrice.innerText;
+                        updateNominalComparison(total);
+                    });
+
+                    function number_format(number) {
+                        return new Intl.NumberFormat('id-ID', {
+                            style: 'currency',
+                            currency: 'IDR'
+                        }).format(number);
+                    }
+
+                    function updateNominalComparison(totalWifi) {
+                        const totalWifiPrice = parseFloat(totalWifi.replace(/[^\d.-]/g, '')) || 0;
+                        const paymentAmount = parseFloat(paymentInput.value) || 0;
+                        const difference = totalWifiPrice - paymentAmount;
+
+                        if (difference > 0) {
+                            nominalComparison.innerText = `Kurang ${number_format(difference)}`;
+                        } else if (difference === 0) {
+                            nominalComparison.innerText =
+                                `Nominal bandingan: ${number_format(0)} (Transaksi sesuai dengan Total Harga Wifi)`;
+                        } else {
+                            nominalComparison.innerText = '';
+                        }
+                    }
+                </script> --}}
+
+
+
+
 
                 <script>
                     const paymentTransfer = document.getElementById('payment-transfer');

@@ -30,6 +30,7 @@
         .dataTables_wrapper select,
         .dataTables_wrapper .dataTables_filter input {
             color: #4a5568;
+            margin-right: 1rem;
             /*text-gray-700*/
             padding-left: 1rem;
             /*pl-4*/

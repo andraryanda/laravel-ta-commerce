@@ -131,12 +131,12 @@
                     $imagePath = asset('logo/alnet.jpg');
                     $imageData = '';
                     $imageType = '';
-
+                    
                     $allowedExtensions = ['png', 'jpg', 'jpeg']; // Ekstensi file gambar yang diizinkan
-
+                    
                     // Mendapatkan ekstensi file gambar
                     $extension = pathinfo($imagePath, PATHINFO_EXTENSION);
-
+                    
                     // Memeriksa apakah ekstensi file gambar diizinkan
                     if (in_array($extension, $allowedExtensions)) {
                         $imageData = base64_encode(file_get_contents($imagePath));

@@ -236,7 +236,7 @@ class HalamanUtamaController extends Controller
             $message .= "Harap bantuan dan informasinya. Terima kasih. \n\n";
         } else {
             $message .= "Silakan hubungi kami jika Anda memiliki pertanyaan atau masukan.\n";
-            $message .= "*Al's Store: 085314005779*";
+            $message .= "*AL-N3T Support Gesitnet: 085314005779*";
         }
 
         $url = 'https://wa.me/' . $phone_number . '?text=' . urlencode($message);
