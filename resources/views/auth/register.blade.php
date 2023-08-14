@@ -210,16 +210,19 @@
             <h3 class="text-2xl font-bold text-center">AL-N3T Support Gesitnet</h3>
             <br>
             <hr>
+            <x-jet-validation-errors class="mb-4" />
             <form class="space-y-4 md:space-y-6" method="POST" action="{{ route('register') }}">
                 @csrf
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label for="name"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Masukkan
-                            name</label>
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Masukkan name</label>
                         <input type="text" name="name" id="name"
                             class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder="Tuliskan name" required="">
+                        @error('name')
+                            <p class="text-sm text-red-500">{{ $message }}</p>
+                        @enderror
                     </div>
                     <div>
                         <label for="username"
@@ -228,24 +231,31 @@
                         <input type="text" name="username" id="username"
                             class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder="Tuliskan username" required="">
+                        @error('username')
+                            <p class="text-sm text-red-500">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label for="email"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Masukkan
-                            email</label>
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Masukkan email</label>
                         <input type="email" name="email" id="email"
                             class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder="name@company.com" required="">
+                        @error('email')
+                            <p class="text-sm text-red-500">{{ $message }}</p>
+                        @enderror
                     </div>
                     <div>
                         <label for="phone"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Masukkan
-                            phone</label>
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Masukkan phone</label>
                         <input type="phone" name="phone" id="phone"
                             class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder="No.Handphone anda" required="">
+                        @error('phone')
+                            <p class="text-sm text-red-500">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
                 <div>
@@ -254,28 +264,33 @@
                     <textarea name="alamat" id="alamat" rows="5"
                         class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         placeholder="Masukkan alamat anda"></textarea>
+                    @error('alamat')
+                        <p class="text-sm text-red-500">{{ $message }}</p>
+                    @enderror
                 </div>
 
-                {{-- <div class="grid grid-cols-1 md:grid-cols-2 gap-4"> --}}
                 <div>
                     <label for="password"
                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
                     <input type="password" name="password" id="password" placeholder="Isikan password anda"
                         class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         required="">
+                    @error('password')
+                        <p class="text-sm text-red-500">{{ $message }}</p>
+                    @enderror
                 </div>
-
 
                 <div>
                     <label for="confirmation-password"
-                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirm
-                        password</label>
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirm password</label>
                     <input type="password" name="password_confirmation" id="confirmation-password"
                         placeholder="Isikan lagi password dengan yang pertama"
                         class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         required autocomplete="new-password" />
+                    @error('password_confirmation')
+                        <p class="text-sm text-red-500">{{ $message }}</p>
+                    @enderror
                 </div>
-                {{-- </div> --}}
 
                 @if (Laravel\Jetstream\Jetstream::hasTermsAndPrivacyPolicyFeature())
                     <div class="mt-4">
@@ -313,6 +328,7 @@
                         class="font-medium text-blue-600 hover:underline dark:text-blue-500">Login here</a>
                 </p>
             </form>
+
         </div>
     </div>
 

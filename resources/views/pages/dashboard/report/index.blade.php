@@ -442,7 +442,7 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="mb-4">
+                                    {{-- <div class="mb-4">
                                         <label for="filterProduk"
                                             class="block text-sm font-medium text-gray-700">Filter Nama Produk:</label>
                                         <select id="filterProduk" class="filter-dropdown select2">
@@ -452,8 +452,8 @@
                                                     {{ $transaction->product->name }}</option>
                                             @endforeach
                                         </select>
-                                    </div>
-                                    <div class="mb-4">
+                                    </div> --}}
+                                    {{-- <div class="mb-4">
                                         <label for="filterHarga"
                                             class="block text-sm font-medium text-gray-700">Filter Total Harga
                                             Wifi:</label>
@@ -464,8 +464,8 @@
                                                     {{ $transaction->total_price_wifi }}</option>
                                             @endforeach
                                         </select>
-                                    </div>
-                                    <div class="mb-4">
+                                    </div> --}}
+                                    {{-- <div class="mb-4">
                                         <label for="filterExpired"
                                             class="block text-sm font-medium text-gray-700">Filter Expired Tanggal
                                             Wifi:</label>
@@ -478,7 +478,7 @@
                                                 </option>
                                             @endforeach
                                         </select>
-                                    </div>
+                                    </div> --}}
 
                                 </div>
 
@@ -582,7 +582,8 @@
                                                 <td class="py-2 px-4">{{ $item->product->name }}</td>
                                                 <td class="py-2 px-4">{{ $item->total_price_wifi }}</td>
                                                 <td class="py-2 px-4">
-                                                    {{ \Carbon\Carbon::parse($item->expired_wifi)->format('l, d-m-Y') }}
+                                                    {{ \Carbon\Carbon::parse($item->expired_wifi)->timezone('Asia/Jakarta')->locale('id_ID')->isoFormat('dddd, D MMMM Y') }}
+
                                                 </td>
                                                 <td class="py-2 px-4">
                                                     <span

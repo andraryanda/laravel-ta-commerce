@@ -89,46 +89,46 @@ class Kernel extends ConsoleKernel
         //     print($message->sid);
         // })->everyMinute(); // Jalankan setiap hari
 
-        // $schedule->call(function () {
-        //     $sid = "AC500ec6026deaa9eaad888c17c98c6f59";
-        //     $token = "6adece88681c084b6245e9bdd5de7f11";
-        //     $twilio = new Client($sid, $token);
+        $schedule->call(function () {
+            $sid = "AC500ec6026deaa9eaad888c17c98c6f59";
+            $token = "6adece88681c084b6245e9bdd5de7f11";
+            $twilio = new Client($sid, $token);
 
-        //     // Ambil transaksi WiFi dengan status ACTIVE dan expired_wifi mendekati 2 hari
-        //     $transactionsWifi = TransactionWifi::where('status', 'ACTIVE')
-        //         ->where('expired_wifi', '<=', \Carbon\Carbon::now()->addDays(2)) // Expired dalam 2 hari
-        //         ->where('expired_wifi', '>=', \Carbon\Carbon::now()) // Pastikan masih dalam batas waktu yang mendekati
-        //         ->get();
+            // Ambil transaksi WiFi dengan status ACTIVE dan expired_wifi mendekati 2 hari
+            $transactionsWifi = TransactionWifi::where('status', 'ACTIVE')
+                ->where('expired_wifi', '<=', \Carbon\Carbon::now()->addDays(2)) // Expired dalam 2 hari
+                ->where('expired_wifi', '>=', \Carbon\Carbon::now()) // Pastikan masih dalam batas waktu yang mendekati
+                ->get();
 
-        //     $twilioPhoneNumber = '+14155238886';
+            $twilioPhoneNumber = '+14155238886';
 
-        //     foreach ($transactionsWifi as $transactionWifi) {
+            foreach ($transactionsWifi as $transactionWifi) {
 
-        //         $phone_number = '+62' . substr_replace($transactionWifi->user->phone, '', 0, 1);
+                $phone_number = '+62' . substr_replace($transactionWifi->user->phone, '', 0, 1);
 
-        //         $expiredDate = \Carbon\Carbon::parse($transactionWifi->expired_wifi)->locale('id_ID')->isoFormat('dddd, D MMMM Y');
+                $expiredDate = \Carbon\Carbon::parse($transactionWifi->expired_wifi)->locale('id_ID')->isoFormat('dddd, D MMMM Y');
 
-        //         $message = "Halo *" . $transactionWifi->user->name . "*, terima kasih telah berlangganan WiFi bulanan di *AL-N3T Support Gesitnet*. Kami ingin memberitahukan bahwa masa berlangganan WiFi Anda akan segera berakhir dalam *2 hari*. Berikut adalah detail pesanan Anda:\n\n";
-        //         $message .= "-----------------------------------\n";
-        //         $message .= "*Detail Pesanan WiFi:*\n";
-        //         $message .= "No: " . $transactionWifi->id . "\n";
-        //         $message .= "Nama Produk: " . $transactionWifi->product->name . "\n";
-        //         $message .= "Total Harga WIFI: Rp " . number_format($transactionWifi->total_price_wifi, 0, ',', '.') . "\n\n";
-        //         // $message .= "Total Harga WIFI: " . $transactionWifi->total_price_wifi . "\n";
-        //         $message .= "*Expired Tanggal WIFI:* " . $expiredDate . "\n";
-        //         $message .= "*Status WIFI:* " . $transactionWifi->status . "\n";
-        //         $message .= "-----------------------------------\n\n";
+                $message = "Halo *" . $transactionWifi->user->name . "*, terima kasih telah berlangganan WiFi bulanan di *AL-N3T Support Gesitnet*. Kami ingin memberitahukan bahwa masa berlangganan WiFi Anda akan segera berakhir dalam *2 hari*. Berikut adalah detail pesanan Anda:\n\n";
+                $message .= "-----------------------------------\n";
+                $message .= "*Detail Pesanan WiFi:*\n";
+                $message .= "No: " . $transactionWifi->id . "\n";
+                $message .= "Nama Produk: " . $transactionWifi->product->name . "\n";
+                $message .= "Total Harga WIFI: Rp " . number_format($transactionWifi->total_price_wifi, 0, ',', '.') . "\n\n";
+                // $message .= "Total Harga WIFI: " . $transactionWifi->total_price_wifi . "\n";
+                $message .= "*Expired Tanggal WIFI:* " . $expiredDate . "\n";
+                $message .= "*Status WIFI:* " . $transactionWifi->status . "\n";
+                $message .= "-----------------------------------\n\n";
 
-        //         $twilio->messages->create(
-        //             'whatsapp:+6285314005779',
-        //             [
-        //                 // 'from' => 'whatsapp:' . '+14155238886',
-        //                 'from' => 'whatsapp:' . $twilioPhoneNumber,
-        //                 'body' => $message
-        //             ]
-        //         );
-        //     }
-        // })->everyMinute(); // Jalankan setiap menit
+                $twilio->messages->create(
+                    'whatsapp:+6285314005779',
+                    [
+                        // 'from' => 'whatsapp:' . '+14155238886',
+                        'from' => 'whatsapp:' . $twilioPhoneNumber,
+                        'body' => $message
+                    ]
+                );
+            }
+        })->everyMinute(); // Jalankan setiap menit
 
     }
 

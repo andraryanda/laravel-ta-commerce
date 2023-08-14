@@ -24,7 +24,7 @@ class CreateTransactionsTable extends Migration
             $table->float('shipping_price')->default(0);
             $table->string('status', 16)->default('PENDING');
             $table->string('payment', 20)->default('MANUAL');
-            // $table->string('snap_token', 75)->nullable();
+            $table->string('order_id')->nullable();
 
 
             $table->softDeletes();

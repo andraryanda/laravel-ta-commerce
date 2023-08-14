@@ -15,7 +15,7 @@
         "eugene-melbourne/laravel-csv-generator": "^1.9",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
-        "guzzlehttp/guzzle": "^7.0.1",
+        "guzzlehttp/guzzle": "^7.7",
         "harvesthq/chosen": "^1.8",
         "illuminate/mail": "*",
         "laravel/framework": "^8.12",

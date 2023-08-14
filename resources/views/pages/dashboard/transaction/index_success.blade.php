@@ -93,12 +93,36 @@
                                     return meta.row + 1;
                                 }
                             },
+                            // {
+                            //     data: 'id',
+                            //     name: 'id',
+                            //     // width: '25%',
+                            //     className: ' dt-body-start',
+                            // },
                             {
                                 data: 'id',
                                 name: 'id',
-                                // width: '25%',
-                                className: ' dt-body-start',
+                                render: function(data, type, row) {
+                                    var linkHtml = '';
+
+                                    if (row.order_id === null) {
+                                        linkHtml = data;
+                                    } else {
+                                        linkHtml = '<a href="/dashboard/midtrans/status/' + row.id + '/' +
+                                            row
+                                            .order_id +
+                                            '" class="text-blue-500 font-bold underline" target="_blank">' +
+                                            data + '</a>';
+                                    }
+
+                                    return linkHtml;
+                                },
+                                className: 'dt-body-start',
                             },
+
+
+
+
                             {
                                 data: 'user.name',
                                 name: 'user.name',

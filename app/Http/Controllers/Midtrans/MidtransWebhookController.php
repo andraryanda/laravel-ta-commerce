@@ -334,6 +334,9 @@ class MidtransWebhookController extends Controller
                 if ($request->transaction_status == 'settlement' || $request->transaction_status == 'capture') {
                     $transaction->status = 'SUCCESS';
                     $transaction->payment = 'Bank Transfer';
+                    $transaction->order_id = $request->order_id;
+                    $transaction->transaction_id = $request->transaction_id; // Ganti dengan kunci yang sesuai dalam respon
+
                 } elseif ($request->transaction_status == 'pending') {
                     $transaction->status = 'PENDING';
                 } elseif ($request->transaction_status == 'deny') {

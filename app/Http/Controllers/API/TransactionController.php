@@ -381,8 +381,8 @@ class TransactionController extends Controller
         }
 
         // Simpan snap_token ke dalam model Transaction
-        $transaction->snap_token = $snap_token;
-        $transaction->save();
+        // $transaction->snap_token = $snap_token;
+        // $transaction->save();
 
         // return ResponseFormatter::success($transaction->load('items.product'), 'Transaksi berhasil');
         return ResponseFormatter::success(

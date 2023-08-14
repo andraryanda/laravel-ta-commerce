@@ -23,6 +23,7 @@ use App\Http\Controllers\SearchGlobalController;
 use App\Http\Controllers\MyTransactionController;
 use App\Http\Controllers\ProductGalleryController;
 use App\Http\Controllers\ProductCategoryController;
+use App\Http\Controllers\TestingMidtransController;
 use App\Http\Controllers\TransactionWifiController;
 use App\Http\Controllers\TransactionChartController;
 use App\Http\Controllers\LandingPage\AboutController;
@@ -63,6 +64,12 @@ use App\Http\Controllers\LandingPageCustom\LandingPageAboutFeatureController;
 // Router::get('/storage_link', function (){
 //     Artisan::call('storage:link');
 // });
+
+// Route::get('testing_midtrans', function () {
+//     return view('testing_midtrans');
+// });
+
+Route::get('midtrans/all-transaction-midtrans', [TestingMidtransController::class, 'getAllTransactions'])->name('testing_midtrans.index');
 
 Route::get('redirects', [HomeController::class, 'index'])->name('redirects');
 
@@ -109,7 +116,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
         // Midtrans
         // Transaksi Pembelian Produk
 
-
+        Route::get('midtrans/status/{id}/{order_id}', [TestingMidtransController::class, 'getStatus'])->name('testing_midtrans.status');
         Route::get('dashboard/payment/cancel/{id}', [MidtransWebhookController::class, 'cancelPayment'])->name('midtrans.cancel');
 
         Route::get('transaction/{id}/payment', [MidtransWebhookController::class, 'payment'])->name('payment');
